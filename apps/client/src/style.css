@@ -1,5 +1,5 @@
 :root {
-  color: #202a32;
+  color: #293b45;
   background: #dceff3;
   font-family: system-ui, sans-serif;
 }
@@ -8,8 +8,11 @@ body {
   margin: 0;
 }
 
-main {
-  max-width: 42rem;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
+.game-shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .75rem 1rem; background: #fff7e5; box-shadow: 0 1px 6px #26323833; z-index: 1; }
+.topbar h1 { margin: 0; font-size: 1.2rem; }
+.topbar span { font-size: .8rem; }
+.city-entry { position: fixed; bottom: 1rem; left: 1rem; right: 1rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem; border-radius: .75rem; background: #fff7e5; box-shadow: 0 4px 18px #26323844; }
+.enter-city { border: 0; border-radius: .5rem; padding: .7rem 1rem; background: #e17055; color: white; font: inherit; animation: subtle-pulse 2.2s ease-in-out infinite; }
+@keyframes subtle-pulse { 50% { transform: scale(1.03); box-shadow: 0 0 0 .35rem #e1705530; } }
+@media (min-width: 700px) { .city-entry { left: auto; width: 24rem; } }
