@@ -2,15 +2,17 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from './App.vue';
 
+vi.mock('./MapCanvas.vue', () => ({ default: { template: '<div data-testid="map" />' } }));
+
 afterEach(() => vi.unstubAllGlobals());
 
 describe('App', () => {
-  it('shows an online status after the server confirms health', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ status: 'ok', service: 'hanse2go-server' }) }));
+  it('shows the map after loading the server-authoritative world state', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ player: {}, fleet: { position: {} }, goods: [], cities: [] }) }));
 
     const wrapper = mount(App);
     await flushPromises();
 
-    expect(wrapper.get('[role="status"]').text()).toContain('erreichbar');
+    expect(wrapper.html()).toContain('data-testid="map"');
   });
 });

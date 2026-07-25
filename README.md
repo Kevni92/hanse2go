@@ -23,6 +23,10 @@ Die Debug-Position wird per `PUT /api/fleet/position` mit `longitude` und
 `latitude` serverseitig bestätigt. `GET /api/cities/reachable` liefert die
 jeweilige Reichweite; ein Abruf einer einzelnen Stadt ist nur im 800-Meter-
 Radius möglich.
+
+Die Client-Startansicht ist eine MapLibre-Ozeankarte mit den drei konfigurierten
+Inselstädten, der bestätigten Flottenposition und einem klar gekennzeichneten
+Debug-Modus.
 Der Alpha-Startzustand ist über `/api/state` lesbar; getrennte lesende
 Endpunkte stehen für Spieler, Flotte, Waren und Städte bereit.
 
