@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import type { GameState, ReachableCity } from '@hanse2go/shared';
-import { fetchGameState, setDebugPosition } from './api.js';
+import type { City, GameState, ReachableCity } from '@hanse2go/shared';
+import { fetchGameState, fetchReachableCity, setDebugPosition } from './api.js';
+import CityView from './CityView.vue';
 import MapCanvas from './MapCanvas.vue';
 
 const state = ref<GameState>();
 const reachableCities = ref<ReachableCity[]>([]);
 const status = ref<'loading' | 'ready' | 'error'>('loading');
 const isMoving = ref(false);
+const openCity = ref<City>();
 const reachable = computed(() => state.value?.cities.filter((city) => reachableCities.value.some((entry) => entry.cityId === city.id && entry.reachable)) ?? []);
 
 onMounted(async () => {
@@ -28,6 +30,9 @@ async function moveFleet(position: { longitude: number; latitude: number }) {
     reachableCities.value = result.reachableCities;
   } catch { status.value = 'error'; } finally { isMoving.value = false; }
 }
+async function enterCity(cityId: string) {
+  try { openCity.value = (await fetchReachableCity(cityId)).city; } catch { status.value = 'error'; }
+}
 </script>
 
 <template>
@@ -39,8 +44,9 @@ async function moveFleet(position: { longitude: number; latitude: number }) {
       <MapCanvas :cities="state.cities" :fleet="state.fleet" :reachable-cities="reachableCities" :disabled="isMoving" @debug-position="moveFleet" />
       <section v-if="reachable.length" class="city-entry" aria-live="polite">
         <strong>{{ reachable[0]?.name }} ist erreichbar</strong>
-        <button class="enter-city" type="button">Stadt betreten</button>
+        <button class="enter-city" type="button" @click="enterCity(reachable[0]!.id)">Stadt betreten</button>
       </section>
+      <CityView v-if="openCity" :city="openCity" @close="openCity = undefined" />
     </template>
   </main>
 </template>

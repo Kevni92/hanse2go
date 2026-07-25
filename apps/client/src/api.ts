@@ -1,4 +1,4 @@
-import type { DebugPositionRequest, GameState, HealthResponse, ReachableCity } from '@hanse2go/shared';
+import type { City, DebugPositionRequest, GameState, HealthResponse, ReachableCity } from '@hanse2go/shared';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
@@ -25,4 +25,8 @@ export function setDebugPosition(position: DebugPositionRequest): Promise<{ flee
   return request('/api/fleet/position', {
     method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(position),
   });
+}
+
+export function fetchReachableCity(cityId: string): Promise<{ city: City; distanceMeters: number }> {
+  return request(`/api/cities/${cityId}`);
 }
