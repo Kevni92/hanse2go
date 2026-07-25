@@ -18,6 +18,11 @@ pnpm dev
 Der Client läuft auf `http://localhost:5173`, der Server auf
 `http://localhost:3000`. Der Health-Endpunkt lautet `/health`; die interaktive
 OpenAPI-Dokumentation ist unter `/documentation` verfügbar.
+
+Die Debug-Position wird per `PUT /api/fleet/position` mit `longitude` und
+`latitude` serverseitig bestätigt. `GET /api/cities/reachable` liefert die
+jeweilige Reichweite; ein Abruf einer einzelnen Stadt ist nur im 800-Meter-
+Radius möglich.
 Der Alpha-Startzustand ist über `/api/state` lesbar; getrennte lesende
 Endpunkte stehen für Spieler, Flotte, Waren und Städte bereit.
 

@@ -73,6 +73,11 @@ Alle schreibenden Aktionen sind Befehle an den Server. Der Server validiert sie,
 
 Für Alpha 1 sind keine WebSockets erforderlich, da keine laufende Simulation stattfindet. Die konkrete URL-Struktur darf Codex konsistent und REST-orientiert festlegen. API-Verträge werden in `packages/shared` verwendet und über OpenAPI beschrieben.
 
+Für die Alpha-Debugposition akzeptiert `PUT /api/fleet/position` ausschließlich
+Längen- und Breitengrad. Der Server validiert die WGS84-Grenzen und setzt den
+Zeitstempel selbst. `GET /api/cities/reachable` liefert die serverseitig
+berechneten Distanzen; der Abruf einer einzelnen Stadt prüft den Radius erneut.
+
 ## Zustandsmodell Alpha 1
 
 Alpha 1 verwendet einen vollständig deterministischen In-Memory-Zustand. Ein Serverneustart erzeugt wieder die Werte aus [`alpha-1/test-world.md`](alpha-1/test-world.md).
