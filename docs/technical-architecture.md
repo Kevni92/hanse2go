@@ -92,6 +92,11 @@ Die Alpha-API stellt Preisangebote unter
 `POST /api/cities/:cityId/market/quote` bereit und schließt sie über
 `POST /api/cities/:cityId/market/trade` mit Marktversion und Idempotenzschlüssel
 ab. Nur der Server verändert dadurch Gold, Stadtbestand und Flottenladung.
+Der Client lädt die Preis- und Handelsereignisse einer Ware über
+`GET /api/cities/:cityId/market/:goodId/history`; auch dieser Abruf prüft den
+Stadtradius serverseitig. Preisindikatoren und Mengenangebote im Client werden
+aus Preisangeboten des Servers abgeleitet und sind niemals eine lokale
+Preisberechnung.
 
 ## Fehlerformat
 
