@@ -7,12 +7,12 @@ import { CityAccessService, DomainError } from './city-access.js';
 import { InMemoryGameRepository, type GameRepository } from './game-state.js';
 import { MarketService } from './market.js';
 
-export function buildApp(repository: GameRepository = new InMemoryGameRepository()) {
+export function buildApp(repository: GameRepository = new InMemoryGameRepository(), options: { enableTestReset?: boolean } = {}) {
   const app = Fastify({ logger: true });
   const cityAccess = new CityAccessService(repository);
   const market = new MarketService(repository, cityAccess);
 
-  app.register(cors, { origin: true });
+  app.register(cors, { origin: true, methods: ['GET', 'HEAD', 'POST', 'PUT'] });
   app.register(swagger, {
     openapi: {
       info: { title: 'Hanse2Go API', version: '0.1.0' },
@@ -73,6 +73,7 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   app.post<{ Params: { cityId: string }; Body: MarketQuoteRequest }>('/api/cities/:cityId/market/quote', { schema: { tags: ['Markt'] } }, ({ params, body }) => market.quote({ cityId: params.cityId, ...body }));
   app.post<{ Params: { cityId: string }; Body: TradeRequest }>('/api/cities/:cityId/market/trade', { schema: { tags: ['Markt'] } }, ({ params, body }) => market.commit({ cityId: params.cityId, ...body }));
   app.get<{ Params: { cityId: string; goodId: string } }>('/api/cities/:cityId/market/:goodId/history', { schema: { tags: ['Markt'] } }, ({ params }) => market.getHistory(params.cityId, params.goodId));
+  if (options.enableTestReset) app.post('/test/reset', { schema: { tags: ['Tests'] } }, () => { repository.reset(); market.reset(); return repository.getState(); });
 
   return app;
 }

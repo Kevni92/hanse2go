@@ -200,7 +200,7 @@ onMounted(refreshOverview);
       <p v-if="error" class="error" role="alert">{{ error }}</p>
       <section v-for="group in groupedGoods" :key="group.category" class="market-group">
         <h4>{{ group.category }}</h4>
-        <button v-for="good in group.goods" :key="good.id" class="good-row" type="button" @click="selectGood(good)">
+        <button v-for="good in group.goods" :key="good.id" class="good-row" :data-testid="`market-good-${good.id}`" type="button" @click="selectGood(good)">
           <span class="good-name"><span aria-hidden="true">{{ icons[good.category] }}</span>{{ good.name }}</span>
           <span class="price" :class="priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).tone" :aria-label="priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).label">
             <strong v-if="quotes[good.id]">{{ formatGold(quotes[good.id]?.averageUnitPrice ?? 0) }} G</strong> {{ priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).coins }}<small>{{ priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).label }}</small>
@@ -227,7 +227,7 @@ onMounted(refreshOverview);
 
       <section class="history" aria-label="Preis- und Handelsverlauf">
         <h5>Preisverlauf</h5>
-        <template v-if="history.length > 1"><svg viewBox="0 0 100 40" preserveAspectRatio="none" role="img" :aria-label="`${history.length} Preisänderungen in dieser Serverlaufzeit`"><polyline :points="historyPoints" /></svg><p>{{ tradedVolume }} t in dieser Serverlaufzeit gehandelt</p></template>
+        <template v-if="history.length"><svg v-if="history.length > 1" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" :aria-label="`${history.length} Preisänderungen in dieser Serverlaufzeit`"><polyline :points="historyPoints" /></svg><p>{{ tradedVolume }} t in dieser Serverlaufzeit gehandelt</p></template>
         <p v-else>Noch kein Preis- oder Handelsverlauf in dieser Serverlaufzeit.</p>
       </section>
 
@@ -238,7 +238,7 @@ onMounted(refreshOverview);
         <div class="quantity-buttons"><button type="button" :disabled="quantity <= 1" @click="changeQuantity(quantity - 10)">−10</button><button type="button" :disabled="quantity <= 1" @click="changeQuantity(quantity - 1)">−1</button><button type="button" :disabled="quantity >= maximum" @click="changeQuantity(quantity + 1)">+1</button><button type="button" :disabled="quantity >= maximum" @click="changeQuantity(quantity + 10)">+10</button><button type="button" :disabled="maximum < 1 || quantity >= maximum" @click="useMaximum">Max</button></div>
       </section>
 
-      <section v-if="activeQuote" class="offer" aria-label="Serverangebot">
+      <section v-if="activeQuote" class="offer" aria-label="Serverangebot" role="region">
         <h5>Serverangebot</h5>
         <dl><div><dt>Menge</dt><dd>{{ activeQuote.quantity }} t</dd></div><div><dt>Durchschnittspreis</dt><dd>{{ formatGold(activeQuote.averageUnitPrice) }} Gold</dd></div><div><dt>{{ direction === 'buy' ? 'Gesamtpreis' : 'Gesamterlös' }}</dt><dd>{{ formatGold(activeQuote.total) }} Gold</dd></div><div><dt>Verbleibendes Gold</dt><dd>{{ formatGold(activeQuote.resultingGold) }} Gold</dd></div><div><dt>Freier Laderaum</dt><dd>{{ activeQuote.remainingCapacity }} t</dd></div><div><dt>Stadt / Flotte</dt><dd>{{ activeQuote.resultingCityStock }} t / {{ activeQuote.resultingFleetStock }} t</dd></div></dl>
       </section>

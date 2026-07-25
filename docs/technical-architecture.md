@@ -101,6 +101,12 @@ Stadtradius serverseitig. Preisindikatoren und Mengenangebote im Client werden
 aus Preisangeboten des Servers abgeleitet und sind niemals eine lokale
 Preisberechnung.
 
+Für die Playwright-Abnahme startet der Server mit der ausschließlich dafür
+gesetzten Umgebungsvariable `HANSE2GO_E2E_TEST=1`. Nur dann steht
+`POST /test/reset` bereit; der Endpunkt stellt den deterministischen
+Startzustand einschließlich Marktversionen und Verlauf wieder her und ist im
+normalen Serverbetrieb nicht verfügbar.
+
 ## Fehlerformat
 
 Fehlerantworten besitzen mindestens:
