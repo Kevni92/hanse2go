@@ -1,10 +1,10 @@
-import type { City, ReachableCity } from '@hanse2go/shared';
+import type { ApiError, City, ReachableCity } from '@hanse2go/shared';
 import { distanceInMeters } from './distance.js';
 import type { GameRepository } from './game-state.js';
 
 export class DomainError extends Error {
   constructor(
-    readonly code: 'CITY_NOT_FOUND' | 'CITY_OUT_OF_RANGE' | 'INVALID_POSITION',
+    readonly code: ApiError['error']['code'],
     message: string,
     readonly statusCode: number,
     readonly details?: Record<string, unknown>,

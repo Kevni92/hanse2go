@@ -8,6 +8,7 @@ export interface GameRepository {
   getGoods(): Good[];
   getCities(): City[];
   setFleetPosition(position: Position): Fleet;
+  runTransaction<T>(operation: (state: GameState) => T): T;
 }
 const clone = <T>(value: T): T => structuredClone(value);
 export class InMemoryGameRepository implements GameRepository {
@@ -22,4 +23,5 @@ export class InMemoryGameRepository implements GameRepository {
     this.state.fleet.position = clone(position);
     return this.getFleet();
   };
+  runTransaction = <T>(operation: (state: GameState) => T): T => operation(this.state);
 }
