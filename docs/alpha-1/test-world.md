@@ -55,6 +55,38 @@ Alle Werte sind Tonnen beziehungsweise Goldmünzen pro Tonne. Der Zielbestand gi
 | Zucker | 160 | 70 | 35 | 50 | 120 |
 | Rum | 300 | 50 | 10 | 15 | 100 |
 
+### Technische Warenzuordnung
+
+Die folgende Reihenfolge ordnet jede Zeile der Startwerttabelle eindeutig der
+technischen Waren-ID und der Marktgruppe zu. Sie ist Teil der Alpha-1-
+Konfiguration; weitere fachliche Zuordnungen sind für die Initialisierung nicht
+erforderlich.
+
+| Ware | Technische ID | Marktgruppe |
+|---|---|---|
+| Getreide | `grain` | Nahrung |
+| Mehl | `flour` | Nahrung |
+| Brot | `bread` | Nahrung |
+| Vieh | `livestock` | Nahrung |
+| Milch | `milk` | Nahrung |
+| Fleisch | `meat` | Nahrung |
+| Käse | `cheese` | Nahrung |
+| Holz | `wood` | Baustoffe |
+| Bretter | `planks` | Baustoffe |
+| Lehm | `clay` | Baustoffe |
+| Ziegel | `bricks` | Baustoffe |
+| Kohle | `charcoal` | Handwerk |
+| Eisen | `iron` | Handwerk |
+| Werkzeug | `tools` | Handwerk |
+| Baumwolle | `cotton` | Kleidung |
+| Stoff | `cloth` | Kleidung |
+| Kleidung | `clothing` | Kleidung |
+| Keramik | `ceramics` | Haushaltswaren |
+| Möbel | `furniture` | Haushaltswaren |
+| Zuckerrohr | `sugarcane` | Luxuswaren |
+| Zucker | `sugar` | Luxuswaren |
+| Rum | `rum` | Luxuswaren |
+
 ## Verbindlicher Haupt-Handelsweg
 
 ### Schritt 1: Holz in Lambrecht kaufen
@@ -70,6 +102,12 @@ Alle Werte sind Tonnen beziehungsweise Goldmünzen pro Tonne. Der Zielbestand gi
 - Der Ausgangspreisfaktor liegt bei 2,5.
 - Holz wird dort deutlich über dem Basispreis angekauft.
 - Der Abnahmetest verkauft die zehn Tonnen vollständig.
+
+Bei den anfänglichen Beständen beträgt der Kaufpreis für die erste Tonne Holz
+in Lambrecht `ceil(80 × 0,5 × 1,05) = 42` Goldmünzen. Der Verkaufserlös für die
+erste Tonne in Neustadt beträgt `floor(80 × 2,5 × 0,95) = 190` Goldmünzen.
+Die einheitenweise Berechnung kann diese Werte mit jeder gehandelten Tonne
+verändern, der Weg bleibt jedoch nach den verbindlichen Preisregeln profitabel.
 
 Der Gesamtverkaufserlös in Neustadt muss größer sein als der vorherige Gesamtkaufpreis in Lambrecht. Der Test prüft die exakten Werte aus den serverseitigen Angeboten statt fest codierter Clientberechnungen.
 
