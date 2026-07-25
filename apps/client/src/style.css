@@ -9,10 +9,10 @@ body {
 }
 
 .game-shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
-.topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .75rem 1rem; background: #fff7e5; box-shadow: 0 1px 6px #26323833; z-index: 1; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .65rem .75rem; background: #fff7e5; box-shadow: 0 1px 6px #26323833; z-index: 1; }
 .topbar h1 { margin: 0; font-size: 1.2rem; }
-.topbar span { font-size: .8rem; }
+.debug-hint { display: none; font-size: .8rem; }.hud-actions { display: flex; gap: .35rem; margin-left: auto; }.hud-actions button { display: grid; min-height: 2.75rem; padding: .3rem .55rem; border: 0; border-radius: .4rem; background: #e9d4b2; color: #453526; font: inherit; text-align: right; }.hud-actions small { font-size: .65rem; }.hud-actions strong { font-size: .82rem; }
 .city-entry { position: fixed; bottom: 1rem; left: 1rem; right: 1rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem; border-radius: .75rem; background: #fff7e5; box-shadow: 0 4px 18px #26323844; }
 .enter-city { border: 0; border-radius: .5rem; padding: .7rem 1rem; background: #e17055; color: white; font: inherit; animation: subtle-pulse 2.2s ease-in-out infinite; }
 @keyframes subtle-pulse { 50% { transform: scale(1.03); box-shadow: 0 0 0 .35rem #e1705530; } }
-@media (min-width: 700px) { .city-entry { left: auto; width: 24rem; } }
+@media (min-width: 700px) { .topbar { padding: .75rem 1rem; }.debug-hint { display: inline; }.city-entry { left: auto; width: 24rem; } }

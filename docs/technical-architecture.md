@@ -30,6 +30,9 @@ tests/
 - Vitest für Komponenten- und Clientlogiktests
 
 Der Client stellt serverseitig gelieferte Zustände dar und sendet Spielerabsichten. Er entscheidet nicht verbindlich über Position, Reichweite, Preise, Geld, Bestände oder Handel.
+Nach einem erfolgreichen Handel lädt der Client den vollständigen Spielzustand
+neu und aktualisiert damit Markt und HUD gemeinsam. Bei einer abgelehnten
+Transaktion bleibt der zuletzt serverbestätigte HUD-Zustand sichtbar.
 
 ## Server
 

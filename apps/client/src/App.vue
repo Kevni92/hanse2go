@@ -4,12 +4,14 @@ import type { City, GameState, ReachableCity } from '@hanse2go/shared';
 import { fetchGameState, fetchReachableCity, setDebugPosition } from './api.js';
 import CityView from './CityView.vue';
 import MapCanvas from './MapCanvas.vue';
+import PlayerHud from './PlayerHud.vue';
 
 const state = ref<GameState>();
 const reachableCities = ref<ReachableCity[]>([]);
 const status = ref<'loading' | 'ready' | 'error'>('loading');
 const isMoving = ref(false);
 const openCity = ref<City>();
+const hudView = ref<'player' | 'fleet'>();
 const reachable = computed(() => state.value?.cities.filter((city) => reachableCities.value.some((entry) => entry.cityId === city.id && entry.reachable)) ?? []);
 
 onMounted(async () => {
@@ -38,7 +40,7 @@ async function refreshState() { try { state.value = await fetchGameState(); if (
 
 <template>
   <main class="game-shell">
-    <header class="topbar"><h1>Hanse2Go</h1><span>Debug-Modus · Karte klicken zum Bewegen</span></header>
+    <header class="topbar"><h1>Hanse2Go</h1><span class="debug-hint">Debug-Modus · Karte klicken zum Bewegen</span><div v-if="state" class="hud-actions"><button type="button" aria-label="Spielerübersicht öffnen" @click="hudView = 'player'"><small>Gold</small><strong>{{ state.player.gold.toLocaleString('de-DE') }} G</strong></button><button type="button" aria-label="Flottenübersicht öffnen" @click="hudView = 'fleet'"><small>Flotte</small><strong>{{ Object.values(state.fleet.cargo).reduce((total, amount) => total + amount, 0) }} / {{ state.fleet.capacity }} t</strong></button></div></header>
     <p v-if="status === 'loading'" aria-live="polite">Spielwelt wird geladen …</p>
     <p v-else-if="status === 'error'" role="alert">Der Server ist derzeit nicht erreichbar.</p>
     <template v-else-if="state">
@@ -48,6 +50,7 @@ async function refreshState() { try { state.value = await fetchGameState(); if (
         <button class="enter-city" type="button" @click="enterCity(reachable[0]!.id)">Stadt betreten</button>
       </section>
       <CityView v-if="openCity" :city="openCity" :goods="state.goods" :fleet="state.fleet" :player="state.player" @close="openCity = undefined" @traded="refreshState" />
+      <PlayerHud v-if="hudView" :view="hudView" :player="state.player" :fleet="state.fleet" :goods="state.goods" @close="hudView = undefined" @change-view="hudView = $event" />
     </template>
   </main>
 </template>
