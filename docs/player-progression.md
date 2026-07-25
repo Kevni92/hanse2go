@@ -24,27 +24,26 @@ Das Tutorial soll den Spieler nicht sofort mit Kontoren oder Gebäuden überford
 
 Später können auch Schiffbrüchige oder Reisende erscheinen, die zu einer bestimmten Stadt gebracht werden möchten. Größere Entfernung bedeutet grundsätzlich eine höhere Belohnung.
 
-## Beliebtheit je Stadt
+## Örtlicher Ruf und Baukonzession (Alpha 2)
 
-Jeder Spieler besitzt für jede Stadt einen eigenen Beliebtheitswert.
+Alpha 2 ersetzt die bisher unverbindliche Beliebtheitsnotiz durch einen serverautoritativen örtlichen Ruf. Jeder Spieler besitzt je Stadt einen ganzzahligen Ruf von 0 bis 100; ein neuer Spieler startet in jeder Stadt mit 0.
 
-- Handel mit einer Stadt erhöht die Beliebtheit.
-- Die genaue Berechnung und Begrenzung ist Balancing.
-- Ein Kontor darf erst ab einem definierten Schwellwert errichtet werden.
-- Als bisheriges Beispiel wurde eine Beliebtheit von 80 Prozent genannt.
+| Ruf | Status |
+|---:|---|
+| 0–19 | Fremder |
+| 20–49 | Bekannter Händler |
+| 50–79 | Angesehener Händler |
+| 80–100 | Vertrauenswürdiger Bürger |
+
+Nur nützlicher Handel kann Ruf erhöhen. Ein Rufverlust, globaler Ruf, Ruf durch Zeit, Gebäudebesitz oder bloße Anwesenheit existiert in Alpha 2 nicht. Ab 80 Ruf kann der Spieler genau für diese Stadt eine dauerhafte Baukonzession für 10.000 Gold kaufen. Die Konzession wird weder übertragen noch entzogen.
+
+Die vollständige Berechnung, Missbrauchsschutz und Fehlerfälle stehen in [`alpha-2/reputation-and-concessions.md`](alpha-2/reputation-and-concessions.md).
 
 ## Kontore
 
 Ein Kontor ist das persönliche Lager des Spielers in genau einer Stadt.
 
-Für den Bau werden benötigt:
-
-- ausreichende lokale Beliebtheit,
-- eine Geldzahlung; bisheriges Beispiel: 10.000 Goldmünzen,
-- Baumaterialien; bisheriges Beispiel: 100 Holz und 100 Lehm,
-- eine Bauzeit von mehreren Stunden oder Tagen.
-
-Alle Zahlen sind Balancingwerte und außerhalb der Alpha noch nicht final.
+In Alpha 2 setzt der sofortige Kontorbau eine stadtbezogene Baukonzession voraus. Kosten und Materialien sind verbindlich in [`alpha-2/buildings-and-construction.md`](alpha-2/buildings-and-construction.md) festgelegt; die Konzession selbst kostet 10.000 Gold und ist keine Kontorbauzahlung.
 
 ### Lokale Lagerung
 

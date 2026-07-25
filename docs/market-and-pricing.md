@@ -124,3 +124,9 @@ KI-Produktion und KI-Handel werden zurückgefahren, wenn genügend Spieleraktivi
 ## Alpha 1
 
 In Alpha 1 verändern ausschließlich Spielertransaktionen die Bestände und Preise. Es gibt keine laufende Produktion, keinen Verbrauch, keine KI-Händler, keine Marktaufträge und kein Stadtbudget.
+
+## Alpha 2: Rufrelevanter Handel
+
+Alpha 2 behält Preisformel, Spread und atomare Handelsprüfung unverändert bei. Zusätzlich wertet der Server nach einer erfolgreichen Buchung den tatsächlichen Marktbestand vor und nach der Buchung für den örtlichen Ruf aus. Ruf entsteht ausschließlich, wenn ein Verkauf eine knappe Ware zum Zielbestand hin bewegt oder ein Kauf eine überschüssige Ware zum Zielbestand hin bewegt. Preis oder Gewinn eines Geschäfts ändern den Ruf nicht.
+
+Die konkrete Formel und der Schutz gegen Teilmengen- und Gegenbuchungen stehen in [`alpha-2/reputation-and-concessions.md`](alpha-2/reputation-and-concessions.md). Produktion und Bevölkerungsverbrauch bleiben im Alpha-1-Abschnitt ausdrücklich ausgeschlossen und beginnen erst mit Alpha 2.
