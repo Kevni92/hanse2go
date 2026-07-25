@@ -3,8 +3,9 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
 import type { HealthResponse } from '@hanse2go/shared';
+import { InMemoryGameRepository, type GameRepository } from './game-state.js';
 
-export function buildApp() {
+export function buildApp(repository: GameRepository = new InMemoryGameRepository()) {
   const app = Fastify({ logger: true });
 
   app.register(cors, { origin: true });
@@ -30,6 +31,11 @@ export function buildApp() {
       },
     },
   }, async () => ({ status: 'ok', service: 'hanse2go-server' }));
+  app.get('/api/state', { schema: { tags: ['Alpha 1'] } }, () => repository.getState());
+  app.get('/api/player', { schema: { tags: ['Alpha 1'] } }, () => repository.getPlayer());
+  app.get('/api/fleet', { schema: { tags: ['Alpha 1'] } }, () => repository.getFleet());
+  app.get('/api/goods', { schema: { tags: ['Alpha 1'] } }, () => repository.getGoods());
+  app.get('/api/cities', { schema: { tags: ['Alpha 1'] } }, () => repository.getCities());
 
   return app;
 }

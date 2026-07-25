@@ -18,6 +18,8 @@ pnpm dev
 Der Client läuft auf `http://localhost:5173`, der Server auf
 `http://localhost:3000`. Der Health-Endpunkt lautet `/health`; die interaktive
 OpenAPI-Dokumentation ist unter `/documentation` verfügbar.
+Der Alpha-Startzustand ist über `/api/state` lesbar; getrennte lesende
+Endpunkte stehen für Spieler, Flotte, Waren und Städte bereit.
 
 ```sh
 pnpm lint
