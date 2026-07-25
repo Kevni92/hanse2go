@@ -33,6 +33,7 @@ async function moveFleet(position: { longitude: number; latitude: number }) {
 async function enterCity(cityId: string) {
   try { openCity.value = (await fetchReachableCity(cityId)).city; } catch { status.value = 'error'; }
 }
+async function refreshState() { try { state.value = await fetchGameState(); if (openCity.value) openCity.value = (await fetchReachableCity(openCity.value.id)).city; } catch { status.value = 'error'; } }
 </script>
 
 <template>
@@ -46,7 +47,7 @@ async function enterCity(cityId: string) {
         <strong>{{ reachable[0]?.name }} ist erreichbar</strong>
         <button class="enter-city" type="button" @click="enterCity(reachable[0]!.id)">Stadt betreten</button>
       </section>
-      <CityView v-if="openCity" :city="openCity" @close="openCity = undefined" />
+      <CityView v-if="openCity" :city="openCity" :goods="state.goods" :fleet="state.fleet" :player="state.player" @close="openCity = undefined" @traded="refreshState" />
     </template>
   </main>
 </template>

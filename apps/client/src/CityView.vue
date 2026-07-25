@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { City } from '@hanse2go/shared';
+import type { City, Fleet, Good, Player } from '@hanse2go/shared';
+import MarketView from './MarketView.vue';
 
-defineProps<{ city: City }>();
-defineEmits<{ close: [] }>();
+defineProps<{ city: City; goods: Good[]; fleet: Fleet; player: Player }>();
+defineEmits<{ close: []; traded: [] }>();
 const tab = ref<'overview' | 'production' | 'market'>('overview');
 const prosperityLabel = (value: number) => value < 30 ? 'einfach' : value < 60 ? 'wohlhabend' : 'reich';
 </script>
@@ -16,7 +17,7 @@ const prosperityLabel = (value: number) => value < 30 ? 'einfach' : value < 60 ?
       <h3>Stadtübersicht</h3><dl><div><dt>Bevölkerung</dt><dd>{{ city.population.toLocaleString('de-DE') }}</dd></div><div><dt>Wohlstand</dt><dd>{{ city.prosperity }} · {{ prosperityLabel(city.prosperity) }}</dd></div><div><dt>Beliebtheit</dt><dd>{{ city.popularity }} %</dd></div><div><dt>Kontor</dt><dd>{{ city.hasKontor ? 'vorhanden' : 'nicht vorhanden' }}</dd></div></dl>
     </article>
     <article v-else-if="tab === 'production'" class="city-content"><h3>Produktionsschwerpunkte</h3><p>Diese Insel ist besonders geeignet für:</p><ul><li v-for="focus in city.productionFocus" :key="focus">{{ focus }}</li></ul></article>
-    <article v-else class="city-content"><h3>Markt</h3><p>Der Stadtmarkt ist erreichbar. Die Handelsübersicht folgt im nächsten Ausbauschritt.</p></article>
+    <article v-else class="city-content"><MarketView :city="city" :goods="goods" :fleet="fleet" :player="player" @traded="$emit('traded')" /></article>
   </section>
 </template>
 
