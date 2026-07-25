@@ -127,6 +127,10 @@ Der Client übersetzt beziehungsweise präsentiert Fehler auf Deutsch. Technisch
 
 Die verbindliche Abnahme steht in [`alpha-1/acceptance.md`](alpha-1/acceptance.md).
 
+## Alpha 2: manueller Wirtschaftstick
+
+Der Alpha-2-Stundentick ist ein einzelnes serverautoritäres, atomar ausgeführtes Kommando mit Welt-Sperre und Idempotenz. Er ist nur in Debug- oder Testkonfiguration verfügbar; ein Scheduler oder Hintergrundjob wird nicht gestartet. Die Reihenfolge, Berichtsdaten und fachlichen Sonderfälle stehen in [`alpha-2/production-tick.md`](alpha-2/production-tick.md).
+
 ## Arbeitsablauf
 
 Für jedes Issue wird ein neuer Branch vom aktuellen `main` erstellt. Es gibt genau einen Pull Request pro Issue gegen `main`. Alle GitHub-CI-Prüfungen müssen erfolgreich sein. Danach merged der Agent den PR und löscht den gemergten Branch. Details stehen in [`../AGENTS.md`](../AGENTS.md).
