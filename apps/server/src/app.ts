@@ -2,13 +2,15 @@ import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
-import type { ApiError, DebugPositionRequest, HealthResponse } from '@hanse2go/shared';
+import type { ApiError, DebugPositionRequest, HealthResponse, MarketQuoteRequest, TradeRequest } from '@hanse2go/shared';
 import { CityAccessService, DomainError } from './city-access.js';
 import { InMemoryGameRepository, type GameRepository } from './game-state.js';
+import { MarketService } from './market.js';
 
 export function buildApp(repository: GameRepository = new InMemoryGameRepository()) {
   const app = Fastify({ logger: true });
   const cityAccess = new CityAccessService(repository);
+  const market = new MarketService(repository, cityAccess);
 
   app.register(cors, { origin: true });
   app.register(swagger, {
@@ -68,6 +70,9 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
     const fleet = repository.setFleetPosition({ ...body, recordedAt: new Date().toISOString() });
     return { fleet, reachableCities: cityAccess.getReachability() };
   });
+  app.post<{ Params: { cityId: string }; Body: MarketQuoteRequest }>('/api/cities/:cityId/market/quote', { schema: { tags: ['Markt'] } }, ({ params, body }) => market.quote({ cityId: params.cityId, ...body }));
+  app.post<{ Params: { cityId: string }; Body: TradeRequest }>('/api/cities/:cityId/market/trade', { schema: { tags: ['Markt'] } }, ({ params, body }) => market.commit({ cityId: params.cityId, ...body }));
+  app.get<{ Params: { cityId: string; goodId: string } }>('/api/cities/:cityId/market/:goodId/history', { schema: { tags: ['Markt'] } }, ({ params }) => market.getHistory(params.cityId, params.goodId));
 
   return app;
 }

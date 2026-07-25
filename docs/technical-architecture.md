@@ -88,6 +88,11 @@ Repository-Schnittstellen kapseln die Speicherung, damit PostgreSQL später ohne
 
 Verbindliche Regeln stehen in [`market-and-pricing.md`](market-and-pricing.md). Preisvorschau und Abschluss müssen dieselbe serverseitige Regel verwenden. Transaktionen sind atomar und gegen doppelte beziehungsweise veraltete Anfragen abzusichern.
 
+Die Alpha-API stellt Preisangebote unter
+`POST /api/cities/:cityId/market/quote` bereit und schließt sie über
+`POST /api/cities/:cityId/market/trade` mit Marktversion und Idempotenzschlüssel
+ab. Nur der Server verändert dadurch Gold, Stadtbestand und Flottenladung.
+
 ## Fehlerformat
 
 Fehlerantworten besitzen mindestens:

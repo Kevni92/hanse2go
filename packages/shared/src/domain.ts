@@ -6,3 +6,6 @@ export interface City { id: string; name: string; position: Position; radiusMete
 export interface Fleet { id: string; capacity: number; cargo: Record<string, number>; position: Position }
 export interface Player { id: string; name: string; gold: number; activeFleetId: string }
 export interface GameState { player: Player; fleet: Fleet; goods: Good[]; cities: City[] }
+export type TradeDirection = 'buy' | 'sell';
+export interface MarketQuote { cityId: string; goodId: string; direction: TradeDirection; quantity: number; marketVersion: number; total: number; averageUnitPrice: number; minimumUnitPrice: number; maximumUnitPrice: number; resultingCityStock: number; resultingFleetStock: number; resultingGold: number; remainingCapacity: number }
+export interface MarketHistoryEntry { timestamp: string; goodId: string; direction: TradeDirection; quantity: number; total: number; priceBefore: number; priceAfter: number }
