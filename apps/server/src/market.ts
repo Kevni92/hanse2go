@@ -53,6 +53,12 @@ export class MarketService {
     return (this.history.get(cityId) ?? []).filter((entry) => entry.goodId === goodId);
   }
 
+  reset(): void {
+    this.versions.clear();
+    this.history.clear();
+    this.completed.clear();
+  }
+
   private calculate(state: GameState, input: QuoteInput): MarketQuote {
     if (!Number.isInteger(input.quantity) || input.quantity <= 0) throw new DomainError('INVALID_QUANTITY', 'Die Handelsmenge muss eine positive ganze Zahl sein.', 400);
     const city = state.cities.find((candidate) => candidate.id === input.cityId);
