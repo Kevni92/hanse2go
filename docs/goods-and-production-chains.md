@@ -118,3 +118,7 @@ Nicht Bestandteil der Alpha, aber als sinnvolle Erweiterungen vorgemerkt:
 - Kakao und Schokolade,
 - Segel aus Stoff,
 - weitere Lebensmittel und Luxuswaren.
+
+## Alpha 2: verbindliche Produktion
+
+Alpha 2 macht jede der 22 Tabellenwaren durch ein Spielergebäude erzeugbar. Die bisher beschriebenen Ketten bleiben dabei erhalten; die verbindlichen technischen IDs, Klassen und Rezeptmengen pro Stundentick stehen in [`alpha-2/building-catalog.md`](alpha-2/building-catalog.md) und [`alpha-2/production-recipes.md`](alpha-2/production-recipes.md). Es gibt keine Nebenprodukte außer den ausdrücklich zwei Ausgängen des Rinderhofs und keine alternativen Rezepte.

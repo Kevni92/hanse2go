@@ -31,3 +31,4 @@ Dieses Dokument wird durch die Alpha-2-Einzelkonzepte konkretisiert. Alpha-1-Reg
 
 - [`reputation-and-concessions.md`](reputation-and-concessions.md) – Ruf und Konzession
 - [`buildings-and-construction.md`](buildings-and-construction.md) – Kontor, Kosten und Bau
+- [`building-catalog.md`](building-catalog.md) und [`production-recipes.md`](production-recipes.md) – Produktionsgebäude und Rezepte
