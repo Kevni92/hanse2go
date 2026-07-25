@@ -33,3 +33,4 @@ Dieses Dokument wird durch die Alpha-2-Einzelkonzepte konkretisiert. Alpha-1-Reg
 - [`buildings-and-construction.md`](buildings-and-construction.md) – Kontor, Kosten und Bau
 - [`building-catalog.md`](building-catalog.md) und [`production-recipes.md`](production-recipes.md) – Produktionsgebäude und Rezepte
 - [`population-consumption.md`](population-consumption.md) – fester Stadtverbrauch
+- [`kontor-and-inventory.md`](kontor-and-inventory.md) – privates Lager und Warenfluss
