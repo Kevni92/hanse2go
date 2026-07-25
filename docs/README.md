@@ -31,6 +31,11 @@
 - [`alpha-1/acceptance.md`](alpha-1/acceptance.md) – Playwright-Abnahme
 - [`technical-architecture.md`](technical-architecture.md) – technische Umsetzung
 
+## Alpha 2
+
+- [`alpha-2/scope.md`](alpha-2/scope.md) – verbindlicher Umfang und Abgrenzung
+- [`alpha-2/reputation-and-concessions.md`](alpha-2/reputation-and-concessions.md) – örtlicher Ruf und Baukonzession
+
 ## Umgang mit Lücken
 
 Explizite Entscheidungen in `docs/` dürfen nicht verändert oder stillschweigend ersetzt werden. Für Alpha 1 gilt zusätzlich: Fehlt nur ein technisches Detail, das die fachliche Absicht nicht verändert, wählt der Agent die einfachste deterministische, serverautoritative und testbare Lösung. Die Entscheidung wird im Pull Request begründet und bei dauerhafter Bedeutung in `docs/` ergänzt. Nur echte fachliche Widersprüche oder Änderungen am Produktumfang erfordern eine Rückfrage.
