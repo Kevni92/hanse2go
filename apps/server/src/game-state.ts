@@ -1,7 +1,14 @@
-import type { City, Fleet, GameState, Good, Player } from '@hanse2go/shared';
+import type { City, Fleet, GameState, Good, Player, Position } from '@hanse2go/shared';
 import { createAlphaConfig, type AlphaConfig } from './config.js';
 
-export interface GameRepository { getState(): GameState; getPlayer(): Player; getFleet(): Fleet; getGoods(): Good[]; getCities(): City[] }
+export interface GameRepository {
+  getState(): GameState;
+  getPlayer(): Player;
+  getFleet(): Fleet;
+  getGoods(): Good[];
+  getCities(): City[];
+  setFleetPosition(position: Position): Fleet;
+}
 const clone = <T>(value: T): T => structuredClone(value);
 export class InMemoryGameRepository implements GameRepository {
   private readonly state: GameState;
@@ -11,4 +18,8 @@ export class InMemoryGameRepository implements GameRepository {
   getFleet = (): Fleet => clone(this.state.fleet);
   getGoods = (): Good[] => clone(this.state.goods);
   getCities = (): City[] => clone(this.state.cities);
+  setFleetPosition = (position: Position): Fleet => {
+    this.state.fleet.position = clone(position);
+    return this.getFleet();
+  };
 }
