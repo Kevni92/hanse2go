@@ -135,3 +135,7 @@ Konkrete Mietverteilung und Auslastung mehrerer Eigentümer werden später defin
 ## Alpha 1
 
 Alpha 1 zeigt pro Stadt nur statische Bevölkerung und einen statischen Wohlstandswert. Bevölkerungsvermögen, Löhne, Bedürfnisse, Arbeitslosigkeit, Wachstum, Wohnraum und Mieten werden nicht simuliert.
+
+## Alpha 2: fester Warenverbrauch
+
+Alpha 2 ersetzt für seinen Umfang die oben beschriebene wohlstands- und einkommensabhängige Bedarfslogik durch feste Mengen pro Einwohner. Alle Einwohner verbrauchen dieselben Waren, unabhängig von Wohlstand, Beruf, Einkommen oder Haushalt. Die verbindlichen Werte, Rest- und Knappheitsregeln stehen in [`alpha-2/population-consumption.md`](alpha-2/population-consumption.md). Wohnraum, Wachstum, Zufriedenheit, Hunger, Krankheit und Sterblichkeit bleiben ausgeschlossen.
