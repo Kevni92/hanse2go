@@ -107,3 +107,9 @@ Konkrete Verschleißraten und Reparaturformeln sind Balancing.
 ## Alpha 1
 
 Alpha 1 implementiert keine Gebäude, Kontore, Produktionszyklen, Arbeiter, Löhne, Verschleiß oder Reparaturen. Sie zeigt pro Stadt nur statische Produktionsschwerpunkte und handelt bereits alle 22 Waren.
+
+## Alpha 2: Bau ohne Arbeiter und Bauzeit
+
+Alpha 2 ersetzt für seinen Umfang die oben beschriebenen offenen Arbeits-, Lohn-, Zustands- und Bauzeitregeln. Der Server baut ein berechtigtes Gebäude sofort und atomar aus Gold und Baumaterialien der aktiven Flotte. Es gibt weder Baufortschritt, Wartung, Verschleiß, Reparatur noch Arbeiter. Produktionsgebäude arbeiten später mit voller Rezeptleistung oder stehen bei fehlenden Inputs vollständig still.
+
+Jedes Produktionsgebäude ist eine eigene Instanz; mehrere Instanzen desselben Typs sind erlaubt. Nur das Kontor ist je Spieler und Stadt einmalig und muss vor jeder Produktionsinstanz vorhanden sein. Die verbindlichen Baukosten stehen in [`alpha-2/buildings-and-construction.md`](alpha-2/buildings-and-construction.md).

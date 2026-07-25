@@ -26,3 +26,8 @@ Der Server validiert und bucht jede Aktion atomar. Der Client zeigt ausschließl
 ## Abhängigkeiten
 
 Dieses Dokument wird durch die Alpha-2-Einzelkonzepte konkretisiert. Alpha-1-Regeln bleiben gültig, soweit ein Alpha-2-Dokument sie nicht ausdrücklich ersetzt.
+
+## Verbindliche Einzelkonzepte
+
+- [`reputation-and-concessions.md`](reputation-and-concessions.md) – Ruf und Konzession
+- [`buildings-and-construction.md`](buildings-and-construction.md) – Kontor, Kosten und Bau
