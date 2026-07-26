@@ -175,6 +175,8 @@ Zusätzlich zu `POST /test/reset` bereitet `POST /test/seed` im Testbetrieb Gold
 
 Alpha 4 ergänzt die Welt um versionsgesicherte Schiffsentitäten, Flotten, Hafenmärkte, Werften und Bauaufträge. Jeder schreibende Hafenbefehl arbeitet auf einem konsistenten Snapshot, ist idempotent und schreibt Gold, Eigentum, Inventare, Zuordnungen, Aufträge und Versionen nur gemeinsam zurück. Der manuelle Tick erweitert den Alpha-3-Snapshot um die Werftphase; ein Fehler in dieser Phase rollt auch alle Alpha-3-Änderungen zurück. Die verbindlichen Routen, Versionen und Fehlerverträge stehen in [`alpha-4/api-contracts.md`](alpha-4/api-contracts.md) und [`alpha-4/tick.md`](alpha-4/tick.md).
 
+Die Alpha-4-CI bewahrt bei End-to-End-Fehlern zusätzlich vollständigen Hafen-, Flotten-, Werft- und Schiffszustand, Testpreset/Seed, Tickbericht sowie Schiffszahl und IDs vor/nach dem Fehler auf. Die konkrete Abnahme steht in [`alpha-4/acceptance.md`](alpha-4/acceptance.md).
+
 ## Arbeitsablauf
 
 Für jedes Issue wird ein neuer Branch vom aktuellen `main` erstellt. Es gibt genau einen Pull Request pro Issue gegen `main`. Alle GitHub-CI-Prüfungen müssen erfolgreich sein. Danach merged der Agent den PR und löscht den gemergten Branch. Details stehen in [`../AGENTS.md`](../AGENTS.md).
