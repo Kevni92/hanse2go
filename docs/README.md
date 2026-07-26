@@ -109,6 +109,9 @@
 - [`alpha-6/tick.md`](alpha-6/tick.md) – dreizehnstufige Tickreihenfolge, Akteursreihenfolge, Budgets und Rollbackgrenzen
 - [`alpha-6/decision-engine.md`](alpha-6/decision-engine.md) – Zyklusablauf, Vorfilterung, Sortierung und Determinismusregeln
 - [`alpha-6/user-interface.md`](alpha-6/user-interface.md) – Handelshausübersicht, Versorgungsanzeige, Reisebedienung und KI-Debug-Ansicht
+- [`alpha-6/balancing.md`](alpha-6/balancing.md) – alle verbindlichen Alpha-6-Balancingwerte an einer Stelle
+- [`alpha-6/test-world.md`](alpha-6/test-world.md) – `alpha6-baseline`, Tick-0-Stadtorders und die drei Testpresets
+- [`alpha-6/acceptance.md`](alpha-6/acceptance.md) – vollständige Abnahme, Langzeitsimulationen und E2E-Happy-Path
 
 ## Umgang mit Lücken
 

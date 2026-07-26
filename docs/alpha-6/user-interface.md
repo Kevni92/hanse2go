@@ -198,6 +198,10 @@ Breite Inhalte wie Kandidatenlisten und Berechnungen scrollen innerhalb ihres ei
 | `ai-goods-invariant` | Wareninvariante im Tickbericht |
 | `ai-ship-invariant` | Schiffsinvariante im Tickbericht |
 
+## Abnahme der Oberfläche
+
+Der verbindliche End-to-End-Happy-Path mit dem Preset `alpha6-bread-shortage`, die Mobile- und Desktop-Prüfungen sowie die Barrierefreiheits- und Test-ID-Abnahme stehen in [`acceptance.md`](acceptance.md). Der Ablauf weist unter anderem nach, dass ein Spieler eine eigene Reise nach denselben Regeln starten kann wie ein Handelshaus und dass nach einem Seitenneuladen ausschließlich serverbestätigte Zustände angezeigt werden.
+
 ## Ausdrücklich ausgeschlossen
 
 KI-Steuerung oder manuelles Eingreifen durch Spieler, Änderung von KI-Regeln in der Oberfläche, vollständige private Inventare fremder Akteure im regulären Spiel, grafische Karibikkarte, Kampf- oder Reparaturanzeigen sowie generative Freitexterklärungen.

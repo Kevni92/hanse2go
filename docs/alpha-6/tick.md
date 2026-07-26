@@ -171,6 +171,10 @@ Der Bericht ergänzt die bestehenden Alpha-3-bis-Alpha-5-Abschnitte um mindesten
 
 Die bestehenden Tickfehlercodes `TICK_IN_PROGRESS`, `TICK_ORDER_MARKET_INVARIANT_FAILED`, `MONEY_SUPPLY_INVARIANT_VIOLATION`, `GOODS_SUPPLY_INVARIANT_VIOLATION`, `MONEY_LEDGER_IMBALANCE` und `ORDER_ATOMIC_COMMIT_FAILED` bleiben unverändert gültig.
 
+## Abnahme des Ticks
+
+Die verbindlichen Prüfungen der Tickreihenfolge, der Invarianten nach jedem Tick, der 720- und 4.320-Tick-Langzeitsimulationen und der Determinismuswiederholung stehen in [`acceptance.md`](acceptance.md). Insbesondere gilt: Eine in Tick `n` gestartete Reise über 8 Ticks kommt exakt in Tick `n + 8` an, und zwei Läufe derselben Ausgangswelt liefern identische Zustände, IDs und Entscheidungsprotokolle.
+
 ## Ausdrücklich ausgeschlossen
 
 Hintergrundthreads, asynchrone KI außerhalb des Ticks, zufällige oder zeitabhängige Entscheidungen, LLM- oder sonstige generative Aufrufe, direkte Zustandsmutation durch die KI, unbegrenzte Kandidatensuche sowie parallele Verarbeitung derselben Welt ohne deterministische Serialisierung.
