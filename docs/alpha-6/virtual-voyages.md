@@ -73,6 +73,8 @@ Eine Reise darf nur starten, wenn **alle** Bedingungen erfüllt sind:
 
 Ein Handelshaus im Status `insolvent` darf keine neue Reise starten; bereits abgefahrene Reisen laufen regulär weiter.
 
+Eine KI-Reise entsteht ausschließlich als Schritt eines Logistikplans nach [`ai-logistics.md`](ai-logistics.md). Die Flotte ist zu diesem Zeitpunkt genau einem aktiven Plan zugeordnet und bereits beladen; Ziel und Menge stehen fest. Die Reise selbst kennt den Plan nicht und behandelt eine KI-Flotte exakt wie eine Spielerflotte.
+
 ## Abfahrt
 
 Die Abfahrt ist eine einzige atomare Transaktion:

@@ -101,6 +101,7 @@
 - [`alpha-6/virtual-voyages.md`](alpha-6/virtual-voyages.md) – Flottenstatus, Reiseentität, Abfahrt, Fortschritt und Ankunft
 - [`alpha-6/test-world-routes.md`](alpha-6/test-world-routes.md) – statischer Städtegraph und verbindliche Referenzfahrzeiten
 - [`alpha-6/api-contracts.md`](alpha-6/api-contracts.md) – Reise- und Routenverträge, Versionen und Tickvertrag
+- [`alpha-6/ai-logistics.md`](alpha-6/ai-logistics.md) – Logistikplan, Quellen- und Flottenwahl, Umladen und kalkulatorische Transportkosten
 
 ## Umgang mit Lücken
 

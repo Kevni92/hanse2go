@@ -74,6 +74,12 @@ newTotalUnits = totalUnits - removedUnits
 
 Ein Transfer vom Kontor in die eigene Flotte und von der Flotte in das Zielkontor überträgt die Kostenbasis mit der Ware. Die Flotte führt dafür dieselben drei Felder je Ware. Beim Entladen im Zielkontor werden die zugeordneten kalkulatorischen Transportkosten als `addedTotalCost` hinzugerechnet und gehen damit regulär in den gewichteten Durchschnitt ein.
 
+Die kalkulatorischen Transportkosten sind in [`ai-logistics.md`](ai-logistics.md) verbindlich definiert:
+
+`transportCostMoneyUnits = floor(routeDistanceKm × transportedQuantityUnits / 100)`
+
+Sie erzeugen keine Ledgerbuchung und entfernen kein Gold aus dem Kreislauf. Sie erhöhen ausschließlich die Kostenbasis der transportierten Ware und damit deren Mindestverkaufspreis. Eine Ware, die dieselbe Strecke zweimal zurücklegt, trägt die Kosten beider Fahrten – die KI wird dadurch von sinnlosen Hin- und Rücktransporten abgehalten.
+
 Ein Transfer erzeugt und vernichtet keine Kosten: Die Summe der gebundenen Gesamtkosten über alle Inventare eines Handelshauses ändert sich durch einen Transfer nicht, abgesehen von den ausdrücklich zugerechneten Transportkosten.
 
 ## Variable Kosten und Mindestverkaufspreis
