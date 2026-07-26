@@ -2,6 +2,8 @@
 
 Die Stadtansicht erhält den Tab `Gebäude`. Alle Daten und Aktionen stammen vom Server; während einer Anfrage bleiben bestätigte Werte sichtbar.
 
+Alpha 4 ergänzt neben Markt und Gebäuden den Tab `Hafen`. Auch dort bleiben während Anfragen ausschließlich serverbestätigte Werte sichtbar; Details stehen in [`../alpha-4/user-interface.md`](../alpha-4/user-interface.md).
+
 ## Zustände
 
 Ohne Konzession zeigt der Tab Rufwert, Status, fehlenden Ruf, Preis 10.000 Gold und einen nur bei 80 Ruf sowie ausreichendem Gold aktivierten Button `Baukonzession kaufen`. Ohne Kontor zeigt er ausschließlich dessen Kosten, vorhandene/fehlende Materialien und `Kontor bauen`. Mit Kontor zeigt er Lager, eigene Gebäude mit letztem Status sowie den nach Kategorie gruppierten Gebäudekatalog mit Kosten, Inputs, Outputs und Bauvoraussetzungen.
