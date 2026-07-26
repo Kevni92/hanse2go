@@ -131,6 +131,23 @@ Die verbindliche Abnahme steht in [`alpha-1/acceptance.md`](alpha-1/acceptance.m
 
 Der Alpha-2-Stundentick ist ein einzelnes serverautoritäres, atomar ausgeführtes Kommando mit Welt-Sperre und Idempotenz. Er ist nur in Debug- oder Testkonfiguration verfügbar; ein Scheduler oder Hintergrundjob wird nicht gestartet. Die Reihenfolge, Berichtsdaten und fachlichen Sonderfälle stehen in [`alpha-2/production-tick.md`](alpha-2/production-tick.md).
 
+Der Alpha-Server läuft wie die Debug-Position ausschließlich als Debug-Build. `POST /api/debug/tick` ist deshalb standardmäßig registriert und lässt sich mit `HANSE2GO_DEBUG=0` abschalten. Der Tick arbeitet bis zum Abschluss auf Kopien von Gebäuden, Kontorbeständen und Stadtmärkten und schreibt sie erst gemeinsam zurück; ein unerwarteter Fehler lässt den Weltzustand damit vollständig unverändert.
+
+## Alpha-2-Endpunkte
+
+| Endpunkt | Zweck |
+|---|---|
+| `GET /api/world` | Ticknummer, simulierte Stunde und letzter Tickbericht |
+| `GET /api/cities/:cityId/buildings` | Ruf, Konzession, Kontorlager, eigene Gebäude und Katalogangebote |
+| `POST /api/cities/:cityId/concession` | Kauf der Baukonzession |
+| `POST /api/cities/:cityId/buildings` | Bau eines Kontors oder Produktionsgebäudes |
+| `POST /api/cities/:cityId/kontor/transfer` | Ein- und Auslagern ganzer Tonnen |
+| `POST /api/debug/tick` | genau ein Stundentick mit Idempotenzschlüssel |
+
+Alle Alpha-2-Endpunkte prüfen den Stadtradius serverseitig und melden eine unerreichbare Stadt mit dem Alpha-2-Fehlercode `CITY_NOT_REACHABLE`; die Alpha-1-Endpunkte behalten `CITY_OUT_OF_RANGE`. Jede schreibende Antwort liefert die vollständige Stadtübersicht einschließlich Gold, Flotte und Kontorbestand, damit der Client ausschließlich serverbestätigte Werte anzeigt. Ein erfolgreicher Tick erhöht die Marktversion jeder Stadt mit verändertem Bestand, sodass vor dem Tick geholte Preisangebote als veraltet abgelehnt werden.
+
+Zusätzlich zu `POST /test/reset` bereitet `POST /test/seed` im Testbetrieb Gold, Flottenladung und Ruf gemäß [`alpha-2/test-world.md`](alpha-2/test-world.md) vor.
+
 ## Arbeitsablauf
 
 Für jedes Issue wird ein neuer Branch vom aktuellen `main` erstellt. Es gibt genau einen Pull Request pro Issue gegen `main`. Alle GitHub-CI-Prüfungen müssen erfolgreich sein. Danach merged der Agent den PR und löscht den gemergten Branch. Details stehen in [`../AGENTS.md`](../AGENTS.md).

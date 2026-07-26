@@ -1,6 +1,7 @@
 import type { GameState, MarketHistoryEntry, MarketQuote, TradeDirection } from '@hanse2go/shared';
 import { CityAccessService, DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
+import type { ReputationService } from './reputation.js';
 
 type QuoteInput = { cityId: string; goodId: string; direction: TradeDirection; quantity: number };
 type CommitInput = QuoteInput & { marketVersion: number; idempotencyKey: string };
@@ -10,7 +11,7 @@ export class MarketService {
   private readonly history = new Map<string, MarketHistoryEntry[]>();
   private readonly completed = new Map<string, MarketQuote>();
 
-  constructor(private readonly repository: GameRepository, private readonly cityAccess: CityAccessService) {}
+  constructor(private readonly repository: GameRepository, private readonly cityAccess: CityAccessService, private readonly reputation?: ReputationService) {}
 
   quote(input: QuoteInput): MarketQuote {
     this.cityAccess.requireReachable(input.cityId);
@@ -27,7 +28,8 @@ export class MarketService {
       const quote = this.calculate(state, input);
       const city = state.cities.find((candidate) => candidate.id === input.cityId)!;
       const good = state.goods.find((candidate) => candidate.id === input.goodId)!;
-      const before = this.unitPrice(good.basePrice, good.targetStock, city.stock[good.id]!, input.direction);
+      const stockBefore = city.stock[good.id]!;
+      const before = this.unitPrice(good.basePrice, good.targetStock, stockBefore, input.direction);
       if (input.direction === 'buy') {
         city.stock[good.id]! -= input.quantity;
         state.fleet.cargo[good.id] = (state.fleet.cargo[good.id] ?? 0) + input.quantity;
@@ -39,6 +41,7 @@ export class MarketService {
         state.player.gold += quote.total;
       }
       this.versions.set(input.cityId, currentVersion + 1);
+      this.reputation?.registerTrade(state, { cityId: city.id, goodId: good.id, targetStock: good.targetStock, stockBefore, quantity: input.quantity, direction: input.direction });
       const after = this.unitPrice(good.basePrice, good.targetStock, city.stock[good.id]!, input.direction);
       const entry: MarketHistoryEntry = { timestamp: new Date().toISOString(), goodId: good.id, direction: input.direction, quantity: input.quantity, total: quote.total, priceBefore: before, priceAfter: after };
       this.history.set(input.cityId, [...(this.history.get(input.cityId) ?? []), entry]);
@@ -58,6 +61,9 @@ export class MarketService {
     this.history.clear();
     this.completed.clear();
   }
+
+  /** Ein Stundentick verändert Stadtbestände; offene Preisangebote dieser Stadt werden dadurch veraltet. */
+  invalidateCity(cityId: string): void { this.versions.set(cityId, this.version(cityId) + 1); }
 
   private calculate(state: GameState, input: QuoteInput): MarketQuote {
     if (!Number.isInteger(input.quantity) || input.quantity <= 0) throw new DomainError('INVALID_QUANTITY', 'Die Handelsmenge muss eine positive ganze Zahl sein.', 400);

@@ -17,7 +17,9 @@ Für eine Ware mit Zielbestand `Z`, Bestand vor dem Handel `V` und Bestand danac
 
 `Verbesserung = max(0, |V - Z| - |N - Z|)`
 
-Ein Verkauf ist nur unterhalb des Zielbestands nützlich, ein Kauf nur oberhalb des Zielbestands. Ein Handel über den Zielbestand hinaus zählt daher höchstens bis zum Zielbestand. Eine Transaktion muss mindestens 10 Tonnen umfassen; kleinere Geschäfte können handeln, erzeugen aber keinen Ruf.
+Ein Verkauf ist nur unterhalb des Zielbestands nützlich, ein Kauf nur oberhalb des Zielbestands. Ein Handel über den Zielbestand hinaus zählt daher höchstens bis zum Zielbestand: Überschreitet der Handel den Zielbestand, wird `N` für diese Berechnung auf `Z` begrenzt. Gleichwertig gilt mit der gehandelten Menge `M`:
+
+`Verbesserung = max(0, min(M, Z - V))` beim Verkauf und `Verbesserung = max(0, min(M, V - Z))` beim Kauf. Eine Transaktion muss mindestens 10 Tonnen umfassen; kleinere Geschäfte können handeln, erzeugen aber keinen Ruf.
 
 Je Stadt und Ware führt der Server für die laufende simulierte Stunde ein gemeinsames Verbesserungskontingent. Es wird beim ersten relevanten Handel dieser Stunde auf die dann bestehende Entfernung zum Zielbestand gesetzt und um jede gutgeschriebene Verbesserung vermindert. Dadurch kann dieselbe Marktbewegung nicht durch Rückkauf, Gegenverkauf oder wiederholte Teilbuchungen mehrfach Ruf erzeugen. Mit dem nächsten erfolgreichen Stundentick wird das Kontingent gelöscht und beim nächsten Handel aus dem dann tatsächlichen Marktbestand neu bestimmt.
 
