@@ -1,69 +1,44 @@
 # Flotten und Schiffe
 
-## Aktive Flotte
+## Alpha 4: konkrete Schiffe und aktive Flotte
 
-Der Spieler steuert nicht ein einzelnes Schiff, sondern immer eine aktive Flotte. Zu Spielbeginn enthält diese Flotte nur eine Pinasse. Weitere Schiffe können später gekauft oder gekapert und der Flotte hinzugefügt werden.
+Ab Alpha 4 steuert der Spieler genau eine aktive Flotte aus konkreten, dauerhaft identifizierten Schiffen. Die aus Alpha 3 migrierte Startflotte enthält eine konkrete Pinasse. Kauf, Verkauf, Umbenennung und Flottenwechsel erhalten dieselbe Schiffsentität; nur Weltinitialisierung und erfolgreicher Schiffsbau erzeugen ein Schiff.
 
-Die aktive Flotte repräsentiert die GPS-Position des Spielers. Sie bewegt sich direkt mit seiner realen beziehungsweise in Alpha 1 simulierten Position.
+Die aktive Flotte repräsentiert die GPS-Position des Spielers. Sie bewegt sich direkt mit seiner realen beziehungsweise in Alpha 1 simulierten Position. Ihre virtuelle Geschwindigkeit wird in Alpha 4 angezeigt, bewegt sie aber noch nicht automatisch.
 
 ## Auswirkungen mehrerer Schiffe
 
 - Der gesamte Laderaum ist die Summe der Kapazitäten aller Schiffe der Flotte.
-- Für spätere Seeschlachten zählt die konkrete Zusammensetzung der Flotte.
-- Die Flotte kann aus unterschiedlichen Schiffstypen bestehen.
-- Als Ausgangsbasis für die spätere Schiffsliste dienen zunächst die Schiffstypen aus Port Royale 2; eine eigene endgültige Liste wird separat dokumentiert.
+- Die Flottengeschwindigkeit ist die Geschwindigkeit ihres langsamsten Schiffs.
+- Eine Flotte kann unterschiedliche Schiffstypen enthalten.
+- Der verbindliche Katalog steht in [`alpha-4/ship-catalog.md`](alpha-4/ship-catalog.md); Identität und Standortregeln in [`alpha-4/ship-entities.md`](alpha-4/ship-entities.md).
 
 ## Hafenbindung
 
-Die Flottenzusammenstellung darf nur in einer Stadt beziehungsweise einem Hafen verändert werden.
+Flottenzusammenstellung, Kauf und Verkauf erfolgen lokal in einem Hafen. Ein Schiff gehört dabei entweder einer einzigen Flotte an oder liegt unzugeordnet in genau diesem Hafen.
 
-Beispiel:
+In einem Hafen kann der Spieler ab Alpha 4:
 
-1. Der Spieler erreicht Neustadt und kauft dort eine Flöte.
-2. Er fügt sie seiner aktiven Flotte hinzu.
-3. In Lambrecht kauft er eine Galeone und entfernt gleichzeitig die Pinasse aus der aktiven Flotte.
-4. Die Pinasse bleibt im Hafen von Lambrecht.
-5. Von Neustadt aus kann nicht auf die in Lambrecht liegende Pinasse zugegriffen werden.
+- vorhandene Schiffe kaufen oder verkaufen,
+- eigene Schiffe umbenennen,
+- Schiffe einer Flotte hinzufügen oder aus ihr entfernen,
+- weitere Flotten zusammenstellen und eine lokale Flotte aktivieren,
+- Waren zwischen lokalen eigenen Flotten und seinem Kontor bewegen.
 
-In einem Hafen kann der Spieler später:
-
-- Schiffe kaufen,
-- Schiffe verkaufen,
-- Schiffe zur aktiven Flotte hinzufügen,
-- Schiffe aus der aktiven Flotte entfernen,
-- weitere Flotten zusammenstellen.
+Von einem anderen Hafen aus kann der Spieler nicht auf ein dort nicht vorhandenes Schiff zugreifen.
 
 ## Laderaum
 
-Für den ersten Umfang gilt ein einfaches Tonnenmodell:
+Jede Wareneinheit entspricht einer Tonne. Ist der Laderaum voll, können keine weiteren Waren aufgenommen werden; Verkaufen und Entladen bleiben möglich. Die konkrete Alpha-4-Kapazität ist nicht mehr fest 60 Tonnen, sondern wird aus den der aktiven Flotte zugeordneten Schifftypen abgeleitet.
 
-- Jede Wareneinheit entspricht einer Tonne.
-- Waren haben keine unterschiedlichen Größen- oder Gewichtsfaktoren.
-- Ist der Laderaum voll, können keine weiteren Waren gekauft oder aufgenommen werden.
-- Verkaufen und Entladen bleiben möglich.
+## Spätere automatische Handelsrouten
 
-Beispiel: Eine Flotte mit 60 Tonnen Kapazität kann drei Tonnen Getreide und 57 Tonnen einer anderen Ware transportieren.
-
-## Automatische Flotten und Handelsrouten
-
-Später kann der Spieler zusätzliche Flotten anlegen und ihnen automatische Handelsrouten zuweisen.
-
-- Eine automatische Flotte bewegt sich mit virtueller Geschwindigkeit.
-- Die Geschwindigkeit richtet sich nach dem langsamsten Schiff.
-- Automatische Routen sind deutlich langsamer als reale Bewegung mit Auto, Bahn oder Fahrrad.
-- Sie benötigen eigene Schiffe, Kapital und spätere Routenkonfiguration.
-- Die Kosten und Einschränkungen müssen echte Bewegung weiterhin attraktiv halten.
+Zusätzliche Flotten und automatische Handelsrouten werden nach Alpha 4 ergänzt. Solche Flotten bewegen sich später mit virtueller Geschwindigkeit, die sich nach dem langsamsten Schiff richtet. Sie benötigen eigene Schiffe, Kapital und Routenkonfiguration; echte Bewegung bleibt die schnellste direkte Handelsform.
 
 ## Verlust und Bankrott
 
-Das vom Spieler persönlich gesteuerte Mindestschiff beziehungsweise die grundlegende aktive Flotte soll nicht endgültig zerstört werden. Weitere Schiffe können in späteren Kampfsystemen Risiken unterliegen; konkrete Verlustregeln sind noch nicht entschieden.
+Das vom Spieler persönlich gesteuerte Mindestschiff beziehungsweise die grundlegende aktive Flotte soll nicht endgültig zerstört werden. Reparatur, Kampf, Piraterie, Kapern und konkrete Verlustregeln liegen außerhalb von Alpha 4.
 
-## Alpha 1
+## Alpha 1 bis Alpha 3
 
-Alpha 1 modelliert noch keine einzelnen Schiffe. Sie verwendet ausschließlich:
-
-- eine aktive Flotte,
-- 60 Tonnen feste Gesamtkapazität,
-- einen Warenbestand je Ware,
-- belegten und freien Laderaum,
-- keine Häfen, Schiffskäufe, Flottenverwaltung, Geschwindigkeit oder Kämpfe.
+Vor Alpha 4 modelliert die Anwendung keine einzelnen Schiffe. Sie verwendet ausschließlich eine abstrakte aktive Flotte mit fester 60-Tonnen-Kapazität, Warenbestand sowie belegtem und freiem Laderaum. Alpha 4 migriert diese Startflotte in eine Flotte mit einer Pinasse.

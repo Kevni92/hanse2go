@@ -66,6 +66,12 @@
 
 - [`alpha-3/acceptance.md`](alpha-3/acceptance.md) – Testpresets, Formeln und Mobile-/Desktop-Abnahme
 
+## Alpha 4
+
+- [`alpha-4/scope.md`](alpha-4/scope.md) – verbindlicher Umfang für konkrete Schiffe, Werften und Flotten
+- [`alpha-4/ship-entities.md`](alpha-4/ship-entities.md) – Identität, Eigentum, Standort und Namensregeln
+- [`alpha-4/ship-catalog.md`](alpha-4/ship-catalog.md) – die vier verbindlichen Schiffstypen und abgeleitete Flottenwerte
+
 ## Umgang mit Lücken
 
 Explizite Entscheidungen in `docs/` dürfen nicht verändert oder stillschweigend ersetzt werden. Für Alpha 1 gilt zusätzlich: Fehlt nur ein technisches Detail, das die fachliche Absicht nicht verändert, wählt der Agent die einfachste deterministische, serverautoritative und testbare Lösung. Die Entscheidung wird im Pull Request begründet und bei dauerhafter Bedeutung in `docs/` ergänzt. Nur echte fachliche Widersprüche oder Änderungen am Produktumfang erfordern eine Rückfrage.
