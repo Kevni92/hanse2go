@@ -23,6 +23,6 @@ describe('GET /health', () => {
     expect(state.cities.find((city: { id: string }) => city.id === 'lambrecht').stock.wood).toBe(200);
     expect(state.world).toEqual({ tickNumber: 0, simulatedHour: 0 });
     expect(state.reputations).toEqual([{ cityId: 'lambrecht', value: 0, status: 'stranger' }, { cityId: 'neustadt', value: 0, status: 'stranger' }, { cityId: 'mannheim', value: 0, status: 'stranger' }]);
-    expect(state).toMatchObject({ concessions: [], buildings: [], kontors: {} });
+    expect(state).toMatchObject({ concessions: ['lambrecht'], buildings: [], kontors: {} });
   });
 });

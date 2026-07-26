@@ -14,8 +14,7 @@ describe('kontor transfer API', () => {
 
   const withKontor = async (cargo: Record<string, number> = {}) => {
     await app.inject({ method: 'PUT', url: '/api/fleet/position', payload: { longitude: 8.07, latitude: 49.37 } });
-    await seed({ reputation: { lambrecht: 80 }, cargo: kontorMaterials });
-    await app.inject({ method: 'POST', url: '/api/cities/lambrecht/concession' });
+    await seed({ cargo: kontorMaterials });
     expect((await app.inject({ method: 'POST', url: '/api/cities/lambrecht/buildings', payload: { buildingType: 'kontor' } })).statusCode).toBe(200);
     await seed({ cargo });
   };

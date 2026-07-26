@@ -75,7 +75,13 @@ export function validateGameConfig(config: GameConfig): void {
     }
   }
 
-  uniqueIds(config.cities.map((city) => city.id), 'Stadt');
+  const cityIds = uniqueIds(config.cities.map((city) => city.id), 'Stadt');
+  const startingConcessions = new Set<string>();
+  for (const cityId of config.player.startingConcessions) {
+    if (!cityIds.has(cityId)) throw new ConfigError(`Die Start-Baukonzession verweist auf die unbekannte Stadt "${cityId}".`);
+    if (startingConcessions.has(cityId)) throw new ConfigError(`Die Start-Baukonzession für "${cityId}" ist mehrfach vergeben.`);
+    startingConcessions.add(cityId);
+  }
   for (const city of config.cities) {
     requirePoint(city.position, `Die Position der Stadt "${city.id}"`);
     if (!(city.radiusMeters > 0)) throw new ConfigError(`Der Interaktionsradius von "${city.id}" muss größer als null sein.`);

@@ -32,7 +32,7 @@ export class InMemoryGameRepository implements GameRepository {
       player: { id: player.id, name: player.name, gold: player.startingGold, activeFleetId: fleet.id },
       fleet: { id: fleet.id, capacity: fleet.capacity, cargo: {}, position: { ...fleet.startPosition, recordedAt: world.startTimestamp } },
       goods, cities,
-      world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [], buildings: [], kontors: {},
+      world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [...player.startingConcessions], buildings: [], kontors: {},
     };
   }
   getState = (): GameState => clone(this.state);

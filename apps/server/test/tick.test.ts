@@ -32,8 +32,7 @@ describe('hourly tick API', () => {
 
   const withKontor = async () => {
     await app.inject({ method: 'PUT', url: '/api/fleet/position', payload: { longitude: 8.07, latitude: 49.37 } });
-    await seed({ reputation: { lambrecht: 80 }, cargo: kontorMaterials });
-    await app.inject({ method: 'POST', url: '/api/cities/lambrecht/concession' });
+    await seed({ cargo: kontorMaterials });
     expect((await build('kontor')).statusCode).toBe(200);
   };
 

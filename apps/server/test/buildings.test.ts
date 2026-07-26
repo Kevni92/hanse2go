@@ -19,10 +19,11 @@ describe('building API', () => {
   const player = async () => (await app.inject({ method: 'GET', url: '/api/player' })).json();
   const fleet = async () => (await app.inject({ method: 'GET', url: '/api/fleet' })).json();
 
+  // Lambrecht startet laut `docs/alpha-2/test-world.md` bereits mit Baukonzession.
   const prepare = async (extra: Record<string, number> = {}) => {
     await app.inject({ method: 'PUT', url: '/api/fleet/position', payload: { longitude: 8.07, latitude: 49.37 } });
-    await seed({ reputation: { lambrecht: 80 }, gold: 100_000, cargo: { ...kontorMaterials, ...extra } });
-    expect((await app.inject({ method: 'POST', url: '/api/cities/lambrecht/concession' })).statusCode).toBe(200);
+    await seed({ gold: 100_000, cargo: { ...kontorMaterials, ...extra } });
+    expect((await overview()).hasConcession).toBe(true);
   };
 
   it('publishes the full catalog with land price, class costs and recipes', async () => {
@@ -55,13 +56,13 @@ describe('building API', () => {
     }
   });
 
-  it('requires a concession before any building', async () => {
-    await app.inject({ method: 'PUT', url: '/api/fleet/position', payload: { longitude: 8.07, latitude: 49.37 } });
+  it('requires a concession before any building in a city without one', async () => {
+    await app.inject({ method: 'PUT', url: '/api/fleet/position', payload: { longitude: 8.14, latitude: 49.4 } });
     await seed({ cargo: kontorMaterials });
-    const response = await build('kontor');
+    const response = await build('kontor', 'neustadt');
     expect(response.statusCode).toBe(409);
     expect(response.json()).toMatchObject({ error: { code: 'CONCESSION_REQUIRED' } });
-    expect((await overview()).kontor).toMatchObject({ availability: 'requirements_missing', missingRequirements: ['concession'] });
+    expect((await overview('neustadt')).kontor).toMatchObject({ availability: 'requirements_missing', missingRequirements: ['concession'] });
   });
 
   it('requires the kontor before any production building and allows it only once', async () => {

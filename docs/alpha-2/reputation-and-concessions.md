@@ -35,7 +35,7 @@ Beispiele bei Zielbestand 100:
 
 ## Baukonzession
 
-Der Kauf ist ein serverautoritatives, atomar gebuchtes Kommando für die aktuelle, erreichbare Stadt. Voraussetzungen sind mindestens 80 Ruf, 10.000 Gold und noch keine Konzession für diese Stadt. Bei Erfolg sinkt Gold um 10.000 und der dauerhafte lokale Konzessionsstatus wird gesetzt. Eine Konzession kann nicht verkauft, übertragen, verloren oder erneut gekauft werden.
+Der Kauf ist ein serverautoritatives, atomar gebuchtes Kommando für die aktuelle, erreichbare Stadt. Voraussetzungen sind mindestens 80 Ruf, 10.000 Gold und noch keine Konzession für diese Stadt. Der Alpha-Startzustand enthält die Konzession für Lambrecht bereits; sie wird dort deshalb nicht gekauft, und ein erneuter Kauf wird mit `CONCESSION_ALREADY_OWNED` abgelehnt. Für jede weitere Stadt gilt der Kaufablauf unverändert. Bei Erfolg sinkt Gold um 10.000 und der dauerhafte lokale Konzessionsstatus wird gesetzt. Eine Konzession kann nicht verkauft, übertragen, verloren oder erneut gekauft werden.
 
 | Fehlercode | Bedingung | Zustand nach Ablehnung |
 |---|---|---|

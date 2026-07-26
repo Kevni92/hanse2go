@@ -7,6 +7,7 @@ describe('reputation and concession API', () => {
   afterEach(async () => { await app.close(); app = buildApp(undefined, { enableTestReset: true }); });
 
   const atLambrecht = () => app.inject({ method: 'PUT', url: '/api/fleet/position', payload: { longitude: 8.07, latitude: 49.37 } });
+  const atNeustadt = () => app.inject({ method: 'PUT', url: '/api/fleet/position', payload: { longitude: 8.14, latitude: 49.4 } });
   const trade = async (cityId: string, goodId: string, direction: 'buy' | 'sell', quantity: number, key: string) => {
     const quote = (await app.inject({ method: 'POST', url: `/api/cities/${cityId}/market/quote`, payload: { goodId, direction, quantity } })).json();
     return app.inject({ method: 'POST', url: `/api/cities/${cityId}/market/trade`, payload: { goodId, direction, quantity, marketVersion: quote.marketVersion, idempotencyKey: key } });
@@ -97,15 +98,24 @@ describe('reputation and concession API', () => {
     expect((await reputation('neustadt')).value).toBe(0);
   });
 
-  it('sells a concession only with enough reputation and gold and books it atomically', async () => {
+  it('starts with the documented Lambrecht concession and refuses to sell it again', async () => {
     await atLambrecht();
-    const buy = () => app.inject({ method: 'POST', url: '/api/cities/lambrecht/concession' });
+    expect((await app.inject({ method: 'GET', url: '/api/state' })).json().concessions).toEqual(['lambrecht']);
+    const again = await app.inject({ method: 'POST', url: '/api/cities/lambrecht/concession' });
+    expect(again.statusCode).toBe(409);
+    expect(again.json()).toMatchObject({ error: { code: 'CONCESSION_ALREADY_OWNED' } });
+    expect((await app.inject({ method: 'GET', url: '/api/player' })).json().gold).toBe(100_000);
+  });
+
+  it('sells a concession only with enough reputation and gold and books it atomically', async () => {
+    await atNeustadt();
+    const buy = () => app.inject({ method: 'POST', url: '/api/cities/neustadt/concession' });
 
     const tooLow = await buy();
     expect(tooLow.statusCode).toBe(409);
     expect(tooLow.json()).toMatchObject({ error: { code: 'REPUTATION_TOO_LOW' } });
 
-    await seed({ reputation: { lambrecht: 80 }, gold: 9_999 });
+    await seed({ reputation: { neustadt: 80 }, gold: 9_999 });
     const tooPoor = await buy();
     expect(tooPoor.statusCode).toBe(409);
     expect(tooPoor.json()).toMatchObject({ error: { code: 'INSUFFICIENT_GOLD' } });

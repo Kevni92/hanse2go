@@ -5,7 +5,8 @@
   "player": {
     "id": "player-alpha",
     "name": "Testkapitän",
-    "startingGold": 100000
+    "startingGold": 100000,
+    "startingConcessions": ["lambrecht"]
   },
   "fleet": {
     "id": "fleet-alpha",

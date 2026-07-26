@@ -84,7 +84,7 @@ berechneten Distanzen; der Abruf einer einzelnen Stadt prüft den Radius erneut.
 
 ## Zentrale Spielkonfiguration
 
-Alle statischen Spieleigenschaften stehen ausschließlich in `packages/config/game-config.json`. Dazu gehören Startwerte für Spieler, Flotte und Welt, der Warenkatalog, die Städte mit Startbeständen, die Preisformelgrenzen und der Spread, die Rufregeln mit ihren Statusschwellen, der feste Bevölkerungsverbrauch sowie Grundstückspreis, Baukonzession, Gebäudeklassen, Kontorkosten und alle Produktionsrezepte.
+Alle statischen Spieleigenschaften stehen ausschließlich in `packages/config/game-config.json`. Dazu gehören Startwerte für Spieler, Flotte und Welt einschließlich der Start-Baukonzessionen des Spielers, der Warenkatalog, die Städte mit Startbeständen, die Preisformelgrenzen und der Spread, die Rufregeln mit ihren Statusschwellen, der feste Bevölkerungsverbrauch sowie Grundstückspreis, Baukonzession, Gebäudeklassen, Kontorkosten und alle Produktionsrezepte.
 
 Rechnende Module kennen keinen dieser Werte. Sie erhalten die für sie zuständige Teilkonfiguration von außen über Konstruktor oder Parameter; `buildApp()` lädt die Konfiguration einmal und verdrahtet die Dienste. Eine Änderung einer Spieleigenschaft ist damit eine Änderung an genau einer Datei.
 
