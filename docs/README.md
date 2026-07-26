@@ -104,6 +104,8 @@
 - [`alpha-6/ai-logistics.md`](alpha-6/ai-logistics.md) – Logistikplan, Quellen- und Flottenwahl, Umladen und kalkulatorische Transportkosten
 - [`alpha-6/ai-production-and-investment.md`](alpha-6/ai-production-and-investment.md) – Maßnahmenreihenfolge, Investitionsvoraussetzungen, Amortisation und Gebäudeprioritäten
 - [`alpha-6/ai-building-plans.md`](alpha-6/ai-building-plans.md) – Bauablauf, Kettenprüfung, Materialbedarf und Kandidatenauswahl
+- [`alpha-6/ai-ships-and-fleets.md`](alpha-6/ai-ships-and-fleets.md) – Kapazitätsengpass, Schiffskauf, Schiffsbau, Flottenbildung und Verkauf
+- [`alpha-6/ai-investment.md`](alpha-6/ai-investment.md) – gemeinsame Investitionsgrenzen, Raten und Amortisationsform
 
 ## Umgang mit Lücken
 

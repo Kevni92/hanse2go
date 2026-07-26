@@ -32,3 +32,11 @@ Nach der Alpha-3-Wirtschafts- und Bevölkerungsberechnung verarbeitet der Tick S
 Der nächste wartende Auftrag wird noch im Abschluss-Tick `building` und erhält `startedAtTick`, verliert aber erst im folgenden Tick Bauzeit. Wiederholte Auftragsanfragen oder Ticks dürfen weder Gold und Material doppelt belasten noch ein zweites Schiff erzeugen. Alpha 4 erlaubt keinen Abbruch und keine Rückerstattung.
 
 Spätere Buy Orders dürfen einen vorgeschalteten Status `awaiting_materials` ergänzen. In Alpha 4 sind unvollständige Materialbereitstellung, automatische Beschaffung und andere Spielerlieferungen ausgeschlossen.
+
+## Alpha 6: Bauaufträge autonomer Handelshäuser
+
+Ab Alpha 6 dürfen auch KI-Handelshäuser Bauaufträge erteilen. Für sie gilt dieses Dokument vollständig unverändert: dieselben Gebühren, dieselben Materialmengen, dieselben Bauzeiten, dieselbe FIFO-Warteschlange und dieselbe Fertigstellung von genau einem Schiff im Tick. `ownerType` eines Bauauftrags ist dann `ai` statt `player`.
+
+Ein Handelshaus erhält **keine** bevorzugte Warteschlangenposition und kann sie nicht erkaufen. Steht ein Spielerauftrag vor einem KI-Auftrag, bleibt das so. Die Werftgebühr stammt aus dem Gold des Handelshauses, sämtliche Materialien ausschließlich aus seinem eigenen Kontor in der Werftstadt. Die für Handelshäuser geltende Lokalitätsprüfung ersetzt die Stadtreichweite der aktiven Flotte durch das eigene Kontor in dieser Stadt.
+
+Eine ungedeckte Teilbeauftragung bleibt ausgeschlossen: Der Auftrag wird erst erteilt, wenn Gebühr und alle Materialien vollständig und unreserviert vorliegen. Die Beschaffungs-, Amortisations- und Ratenregeln der KI stehen in [`../alpha-6/ai-ships-and-fleets.md`](../alpha-6/ai-ships-and-fleets.md).
