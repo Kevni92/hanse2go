@@ -1,6 +1,6 @@
 # Stadtmarkt, Nachfrage und Preisberechnung
 
-> Historische Alpha-1-bis-Alpha-4-Regeln: Ab Alpha 5 ersetzt das lokale, vollständig gedeckte Limit-Orderbuch diese direkte Stadtmarkt-Abrechnung. Die Preisformel und der Spread bleiben nur Referenzwerte; verbindliche Konten- und Ledgerregeln stehen in [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md).
+> Historische Alpha-1-bis-Alpha-4-Regeln: Ab Alpha 5 ersetzt das lokale, vollständig gedeckte Limit-Orderbuch diese direkte Stadtmarkt-Abrechnung. Die Preisformel und der Spread bleiben nur Referenzwerte; verbindliche Konten- und Ledgerregeln stehen in [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md). Ab Alpha 6 handeln zusätzlich autonome Handelshäuser in demselben Buch, mit denselben Gebühren und ohne Vorrang; siehe [`alpha-6/scope.md`](alpha-6/scope.md).
 
 Die Pflichtfelder, Reservierungen, Status und Lebenszyklus der Alpha-5-Orders stehen in [`alpha-5/orders.md`](alpha-5/orders.md).
 

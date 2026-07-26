@@ -203,6 +203,8 @@ Die vollständige Testmatrix und die Bilanzabnahme stehen in
 
 ## Alpha 6: virtuelle Reisen und regelbasierte Wirtschafts-KI
 
+Der verbindliche fachliche Umfang steht in [`alpha-6/scope.md`](alpha-6/scope.md).
+
 Alpha 6 erweitert denselben atomaren Welt-Tick um eine Reisephase und um die KI-Entscheidungsphasen. Es entsteht kein Scheduler, kein Hintergrundthread und keine nebenläufige Verarbeitung; die KI läuft ausschließlich innerhalb der bestehenden Welttransaktion. Ein technischer Fehler in der Reise- oder KI-Phase rollt sämtliche Phasen des Ticks gemeinsam zurück.
 
 Die Entscheidungsmaschine ist eine reine Funktion aus Weltsnapshot, `actorId`, Zyklustyp und Ticknummer. Sie besitzt keinen verborgenen Zustand, keine Zufallsquelle, keinen Zugriff auf die Systemzeit und keinen eigenen Schreibpfad in den Domänenzustand. Ihr Ergebnis ist eine geordnete Liste regulärer Fachbefehle mit deterministischen Idempotenzschlüsseln; die endgültige Prüfung von Deckung, Version, Kapazität und Eigentum bleibt allein im bestehenden Befehlspfad. Damit wird jede Regel an genau einer Stelle durchgesetzt.

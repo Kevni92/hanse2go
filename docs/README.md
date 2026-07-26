@@ -6,10 +6,12 @@
 
 1. [`../AGENTS.md`](../AGENTS.md) – verbindlicher Issue-, Branch-, PR- und CI-Workflow
 2. [`game-vision.md`](game-vision.md) – Spielidee, Core Loop und langfristige Grenzen
-3. [`alpha-1/scope.md`](alpha-1/scope.md) – verbindlicher Umfang der ersten Alpha
+3. Der Scope der bearbeiteten Alpha, aktuell [`alpha-6/scope.md`](alpha-6/scope.md)
 4. Die zum Issue gehörenden Fachdateien
 5. [`technical-architecture.md`](technical-architecture.md) – Tech Stack, Serverautorität und technische Leitlinien
-6. [`alpha-1/acceptance.md`](alpha-1/acceptance.md) – abschließende Abnahme
+6. Die Abnahme der bearbeiteten Alpha, aktuell [`alpha-6/acceptance.md`](alpha-6/acceptance.md)
+
+Die Scope- und Abnahmedateien früherer Alphas bleiben als historischer Stand gültig und beschreiben den damaligen Umfang.
 
 ## Fachliche Konzepte
 
@@ -90,6 +92,7 @@
 
 ## Alpha 6
 
+- [`alpha-6/scope.md`](alpha-6/scope.md) – verbindlicher Umfang, Grundsätze, Abgrenzung und Dokumentenkarte der autonomen Handelswirtschaft
 - [`alpha-6/ai-actors.md`](alpha-6/ai-actors.md) – KI-Handelshäuser als reguläre Wirtschaftsakteure, Eigentum und Informationsgrenzen
 - [`alpha-6/start-state.md`](alpha-6/start-state.md) – bilanzierte Initialisierung von Gold, Konzession, Kontor, Schiff und Flotte
 - [`alpha-6/insolvency.md`](alpha-6/insolvency.md) – Liquiditätszustände, Sparmaßnahmen und Insolvenz ohne Rettungsgeld
