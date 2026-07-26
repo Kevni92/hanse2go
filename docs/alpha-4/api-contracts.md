@@ -2,6 +2,36 @@
 
 Alle schreibenden Alpha-4-Hafenbefehle sind serverautoritativ, atomar und verwenden einen Idempotenzschlüssel. Sie prüfen die aktuelle Stadtreichweite, bevor sie Zustand verändern, und liefern anschließend den vollständigen serverbestätigten Hafen- und Spielzustand.
 
+## Versionen, Idempotenz und Antworten
+
+Schiffe, Flotten, Hafenmärkte und Werften besitzen `shipVersion`, `fleetVersion`, `shipMarketVersion` beziehungsweise `shipyardVersion`, jeweils mit Startwert 1. Jede erfolgreiche Änderung ihres Zustands erhöht die betroffene Version exakt um eins; abgeleitete Kapazität und Geschwindigkeit sind Teil derselben Flottenversion. Schreibbefehle senden die relevanten erwarteten Versionen. Veraltete Werte werden mit `SHIP_VERSION_CONFLICT`, `FLEET_VERSION_CONFLICT`, `SHIP_MARKET_VERSION_CONFLICT`, `SHIPYARD_VERSION_CONFLICT` oder `WORLD_STATE_CONFLICT` abgelehnt.
+
+Jeder Schreibbefehl verlangt einen Idempotenzschlüssel. Derselbe Schlüssel mit derselben Nutzlast liefert das gespeicherte Ergebnis ohne erneute Buchung; bei abweichendem Befehl oder Nutzlast antwortet der Server `IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_COMMAND`. Fehlende Schlüssel ergeben `IDEMPOTENCY_KEY_REQUIRED`.
+
+Erfolgreiche lokale Aktionen liefern `HarborManagementState`: Spielergold, aktive Flotten-ID und lokale aktive Flotte, alle lokalen eigenen inaktiven Flotten und unzugeordneten Schiffe, neutrales Angebot, `shipMarketVersion`, lokale Werft samt Aufträgen und Warteschlange, Kontorbestand sowie alle betroffenen Versionen. Eine globale Umbenennung liefert das aktualisierte Objekt mit neuer Version.
+
+## Verbindliche Routen
+
+| Route | Zweck |
+|---|---|
+| `GET /api/player/fleets` | eigene Flottenübersicht, standortunabhängig lesbar |
+| `GET /api/cities/:cityId/harbor` | lokale Flotten, Schiffe, Angebot, Werft und Aufträge |
+| `GET /api/ships/:shipId` | eigenes oder neutral angebotenes Schiff lesen |
+| `GET /api/cities/:cityId/ship-build-orders` | eigene Aufträge und sichtbare Warteschlange lesen |
+| `POST /api/cities/:cityId/ships/:shipId/buy` | neutrales Schiff kaufen |
+| `POST /api/cities/:cityId/ships/:shipId/sell` | lokales unzugeordnetes eigenes Schiff verkaufen |
+| `PATCH /api/ships/:shipId/name` | eigenes Schiff umbenennen |
+| `POST /api/cities/:cityId/ship-build-orders` | Bauauftrag anlegen |
+| `POST /api/cities/:cityId/fleets` | inaktive Flotte mit erstem Schiff anlegen |
+| `PATCH /api/fleets/:fleetId/name` | eigene Flotte umbenennen |
+| `POST /api/cities/:cityId/fleets/:fleetId/ships` | Hafenschiff zuweisen |
+| `DELETE /api/cities/:cityId/fleets/:fleetId/ships/:shipId` | Schiff im Hafen ablegen |
+| `DELETE /api/cities/:cityId/fleets/:fleetId` | leere inaktive Flotte auflösen |
+| `POST /api/cities/:cityId/fleets/:fleetId/activate` | lokale Flotte aktivieren |
+| `POST /api/cities/:cityId/inventory/transfer` | lokale Inventare übertragen |
+
+Hafenabrufe und lokale Befehle prüfen Reichweite; Fernverwaltung ist ausgeschlossen. Der Server leitet den handelnden Spieler aus dem Alpha-Testkontext ab, akzeptiert nie eine Client-Eigentümer-ID und gibt keine privaten Fremddetails aus.
+
 ## Hafenübersicht
 
 Die Hafenübersicht liefert die Stadt-ID, `shipMarketVersion`, alle dort angebotenen konkreten Schiffe mit `shipId`, Typ, Name und Kaufpreis sowie die lokal verfügbaren eigenen unzugeordneten Schiffe. Ein Angebot enthält kein abstraktes Kontingent.

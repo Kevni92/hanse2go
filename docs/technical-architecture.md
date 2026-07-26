@@ -171,6 +171,10 @@ Der bestehende Debug-Stundentick wird erweitert, nicht dupliziert. Er arbeitet a
 
 Zusätzlich zu `POST /test/reset` bereitet `POST /test/seed` im Testbetrieb Gold, Flottenladung und Ruf gemäß [`alpha-2/test-world.md`](alpha-2/test-world.md) vor. Alpha-3-Presets sind ebenfalls ausschließlich im Testbetrieb verfügbar. Die CI bewahrt bei End-to-End-Fehlern Trace, Screenshot, Browserkonsole, Serverlog, Preset/Seed und den letzten erfolgreichen sowie fehlgeschlagenen Tickbericht auf; der Testvertrag steht in [`alpha-3/acceptance.md`](alpha-3/acceptance.md).
 
+## Alpha 4: Hafen- und Werfttransaktionen
+
+Alpha 4 ergänzt die Welt um versionsgesicherte Schiffsentitäten, Flotten, Hafenmärkte, Werften und Bauaufträge. Jeder schreibende Hafenbefehl arbeitet auf einem konsistenten Snapshot, ist idempotent und schreibt Gold, Eigentum, Inventare, Zuordnungen, Aufträge und Versionen nur gemeinsam zurück. Der manuelle Tick erweitert den Alpha-3-Snapshot um die Werftphase; ein Fehler in dieser Phase rollt auch alle Alpha-3-Änderungen zurück. Die verbindlichen Routen, Versionen und Fehlerverträge stehen in [`alpha-4/api-contracts.md`](alpha-4/api-contracts.md) und [`alpha-4/tick.md`](alpha-4/tick.md).
+
 ## Arbeitsablauf
 
 Für jedes Issue wird ein neuer Branch vom aktuellen `main` erstellt. Es gibt genau einen Pull Request pro Issue gegen `main`. Alle GitHub-CI-Prüfungen müssen erfolgreich sein. Danach merged der Agent den PR und löscht den gemergten Branch. Details stehen in [`../AGENTS.md`](../AGENTS.md).
