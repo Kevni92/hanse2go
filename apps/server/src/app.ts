@@ -3,7 +3,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
 import { loadGameConfig, type GameConfig } from '@hanse2go/config';
-import type { ApiError, BuildBuildingRequest, DebugPositionRequest, HealthResponse, KontorTransferRequest, MarketQuoteRequest, TickRequest, TradeRequest, WorkforcePriorityRequest } from '@hanse2go/shared';
+import type { ApiError, BuildBuildingRequest, CancelOrderRequest, CreateOrderRequest, DebugPositionRequest, GameState, HealthResponse, KontorTransferRequest, MarketQuoteRequest, Order, OrderExecution, ReplaceOrderRequest, TickRequest, TradeRequest, WorkforcePriorityRequest } from '@hanse2go/shared';
 import { BuildingService } from './buildings.js';
 import { CityAccessService, DomainError } from './city-access.js';
 import { ConsumptionModel } from './consumption.js';
@@ -13,6 +13,8 @@ import { createBuildingCatalog } from './production.js';
 import { ReputationService } from './reputation.js';
 import { TickService } from './tick.js';
 import { HarborService } from './harbor.js';
+import { OrderBookService } from './order-book.js';
+import { CITY_ACCOUNT, PLAYER_ACCOUNT } from './money.js';
 
 export interface AppOptions {
   enableTestReset?: boolean;
@@ -30,8 +32,9 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   const reputation = new ReputationService(config.reputation);
   const market = new MarketService(repository, cityAccess, config.market, reputation);
   const buildings = new BuildingService(repository, cityAccess, reputation, catalog);
-  const tick = new TickService(repository, reputation, market, catalog, new ConsumptionModel(config.consumption), config.alpha3);
   const harbor = new HarborService(repository, cityAccess, config.alpha4);
+  const orderBook = new OrderBookService(repository, config.alpha5);
+  const tick = new TickService(repository, reputation, market, catalog, new ConsumptionModel(config.consumption), config.alpha3, orderBook);
   const enableDebugTick = options.enableDebugTick ?? true;
 
   app.register(cors, { origin: true, methods: ['GET', 'HEAD', 'POST', 'PUT'] });
@@ -95,6 +98,42 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   app.post<{ Params: { cityId: string }; Body: MarketQuoteRequest }>('/api/cities/:cityId/market/quote', { schema: { tags: ['Markt'] } }, ({ params, body }) => market.quote({ cityId: params.cityId, ...body }));
   app.post<{ Params: { cityId: string }; Body: TradeRequest }>('/api/cities/:cityId/market/trade', { schema: { tags: ['Markt'] } }, ({ params, body }) => market.commit({ cityId: params.cityId, ...body }));
   app.get<{ Params: { cityId: string; goodId: string } }>('/api/cities/:cityId/market/:goodId/history', { schema: { tags: ['Markt'] } }, ({ params }) => market.getHistory(params.cityId, params.goodId));
+  app.get<{ Params: { cityId: string; goodId: string } }>('/api/cities/:cityId/market/:goodId/order-book', { schema: { tags: ['Alpha 5'] } }, ({ params }) => { cityAccess.requireReachable(params.cityId); return orderBook.getBook(params.cityId, params.goodId); });
+  app.get<{ Params: { cityId: string; goodId: string } }>('/api/cities/:cityId/market/:goodId/trades', { schema: { tags: ['Alpha 5'] } }, ({ params }) => { cityAccess.requireReachable(params.cityId); return orderBook.getTrades(params.cityId, params.goodId); });
+  app.get<{ Params: { cityId: string } }>('/api/cities/:cityId/market/summary', { schema: { tags: ['Alpha 5'] } }, ({ params }) => {
+    cityAccess.requireReachable(params.cityId);
+    return repository.getGoods().map((good) => orderBook.getBook(params.cityId, good.id));
+  });
+  app.get<{ Querystring: { cityId?: string; goodId?: string; status?: string } }>('/api/player/orders', { schema: { tags: ['Alpha 5'] } }, ({ query }) => orderBook.getPlayerOrders(query));
+  app.get('/api/player/ledger', { schema: { tags: ['Alpha 5'] } }, () => orderBook.getPlayerLedger());
+  app.get<{ Params: { cityId: string } }>('/api/cities/:cityId/treasury', { schema: { tags: ['Alpha 5'] } }, ({ params }) => { cityAccess.requireReachable(params.cityId); return orderBook.getTreasury(params.cityId); });
+  app.get<{ Params: { cityId: string; orderId: string } }>('/api/cities/:cityId/market/orders/:orderId', { schema: { tags: ['Alpha 5'] } }, ({ params }) => { cityAccess.requireReachable(params.cityId); return orderBook.getPlayerOrder(params.orderId); });
+  app.post<{ Params: { cityId: string }; Body: CreateOrderRequest }>('/api/cities/:cityId/market/orders', {
+    schema: { tags: ['Alpha 5'], body: { type: 'object', required: ['goodId', 'side', 'quantityUnits', 'limitPriceGoldPerTon'], additionalProperties: false, properties: { goodId: { type: 'string' }, side: { type: 'string', enum: ['buy', 'sell'] }, quantityUnits: { type: 'integer', minimum: 1 }, limitPriceGoldPerTon: { type: 'integer', minimum: 1 }, idempotencyKey: { type: 'string' } } } },
+  }, (request) => {
+    cityAccess.requireReachable(request.params.cityId);
+    const idempotencyKey = normalizeIdempotencyKey(request.headers['idempotency-key'], request.body.idempotencyKey);
+    const before = repository.getState().executions.length;
+    const order = orderBook.create({ cityId: request.params.cityId, ...request.body, idempotencyKey });
+    return orderResponse(repository.getState(), order, repository.getState().executions.slice(before));
+  });
+  app.delete<{ Params: { cityId: string; orderId: string }; Body: CancelOrderRequest & { expectedOrderVersion?: number } }>('/api/cities/:cityId/market/orders/:orderId', {
+    schema: { tags: ['Alpha 5'], body: { type: 'object', required: ['orderVersion'], additionalProperties: false, properties: { orderVersion: { type: 'integer', minimum: 1 }, expectedOrderVersion: { type: 'integer', minimum: 1 }, idempotencyKey: { type: 'string' } } } },
+  }, (request) => {
+    cityAccess.requireReachable(request.params.cityId);
+    const idempotencyKey = normalizeIdempotencyKey(request.headers['idempotency-key'], request.body.idempotencyKey);
+    const order = orderBook.cancel({ orderId: request.params.orderId, orderVersion: request.body.expectedOrderVersion ?? request.body.orderVersion, idempotencyKey });
+    return orderResponse(repository.getState(), order, []);
+  });
+  app.post<{ Params: { cityId: string; orderId: string }; Body: ReplaceOrderRequest }>('/api/cities/:cityId/market/orders/:orderId/replace', {
+    schema: { tags: ['Alpha 5'], body: { type: 'object', required: ['orderVersion', 'quantityUnits', 'limitPriceGoldPerTon'], additionalProperties: false, properties: { orderVersion: { type: 'integer', minimum: 1 }, quantityUnits: { type: 'integer', minimum: 1 }, limitPriceGoldPerTon: { type: 'integer', minimum: 1 }, idempotencyKey: { type: 'string' } } } },
+  }, (request) => {
+    cityAccess.requireReachable(request.params.cityId);
+    const idempotencyKey = normalizeIdempotencyKey(request.headers['idempotency-key'], request.body.idempotencyKey);
+    const before = repository.getState().executions.length;
+    const order = orderBook.replace({ orderId: request.params.orderId, orderVersion: request.body.orderVersion, quantityUnits: request.body.quantityUnits, limitPriceGoldPerTon: request.body.limitPriceGoldPerTon, idempotencyKey });
+    return orderResponse(repository.getState(), order, repository.getState().executions.slice(before));
+  });
   app.get('/api/world', { schema: { tags: ['Alpha 2'] } }, () => { const state = repository.getState(); return { ...state.world, lastTickReport: state.lastTickReport }; });
   app.get('/api/player/fleets', { schema: { tags: ['Alpha 4'] } }, () => harbor.fleets());
   app.get<{ Params: { cityId: string } }>('/api/cities/:cityId/harbor', { schema: { tags: ['Alpha 4'] } }, ({ params }) => harbor.overview(params.cityId));
@@ -162,6 +201,29 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
 }
 
 interface TestSeedRequest { gold?: number; cargo?: Record<string, number>; reputation?: Record<string, number> }
+
+function normalizeIdempotencyKey(header: string | string[] | undefined, body: string | undefined): string {
+  const headerValue = Array.isArray(header) ? header[0] : header;
+  if (headerValue && body && headerValue !== body) throw new DomainError('ORDER_IDEMPOTENCY_CONFLICT', 'Header und Payload enthalten widersprüchliche Idempotenzschlüssel.', 409);
+  const value = headerValue ?? body;
+  if (!value) throw new DomainError('IDEMPOTENCY_KEY_REQUIRED', 'Ein Idempotenzschlüssel ist erforderlich.', 400);
+  return value;
+}
+
+function orderResponse(state: GameState, order: Order, executions: OrderExecution[]) {
+  const account = state.accounts[PLAYER_ACCOUNT(state.player.id)];
+  const inventory = state.kontorWarehouses[order.cityId]?.[order.goodId];
+  const cityAccount = state.accounts[CITY_ACCOUNT(order.cityId)];
+  return {
+    order,
+    executions,
+    orderBookVersion: state.orderBookVersions[`${order.cityId}|${order.goodId}`] ?? 0,
+    account,
+    inventory,
+    treasury: cityAccount,
+    ledger: state.ledger.filter((entry) => entry.referenceType === 'order_execution' && executions.some((execution) => entry.referenceId === execution.executionId)),
+  };
+}
 
 function invalidRequest(url: string): ApiError['error'] {
   if (url.endsWith('/fleet/position')) return { code: 'INVALID_POSITION', message: 'Die Debug-Position ist ungültig.' };

@@ -8,8 +8,8 @@ describe('Alpha 5 orderbook domain', () => {
   it('matches by price/time, moves goods and books both fees without changing money supply', () => {
     const repository = new InMemoryGameRepository(loadGameConfig());
     const service = new OrderBookService(repository, loadGameConfig().alpha5);
-    const sell = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', priceMoneyPerUnit: 100, quantityUnits: 100, ownerType: 'city', ownerId: 'lambrecht', idempotencyKey: 'sell-1' });
-    const buy = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'buy', priceMoneyPerUnit: 120, quantityUnits: 100, idempotencyKey: 'buy-1' });
+    const sell = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', limitPriceGoldPerTon: 100, quantityUnits: 100, ownerType: 'city', ownerId: 'lambrecht', idempotencyKey: 'sell-1' });
+    const buy = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'buy', limitPriceGoldPerTon: 120, quantityUnits: 100, idempotencyKey: 'buy-1' });
     const state = repository.getState();
 
     expect(state.orders.find((order) => order.orderId === sell.orderId)?.status).toBe('filled');
@@ -32,8 +32,8 @@ describe('Alpha 5 orderbook domain', () => {
       inventory.availableUnits = 20;
       inventory.totalUnits = 20;
     });
-    const order = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', priceMoneyPerUnit: 100, quantityUnits: 20, idempotencyKey: 'sell-replay' });
-    expect(service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', priceMoneyPerUnit: 100, quantityUnits: 20, idempotencyKey: 'sell-replay' }).orderId).toBe(order.orderId);
+    const order = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', limitPriceGoldPerTon: 100, quantityUnits: 20, idempotencyKey: 'sell-replay' });
+    expect(service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', limitPriceGoldPerTon: 100, quantityUnits: 20, idempotencyKey: 'sell-replay' }).orderId).toBe(order.orderId);
     expect(repository.getState().kontorWarehouses.lambrecht!.wood).toMatchObject({ availableUnits: 0, reservedUnits: 20, totalUnits: 20 });
 
     const cancelled = service.cancel({ orderId: order.orderId, orderVersion: order.orderVersion, idempotencyKey: 'cancel-replay' });
@@ -50,11 +50,11 @@ describe('Alpha 5 orderbook domain', () => {
       inventory.availableUnits = 20;
       inventory.totalUnits = 20;
     });
-    const sell = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', priceMoneyPerUnit: 100, quantityUnits: 20, idempotencyKey: 'partial-sell' });
-    service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'buy', priceMoneyPerUnit: 100, quantityUnits: 10, ownerType: 'city', ownerId: 'lambrecht', idempotencyKey: 'partial-buy' });
+    const sell = service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'sell', limitPriceGoldPerTon: 100, quantityUnits: 20, idempotencyKey: 'partial-sell' });
+    service.create({ cityId: 'lambrecht', goodId: 'wood', side: 'buy', limitPriceGoldPerTon: 100, quantityUnits: 10, ownerType: 'city', ownerId: 'lambrecht', idempotencyKey: 'partial-buy' });
     expect(repository.getState().orders.find((order) => order.orderId === sell.orderId)?.status).toBe('partially_filled');
 
-    const replacement = service.replace({ orderId: sell.orderId, orderVersion: 2, priceMoneyPerUnit: 90, quantityUnits: 5, idempotencyKey: 'replace-1' });
+    const replacement = service.replace({ orderId: sell.orderId, orderVersion: 2, limitPriceGoldPerTon: 90, quantityUnits: 5, idempotencyKey: 'replace-1' });
     expect(replacement.replacesOrderId).toBe(sell.orderId);
     expect(repository.getState().orders.find((order) => order.orderId === sell.orderId)?.status).toBe('replaced');
     expect(repository.getState().kontorWarehouses.lambrecht!.wood).toMatchObject({ availableUnits: 5, reservedUnits: 5, totalUnits: 10 });

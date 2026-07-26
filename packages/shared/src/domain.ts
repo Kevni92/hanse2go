@@ -52,7 +52,7 @@ export interface Order {
   side: OrderSide;
   ownerType: OrderOwnerType;
   ownerId: string;
-  priceMoneyPerUnit: number;
+  limitPriceGoldPerTon: number;
   originalQuantityUnits: number;
   remainingQuantityUnits: number;
   reservedMoney: number;
@@ -71,13 +71,13 @@ export interface OrderExecution {
   buyOrderId: string;
   sellOrderId: string;
   quantityUnits: number;
-  priceMoneyPerUnit: number;
+  limitPriceGoldPerTon: number;
   grossMoney: number;
   buyerFeeMoney: number;
   sellerFeeMoney: number;
   tickNumber: number;
 }
-export interface OrderBookLevel { priceMoneyPerUnit: number; quantityUnits: number; orderCount: number }
+export interface OrderBookLevel { limitPriceGoldPerTon: number; quantityUnits: number; orderCount: number }
 export interface OrderBookSnapshot {
   cityId: string;
   goodId: string;

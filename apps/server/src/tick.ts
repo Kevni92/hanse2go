@@ -6,6 +6,7 @@ import type { GameRepository } from './game-state.js';
 import type { MarketService } from './market.js';
 import type { BuildingCatalog } from './production.js';
 import type { ReputationService } from './reputation.js';
+import type { OrderBookService } from './order-book.js';
 
 /** Stundentick aus `docs/alpha-2/production-tick.md`: eine simulierte Stunde, als Ganzes atomar. */
 export class TickService {
@@ -19,6 +20,7 @@ export class TickService {
     private readonly catalog: BuildingCatalog,
     private readonly consumption: ConsumptionModel,
     private readonly alpha3: Alpha3Config,
+    private readonly orderBook?: OrderBookService,
   ) {}
 
   run(idempotencyKey: string): TickReport {
@@ -47,6 +49,8 @@ export class TickService {
         state.cities = cities;
         state.cityEconomies = cityEconomies;
         state.player = player;
+        this.orderBook?.matchAll(state);
+        this.orderBook?.refreshSystemOrders(state, this.consumption.config);
         state.world = world;
         state.lastTickReport = tickReport;
         return { report: tickReport, changedCities: consumption.filter((entry) => entry.consumed > 0).map((entry) => entry.cityId) };
