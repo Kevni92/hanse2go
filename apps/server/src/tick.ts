@@ -1,9 +1,9 @@
 import type { Building, BuildingProductionReport, City, ConsumptionReport, TickReport } from '@hanse2go/shared';
 import { DomainError } from './city-access.js';
-import { consumptionPerThousand, requiredConsumption } from './consumption.js';
+import type { ConsumptionModel } from './consumption.js';
 import type { GameRepository } from './game-state.js';
 import type { MarketService } from './market.js';
-import { KONTOR_TYPE, findBuildingType } from './production.js';
+import type { BuildingCatalog } from './production.js';
 import type { ReputationService } from './reputation.js';
 
 /** Stundentick aus `docs/alpha-2/production-tick.md`: eine simulierte Stunde, als Ganzes atomar. */
@@ -11,7 +11,13 @@ export class TickService {
   private running = false;
   private readonly completed = new Map<string, TickReport>();
 
-  constructor(private readonly repository: GameRepository, private readonly reputation: ReputationService, private readonly market: MarketService) {}
+  constructor(
+    private readonly repository: GameRepository,
+    private readonly reputation: ReputationService,
+    private readonly market: MarketService,
+    private readonly catalog: BuildingCatalog,
+    private readonly consumption: ConsumptionModel,
+  ) {}
 
   run(idempotencyKey: string): TickReport {
     const prior = this.completed.get(idempotencyKey);
@@ -54,8 +60,8 @@ export class TickService {
     const reports: BuildingProductionReport[] = [];
     const buffered: Array<{ cityId: string; outputs: Record<string, number> }> = [];
     for (const building of buildings) {
-      if (building.buildingType === KONTOR_TYPE) continue;
-      const entry = findBuildingType(building.buildingType);
+      if (building.buildingType === this.catalog.kontorType) continue;
+      const entry = this.catalog.find(building.buildingType);
       if (!entry) continue;
       const store = (kontors[building.cityId] ??= {});
       const inputs = Object.entries(entry.inputs);
@@ -88,8 +94,8 @@ export class TickService {
   private consume(cities: City[]): ConsumptionReport[] {
     const reports: ConsumptionReport[] = [];
     for (const city of cities) {
-      for (const goodId of Object.keys(consumptionPerThousand)) {
-        const requested = requiredConsumption(city.population, goodId);
+      for (const goodId of this.consumption.consumedGoodIds) {
+        const requested = this.consumption.required(city.population, goodId);
         const stock = city.stock[goodId] ?? 0;
         const consumed = Math.min(requested, stock);
         city.stock[goodId] = stock - consumed;

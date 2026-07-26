@@ -1,13 +1,18 @@
 import type { Building, BuildingCatalogEntry, BuildingOffer, BuildingRequirement, CityBuildingsOverview, GameState, TransferDirection } from '@hanse2go/shared';
 import { CityAccessService, DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
-import { CONCESSION_PRICE, CONCESSION_REPUTATION, KONTOR_TYPE, findBuildingType, kontorEntry, productionCatalog } from './production.js';
+import type { BuildingCatalog } from './production.js';
 import { ReputationService } from './reputation.js';
 
 interface TransferInput { goodId: string; quantity: number; direction: TransferDirection }
 
 export class BuildingService {
-  constructor(private readonly repository: GameRepository, private readonly cityAccess: CityAccessService, private readonly reputation: ReputationService) {}
+  constructor(
+    private readonly repository: GameRepository,
+    private readonly cityAccess: CityAccessService,
+    private readonly reputation: ReputationService,
+    private readonly catalog: BuildingCatalog,
+  ) {}
 
   getOverview(cityId: string): CityBuildingsOverview {
     this.cityAccess.requireReachable(cityId, 'CITY_NOT_REACHABLE');
@@ -18,10 +23,11 @@ export class BuildingService {
     this.cityAccess.requireReachable(cityId, 'CITY_NOT_REACHABLE');
     return this.repository.runTransaction((state) => {
       if (state.concessions.includes(cityId)) throw new DomainError('CONCESSION_ALREADY_OWNED', 'Für diese Stadt besteht bereits eine Baukonzession.', 409);
+      const { price, requiredReputation } = this.catalog.concession;
       const reputation = this.reputation.get(state, cityId);
-      if (reputation.value < CONCESSION_REPUTATION) throw new DomainError('REPUTATION_TOO_LOW', `Für die Baukonzession sind ${CONCESSION_REPUTATION} Ruf nötig.`, 409, { reputation: reputation.value, required: CONCESSION_REPUTATION });
-      if (state.player.gold < CONCESSION_PRICE) throw new DomainError('INSUFFICIENT_GOLD', 'Es ist nicht genug Gold für die Baukonzession vorhanden.', 409, { gold: state.player.gold, required: CONCESSION_PRICE });
-      state.player.gold -= CONCESSION_PRICE;
+      if (reputation.value < requiredReputation) throw new DomainError('REPUTATION_TOO_LOW', `Für die Baukonzession sind ${requiredReputation} Ruf nötig.`, 409, { reputation: reputation.value, required: requiredReputation });
+      if (state.player.gold < price) throw new DomainError('INSUFFICIENT_GOLD', 'Es ist nicht genug Gold für die Baukonzession vorhanden.', 409, { gold: state.player.gold, required: price });
+      state.player.gold -= price;
       state.concessions.push(cityId);
       return this.overview(state, cityId);
     });
@@ -29,14 +35,14 @@ export class BuildingService {
 
   build(cityId: string, buildingType: string): CityBuildingsOverview {
     // Prüfreihenfolge aus `docs/alpha-2/buildings-and-construction.md`.
-    const entry = findBuildingType(buildingType);
+    const entry = this.catalog.find(buildingType);
     if (!entry) throw new DomainError('UNKNOWN_BUILDING_TYPE', 'Dieser Gebäudetyp ist nicht im Katalog enthalten.', 404, { buildingType });
     this.cityAccess.requireReachable(cityId, 'CITY_NOT_REACHABLE');
     return this.repository.runTransaction((state) => {
       if (!state.concessions.includes(cityId)) throw new DomainError('CONCESSION_REQUIRED', 'Ohne Baukonzession kann in dieser Stadt nicht gebaut werden.', 409);
       const kontorExists = this.hasKontor(state, cityId);
-      if (entry.buildingType === KONTOR_TYPE && kontorExists) throw new DomainError('KONTOR_ALREADY_EXISTS', 'In dieser Stadt besteht bereits ein eigenes Kontor.', 409);
-      if (entry.buildingType !== KONTOR_TYPE && !kontorExists) throw new DomainError('KONTOR_REQUIRED', 'Produktionsgebäude setzen ein eigenes Kontor in dieser Stadt voraus.', 409);
+      if (entry.buildingType === this.catalog.kontorType && kontorExists) throw new DomainError('KONTOR_ALREADY_EXISTS', 'In dieser Stadt besteht bereits ein eigenes Kontor.', 409);
+      if (entry.buildingType !== this.catalog.kontorType && !kontorExists) throw new DomainError('KONTOR_REQUIRED', 'Produktionsgebäude setzen ein eigenes Kontor in dieser Stadt voraus.', 409);
       if (state.player.gold < entry.cost.totalGold) throw new DomainError('INSUFFICIENT_GOLD', 'Grundstücks- und Baukosten sind nicht vollständig vorhanden.', 409, { gold: state.player.gold, required: entry.cost.totalGold });
       const missingMaterials = this.missingMaterials(state, entry);
       if (Object.keys(missingMaterials).length) throw new DomainError('INSUFFICIENT_BUILD_MATERIALS', 'Im Laderaum der Flotte fehlen Baumaterialien.', 409, { missingMaterials });
@@ -52,7 +58,7 @@ export class BuildingService {
         status: 'built', lastInputs: {}, lastOutputs: {},
       };
       state.buildings.push(instance);
-      if (entry.buildingType === KONTOR_TYPE) {
+      if (entry.buildingType === this.catalog.kontorType) {
         state.kontors[cityId] ??= {};
         // Der Alpha-1-Stadtwert `Kontor` zeigt ab Alpha 2 das eigene Kontor des Spielers.
         const city = state.cities.find((candidate) => candidate.id === cityId);
@@ -89,7 +95,7 @@ export class BuildingService {
   }
 
   hasKontor(state: GameState, cityId: string): boolean {
-    return state.buildings.some((building) => building.cityId === cityId && building.playerId === state.player.id && building.buildingType === KONTOR_TYPE);
+    return state.buildings.some((building) => building.cityId === cityId && building.playerId === state.player.id && building.buildingType === this.catalog.kontorType);
   }
 
   private overview(state: GameState, cityId: string): CityBuildingsOverview {
@@ -98,11 +104,11 @@ export class BuildingService {
     return {
       cityId,
       reputation: this.reputation.get(state, cityId),
-      hasConcession, concessionPrice: CONCESSION_PRICE, hasKontor: kontorBuilt,
+      hasConcession, concessionPrice: this.catalog.concession.price, hasKontor: kontorBuilt,
       kontorInventory: kontorBuilt ? { ...(state.kontors[cityId] ?? {}) } : {},
-      kontor: this.offer(state, kontorEntry, hasConcession, kontorBuilt),
+      kontor: this.offer(state, this.catalog.kontor, hasConcession, kontorBuilt),
       buildings: structuredClone(state.buildings.filter((building) => building.cityId === cityId && building.playerId === state.player.id)),
-      catalog: productionCatalog.map((entry) => this.offer(state, entry, hasConcession, kontorBuilt)),
+      catalog: this.catalog.production.map((entry) => this.offer(state, entry, hasConcession, kontorBuilt)),
       world: { ...state.world }, player: { ...state.player }, fleet: structuredClone(state.fleet),
     };
   }
@@ -110,7 +116,7 @@ export class BuildingService {
   private offer(state: GameState, entry: BuildingCatalogEntry, hasConcession: boolean, kontorBuilt: boolean): BuildingOffer {
     const missingRequirements: BuildingRequirement[] = [];
     if (!hasConcession) missingRequirements.push('concession');
-    if (entry.buildingType === KONTOR_TYPE) { if (kontorBuilt) missingRequirements.push('kontor_already_exists'); }
+    if (entry.buildingType === this.catalog.kontorType) { if (kontorBuilt) missingRequirements.push('kontor_already_exists'); }
     else if (!kontorBuilt) missingRequirements.push('kontor');
     const missingGold = Math.max(0, entry.cost.totalGold - state.player.gold);
     if (missingGold > 0) missingRequirements.push('gold');

@@ -1,28 +1,31 @@
+import type { ReputationConfig } from '@hanse2go/config';
 import type { GameState, Reputation, ReputationStatus, TradeDirection } from '@hanse2go/shared';
 
-/** Regeln aus `docs/alpha-2/reputation-and-concessions.md`. */
-export const MINIMUM_REPUTATION_QUANTITY = 10;
-export const TONS_PER_REPUTATION_POINT = 10;
-export const MAXIMUM_REPUTATION = 100;
-
-export function reputationStatus(value: number): ReputationStatus {
-  if (value < 20) return 'Fremder';
-  if (value < 50) return 'Bekannter Händler';
-  if (value < 80) return 'Angesehener Händler';
-  return 'Vertrauenswürdiger Bürger';
+/** Ordnet einen Rufwert dem höchsten erreichten Status der Konfiguration zu. */
+export function reputationStatus(config: ReputationConfig, value: number): ReputationStatus {
+  let status = config.statusThresholds[0]!.status;
+  for (const threshold of config.statusThresholds) if (value >= threshold.minimumValue) status = threshold.status;
+  return status;
 }
 
 interface TradeFacts { cityId: string; goodId: string; targetStock: number; stockBefore: number; quantity: number; direction: TradeDirection }
 
+/** Regeln aus `docs/alpha-2/reputation-and-concessions.md`; alle Werte stammen aus der Spielkonfiguration. */
 export class ReputationService {
   /** Verbesserungskontingent je Stadt und Ware für die laufende simulierte Stunde. */
   private readonly quotas = new Map<string, number>();
-  /** Restmenge unter zehn Tonnen je Spieler, Stadt und Ware innerhalb der laufenden Stunde. */
+  /** Restmenge unterhalb eines vollen Rufpunkts je Spieler, Stadt und Ware innerhalb der laufenden Stunde. */
   private readonly carried = new Map<string, number>();
+
+  constructor(private readonly config: ReputationConfig) {}
+
+  get maximumValue(): number { return this.config.maximumValue; }
+
+  statusFor(value: number): ReputationStatus { return reputationStatus(this.config, value); }
 
   /** Bucht den Rufgewinn eines bereits verbuchten Handels innerhalb derselben Transaktion. */
   registerTrade(state: GameState, facts: TradeFacts): void {
-    if (facts.quantity < MINIMUM_REPUTATION_QUANTITY) return;
+    if (facts.quantity < this.config.minimumTradeQuantity) return;
     // Ein Verkauf hilft nur unterhalb, ein Kauf nur oberhalb des Zielbestands.
     const distance = facts.direction === 'sell' ? facts.targetStock - facts.stockBefore : facts.stockBefore - facts.targetStock;
     if (distance <= 0) return;
@@ -35,12 +38,12 @@ export class ReputationService {
     if (credited <= 0) return;
 
     const total = (this.carried.get(key) ?? 0) + credited;
-    this.carried.set(key, total % TONS_PER_REPUTATION_POINT);
-    const points = Math.floor(total / TONS_PER_REPUTATION_POINT);
+    this.carried.set(key, total % this.config.tonsPerPoint);
+    const points = Math.floor(total / this.config.tonsPerPoint);
     if (points <= 0) return;
     const entry = this.entry(state, facts.cityId);
-    entry.value = Math.min(MAXIMUM_REPUTATION, entry.value + points);
-    entry.status = reputationStatus(entry.value);
+    entry.value = Math.min(this.config.maximumValue, entry.value + points);
+    entry.status = this.statusFor(entry.value);
   }
 
   get(state: GameState, cityId: string): Reputation { return { ...this.entry(state, cityId) }; }
@@ -51,7 +54,7 @@ export class ReputationService {
 
   private entry(state: GameState, cityId: string): Reputation {
     let entry = state.reputations.find((candidate) => candidate.cityId === cityId);
-    if (!entry) { entry = { cityId, value: 0, status: reputationStatus(0) }; state.reputations.push(entry); }
+    if (!entry) { entry = { cityId, value: 0, status: this.statusFor(0) }; state.reputations.push(entry); }
     return entry;
   }
 }

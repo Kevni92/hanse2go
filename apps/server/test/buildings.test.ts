@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { loadGameConfig } from '@hanse2go/config';
 import { buildApp } from '../src/app.js';
-import { productionCatalog } from '../src/production.js';
+import { createBuildingCatalog } from '../src/production.js';
+
+const productionCatalog = createBuildingCatalog(loadGameConfig().buildings).production;
 
 const kontorMaterials = { wood: 50, planks: 25, bricks: 40, tools: 10 };
 const simpleMaterials = { wood: 20, planks: 10, bricks: 10, tools: 5 };
