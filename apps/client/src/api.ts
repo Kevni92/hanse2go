@@ -1,4 +1,4 @@
-import type { City, CityBuildingsOverview, DebugPositionRequest, GameState, HealthResponse, MarketHistoryEntry, MarketQuote, ReachableCity, TickReport, TradeDirection, TransferDirection, WorkforcePriority, WorldClock } from '@hanse2go/shared';
+import type { City, CityBuildingsOverview, CreateOrderRequest, DebugPositionRequest, GameState, HealthResponse, MarketHistoryEntry, MarketQuote, Order, OrderBookSnapshot, OrderExecution, ReachableCity, TickReport, TradeDirection, TransferDirection, WorkforcePriority, WorldClock } from '@hanse2go/shared';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
@@ -60,6 +60,25 @@ export function submitTrade(cityId: string, quote: MarketQuote): Promise<MarketQ
 
 export function fetchMarketHistory(cityId: string, goodId: string): Promise<MarketHistoryEntry[]> {
   return request(`/api/cities/${cityId}/market/${goodId}/history`);
+}
+
+export interface OrderCommandResponse { order: Order; executions: OrderExecution[]; orderBookVersion: number; account: GameState['accounts'][string]; inventory: GameState['kontorWarehouses'][string][string]; treasury: GameState['accounts'][string]; }
+export function fetchOrderBook(cityId: string, goodId: string): Promise<OrderBookSnapshot> { return request(`/api/cities/${cityId}/market/${goodId}/order-book`); }
+export function fetchOrderTrades(cityId: string, goodId: string): Promise<OrderExecution[]> { return request(`/api/cities/${cityId}/market/${goodId}/trades`); }
+export function fetchPlayerOrders(): Promise<Order[]> { return request('/api/player/orders'); }
+export function fetchPlayerLedger(): Promise<GameState['ledger']> { return request('/api/player/ledger'); }
+export function fetchTreasury(cityId: string): Promise<{ cityId: string; cityAccount: GameState['accounts'][string]; populationAccount: GameState['accounts'][string] }> { return request(`/api/cities/${cityId}/treasury`); }
+export function createOrder(cityId: string, body: Omit<CreateOrderRequest, 'idempotencyKey'> & { idempotencyKey?: string }): Promise<OrderCommandResponse> {
+  const idempotencyKey = body.idempotencyKey ?? createIdempotencyKey();
+  return request(`/api/cities/${cityId}/market/orders`, { ...asJson({ ...body, idempotencyKey }), headers: { 'content-type': 'application/json', 'Idempotency-Key': idempotencyKey } });
+}
+export function cancelOrder(cityId: string, orderId: string, orderVersion: number): Promise<OrderCommandResponse> {
+  const idempotencyKey = createIdempotencyKey();
+  return request(`/api/cities/${cityId}/market/orders/${orderId}`, { ...asJson({ orderVersion, idempotencyKey }), headers: { 'content-type': 'application/json', 'Idempotency-Key': idempotencyKey } });
+}
+export function replaceOrder(cityId: string, orderId: string, orderVersion: number, limitPriceGoldPerTon: number, quantityUnits: number): Promise<OrderCommandResponse> {
+  const idempotencyKey = createIdempotencyKey();
+  return request(`/api/cities/${cityId}/market/orders/${orderId}/replace`, { ...asJson({ orderVersion, limitPriceGoldPerTon, quantityUnits, idempotencyKey }), headers: { 'content-type': 'application/json', 'Idempotency-Key': idempotencyKey } });
 }
 
 const asJson = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
