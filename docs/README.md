@@ -56,6 +56,7 @@
 - [`alpha-3/balancing.md`](alpha-3/balancing.md) – Referenzmargen der Produktionsrezepte
 - [`alpha-3/housing.md`](alpha-3/housing.md) – Grundwohnraum, Wohnhäuser und gemeinsame Kapazität
 - [`alpha-3/building-catalog.md`](alpha-3/building-catalog.md) – Alpha-3-Ergänzungen zum Gebäudekatalog
+- [`alpha-3/consumption-and-wealth.md`](alpha-3/consumption-and-wealth.md) – Verbrauch, Kaufkraft und Wohlstand
 
 ## Umgang mit Lücken
 
