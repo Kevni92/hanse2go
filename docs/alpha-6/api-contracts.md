@@ -78,9 +78,24 @@ Ein Fehler in der Reisephase rollt den vollständigen Welt-Tick zurück. Eine id
 
 Der Tickbericht ergänzt je Reise `voyageId`, `fleetId`, `ownerType`, Start und Ziel, Restticks vor und nach dem Tick sowie den Ankunftsstatus. Die Zusammenfassung enthält fortgeschriebene, gestartete und angekommene Reisen.
 
+## KI-Logistikpläne
+
+Ein Logistikplan ist ein interner Planungszustand, kein Spielerbefehl. Es existiert bewusst **keine** schreibende Route, mit der ein Plan von außen erstellt, verändert oder abgebrochen werden könnte – weder für Spieler noch für Administratoren.
+
+| Methode und Route | Antwort | Zweck |
+|---|---|---|
+| `GET /api/ai/logistics-plans` | `LogisticsPlanListResponse` | offene und abgeschlossene Pläne mit Filtern `actorId`, `status`, `cityId`, `goodId` |
+| `GET /api/ai/logistics-plans/:planId` | `LogisticsPlanResponse` | einzelner Plan mit allen Referenzen und Planwerten |
+
+Beide Routen sind ausschließlich im Debug- und Testbetrieb registriert und folgen derselben Bedingung wie `POST /test/reset`. Im regulären Spiel sind Logistikpläne nicht abrufbar; öffentlich sichtbar sind nur die daraus entstandenen realen Orders, Executions, Transfers und Reisen.
+
+Jeder Planschritt erzeugt intern denselben Fachbefehl wie eine Spieleraktion – Order erstellen, Ware transferieren, Reise starten – mit dem deterministischen Idempotenzschlüssel `ai-<tick>-<actorId>-<planId>-<step>`. Es gibt keinen KI-eigenen Schreibpfad in den Domänenzustand.
+
 ## Fehlercodes
 
 Verbindlich sind `ROUTE_NOT_FOUND`, `FLEET_ALREADY_TRAVELING`, `FLEET_NOT_IN_ORIGIN_PORT`, `FLEET_OVERLOADED`, `FLEET_LOCKED_FOR_VOYAGE`, `VOYAGE_NOT_FOUND` und `VOYAGE_STATE_CONFLICT` aus [`virtual-voyages.md`](virtual-voyages.md).
+
+Für Logistikpläne gelten zusätzlich `AI_LOGISTICS_SOURCE_NOT_FOUND`, `AI_LOGISTICS_FLEET_NOT_AVAILABLE`, `AI_LOGISTICS_CAPACITY_INSUFFICIENT`, `AI_LOGISTICS_PLAN_STATE_CONFLICT`, `AI_LOGISTICS_MARGIN_NO_LONGER_VALID` und `AI_LOGISTICS_TRANSFER_FAILED` aus [`ai-logistics.md`](ai-logistics.md).
 
 Die bestehenden Fehlercodes `FLEET_NOT_FOUND`, `FLEET_NOT_OWNED`, `CITY_NOT_REACHABLE`, `ORDER_IDEMPOTENCY_REQUIRED`, `ORDER_IDEMPOTENCY_PAYLOAD_CONFLICT` und die Alpha-4-Versionskonflikte bleiben unverändert gültig.
 

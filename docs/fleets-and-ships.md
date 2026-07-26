@@ -16,6 +16,14 @@ Spieler und KI-Handelshäuser verwenden denselben Abfahrtsbefehl und dieselben V
 
 Die vollständigen Regeln stehen in [`alpha-6/virtual-voyages.md`](alpha-6/virtual-voyages.md), der Streckengraph mit allen Referenzfahrzeiten in [`alpha-6/test-world-routes.md`](alpha-6/test-world-routes.md) und der technische Vertrag in [`alpha-6/api-contracts.md`](alpha-6/api-contracts.md).
 
+## Alpha 6: Warentransport zwischen Städten
+
+Ab Alpha 6 ist eine Flotte der einzige Weg, Ware zwischen zwei Städten zu bewegen. Ein Transport besteht immer aus derselben Kette: Ware im Quellhafen über eine gedeckte Buy Order kaufen, aus dem Kontor in die Flotte laden, reisen, im Zielhafen in das Kontor entladen und dort über eine gedeckte Sell Order verkaufen. Ein direkter Transfer zwischen Kontoren verschiedener Städte existiert nicht, weder für Spieler noch für die KI.
+
+Eine Flotte gehört zu jedem Zeitpunkt höchstens einem aktiven Transportauftrag. Nach der Ankunft bleibt sie im Zielhafen und wird nicht automatisch leer zurückgeschickt; eine rentable Rückfracht hat Vorrang vor einer Leerfahrt.
+
+Für die wirtschaftliche Bewertung tragen transportierte Waren kalkulatorische Transportkosten von einem `moneyUnit` je Kilometer und Tonne. Diese Größe bewegt kein Gold und erzeugt keine Ledgerbuchung; sie erhöht nur die Kostenbasis und damit den Mindestverkaufspreis. Die vollständigen Regeln stehen in [`alpha-6/ai-logistics.md`](alpha-6/ai-logistics.md).
+
 ## Auswirkungen mehrerer Schiffe
 
 - Der gesamte Laderaum ist die Summe der Kapazitäten aller Schiffe der Flotte.
