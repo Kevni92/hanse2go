@@ -20,4 +20,4 @@ Die Phasen sind verbindlich:
 
 Ein unerwarteter Fehler stellt den Zustand vor Phase 1 vollständig wieder her. Gebäudestillstand, fehlende Marktware und vorab begrenzte Lohnnachfrage sind fachliche Ergebnisse, keine Tickfehler.
 
-Der Bericht enthält vor/nach-Zeit und Idempotenz-ID, Gold und reservierte/gezahlt Löhne je Spieler, Bevölkerung/Arbeit/Wohnraum/Einkommen/Kaufkraft/Versorgung/Wohlstand/Wachstum je Stadt, Priorität/Arbeiter/Auslastung/Löhne/Input/Output/Status je Gebäude sowie Verbrauch, Bestand und Preis je Marktware.
+Der Bericht enthält vor/nach-Zeit und Idempotenz-ID, Gold und reservierte/gezahlt Löhne je Spieler, Bevölkerung/Arbeit/Wohnraum/Einkommen/Kaufkraft/Versorgung/Wohlstand/Wachstum je Stadt, Priorität/Arbeiter/Auslastung/Löhne/Input/Output/Status je Gebäude sowie Verbrauch, Bestand und Preis je Marktware. Die Oberfläche zeigt ihn in zugänglichen, mobilen Akkordeons; siehe [`user-interface.md`](user-interface.md).

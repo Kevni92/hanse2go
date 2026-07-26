@@ -30,4 +30,8 @@ Ein Wohnhaus darf gebaut werden, wenn die aktive Flotte die Stadt erreicht, der 
 
 Wohnhäuser verwenden nur `buildable`, `requirements_missing` und `built`. Sie besitzen nie Produktions- oder Arbeitszustände. Fehlercodes sind `CITY_NOT_REACHABLE`, `CONCESSION_REQUIRED`, `KONTOR_REQUIRED`, `INSUFFICIENT_GOLD`, `INSUFFICIENT_BUILD_MATERIALS` und `UNKNOWN_BUILDING_TYPE`.
 
+## Oberfläche
+
+Die Stadtansicht zeigt Gesamtwohnraum, freien Wohnraum und Auslastung. Im Gebäude-Tab erscheint `town_house` nur nach Konzession und Kontor mit Kosten, Voraussetzungen und dem Hinweis auf die gemeinsame stadtweite Kapazität; es zeigt keine Arbeiter-, Lohn- oder Prioritätswerte. Die vollständigen Interaktions- und Responsive-Regeln stehen in [`user-interface.md`](user-interface.md).
+
 Ausgeschlossen sind Hausklassen, Mieten, Bewohnerlisten, Leerstandskosten, Wohnhausarbeiter, Wartung, Abriss, Bauplätze, Kartenplatzierung und Obdachlosigkeitseffekte oberhalb der Kapazität.

@@ -58,4 +58,8 @@ Arbeitslosigkeit wird angezeigt und im Tickbericht protokolliert. Sie beeinfluss
 
 Die Fachschnittstelle bietet mindestens das Setzen der Priorität einer eigenen Produktionsinstanz, die Arbeiterübersicht einer Stadt und die Zuteilung je eigener Instanz. Sie meldet bei ungültigen Befehlen `BUILDING_NOT_FOUND`, `BUILDING_NOT_OWNED`, `BUILDING_HAS_NO_WORKFORCE` oder `INVALID_WORKFORCE_PRIORITY`.
 
+## Oberfläche
+
+Die Stadtansicht zeigt Arbeiterwerte und fremde Nachfrage nur aggregiert. Eigene Produktionskarten zeigen Beschäftigungsklasse, Bedarf, Zuteilung, Auslastung, Lohnkosten, Priorität und Statusgründe. Nur ihre Priorität ist per Tastatur und Serverbestätigung änderbar; sie wirkt erst im Folgetick. Details stehen in [`user-interface.md`](user-interface.md).
+
 Ausgeschlossen sind Prioritäten gegenüber fremden Gebäuden, manuelle Einzelzuweisung, Reservierung oder dauerhafte Bindung von Arbeitern, globale Prioritäten über Städte, Berufe, Kündigungsfristen und ein zusätzlicher Zufriedenheitswert.
