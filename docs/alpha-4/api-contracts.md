@@ -25,3 +25,9 @@ Fehlercodes sind `CITY_NOT_REACHABLE`, `SHIPYARD_NOT_AVAILABLE`, `KONTOR_REQUIRE
 Die Befehle zum Anlegen, Umbenennen, Zuweisen, Entfernen, Auflösen und Aktivieren einer Flotte enthalten jeweils die betroffenen stabilen IDs und bei jeder Zustandsänderung einen Idempotenzschlüssel. Sie prüfen lokale Hafenreichweite und Eigentum serverseitig und liefern die aktualisierten Flotten, Schiffe sowie abgeleitete Kapazität, Geschwindigkeit und Ladung zurück.
 
 `FLEET_NOT_FOUND`, `FLEET_NOT_OWNED`, `INVALID_FLEET_NAME`, `SHIP_ALREADY_ASSIGNED`, `SHIP_NOT_IN_FLEET`, `FLEET_MUST_KEEP_ONE_SHIP`, `FLEET_CAPACITY_BELOW_CARGO`, `FLEET_NOT_IN_PORT`, `ACTIVE_FLEET_CANNOT_BE_DISBANDED` und `FLEET_CARGO_NOT_EMPTY` beschreiben die spezifischen Ablehnungen. Die vollständige Semantik steht in [`fleet-management.md`](fleet-management.md).
+
+## Lokaler Inventartransfer
+
+Ein Transfer verwendet explizite Referenzen `{ type: "fleet", fleetId }` oder `{ type: "kontor", cityId }`, `goodId`, positive Hundertstel-Tonnen und `idempotencyKey`. Der Server löst Eigentum, Ort, Bestand und Kapazität selbst auf. Er prüft Ware und Menge, Reichweite, Existenz und Eigentum, gemeinsame Stadt, verschiedene Quelle/Ziel, Quellbestand und Zielkapazität in dieser Reihenfolge. Erfolg bucht atomar und liefert alle lokalen eigenen Flotten, Kontor, aktive Flotte und aktualisierte Inventarversionen; bei Fehler ändert sich nichts.
+
+Fehlercodes sind `CITY_NOT_REACHABLE`, `INVENTORY_NOT_FOUND`, `INVENTORY_NOT_OWNED`, `INVENTORY_NOT_IN_CITY`, `TRANSFER_SOURCE_EQUALS_TARGET`, `INVALID_GOOD`, `INVALID_QUANTITY`, `INSUFFICIENT_SOURCE_STOCK`, `INSUFFICIENT_FLEET_CAPACITY`, `KONTOR_REQUIRED` und `IDEMPOTENCY_KEY_REQUIRED`.
