@@ -13,10 +13,10 @@
 
 ## Fachliche Konzepte
 
-- [`game-vision.md`](game-vision.md) – gemeinsame GPS-Handelswelt und Core Loop
+- [`game-vision.md`](game-vision.md) – virtuelle Karibik-Handelswelt und Core Loop
 - [`player-progression.md`](player-progression.md) – Einstieg, Vermögen, Rang, Beliebtheit und Kontore
 - [`fleets-and-ships.md`](fleets-and-ships.md) – aktive Flotte, Schiffe, Häfen und spätere Handelsrouten
-- [`world-map-gps-and-events.md`](world-map-gps-and-events.md) – Karte, Inseln, GPS, Debug-Position und Kartenereignisse
+- [`world-map-gps-and-events.md`](world-map-gps-and-events.md) – virtuelle Karte, Alpha-Debug-Position und spätere Kartenereignisse
 - [`cities-and-growth.md`](cities-and-growth.md) – neutrale Städte, Bauplätze, Wachstum und Stadtgründung
 - [`goods-and-production-chains.md`](goods-and-production-chains.md) – alle 22 Alpha-Waren und ihre Ketten
 - [`production-buildings-and-workers.md`](production-buildings-and-workers.md) – Produktionszyklen, Kontore, Gebäudezustand und Arbeiter
@@ -71,6 +71,10 @@
 - [`alpha-4/scope.md`](alpha-4/scope.md) – verbindlicher Umfang für konkrete Schiffe, Werften und Flotten
 - [`alpha-4/ship-entities.md`](alpha-4/ship-entities.md) – Identität, Eigentum, Standort und Namensregeln
 - [`alpha-4/ship-catalog.md`](alpha-4/ship-catalog.md) – die vier verbindlichen Schiffstypen und abgeleitete Flottenwerte
+
+## Alpha 5
+
+- [`alpha-5/scope.md`](alpha-5/scope.md) – Übergang zur virtuellen Karibik und Abgrenzung des Alpha-5-Orderbuch-Slices
 
 ## Umgang mit Lücken
 

@@ -1,14 +1,16 @@
-# Weltkarte, GPS und Kartenereignisse
+# Weltkarte, Übergangsposition und Kartenereignisse
 
 ## Kartendarstellung
 
-Die Spielwelt wird als Ozeankarte dargestellt. Ausgewählte reale Orte erscheinen als Inseln. Die Insel ist das spielerische Abbild eines Ortes und nicht dessen reale geografische Fläche.
+Die langfristige Spielwelt wird als virtuelle Karibikkarte dargestellt. Städte und Häfen besitzen feste virtuelle Kartenpositionen; Meer, Landmassen und Inseln bilden eine zusammenhängende Handelswelt. Die konkrete Karibikkarte und virtuelle Reiseberechnung sind ein späterer eigener Slice.
+
+Lambrecht, Neustadt und Mannheim mit ihren Koordinaten sind bis dahin ausschließlich eine deterministische Alpha-Testwelt. Ihre Inseln und Radien bilden keinen Entwurf der späteren Live-Welt ab.
 
 Langfristig sollen Inseln visuell wachsen. Häuser, Plantagen, Werkstätten, Bäume und weitere Gebäude werden prozedural ergänzt, damit das Stadtwachstum auf der Karte sichtbar wird. Alpha 1 zeigt nur einfache Inselobjekte ohne Bebauung.
 
-## Auswahl realer Orte
+## Historische Auswahl realer Orte
 
-Die spätere Live-Welt soll aus einer externen Geodatenquelle, voraussichtlich OpenStreetMap oder einer vergleichbaren Ortsdatenbank, erzeugt werden.
+Die folgenden Überlegungen dokumentieren den früheren GPS-Entwurf. Sie sind keine langfristige Produktvorgabe mehr und werden nicht als Grundlage für die virtuelle Karibikkarte verwendet.
 
 Zielkonflikt:
 
@@ -19,15 +21,15 @@ Zielkonflikt:
 
 Die Importlogik muss konfigurierbar sein. Eine Einstellungsdatei soll steuern, welche Ortsarten, Größen und Abstände zu Inseln führen. Die endgültige Regel wird erst anhand realer Daten und Dichteanalysen festgelegt.
 
-## GPS-Interaktion
+## Übergangs-Interaktion für die Alpha-Testwelt
 
-- Der Spieler muss sich physisch in der Nähe eines Kartenobjekts befinden.
+- Der Testspieler setzt eine Debug-Position in die Nähe eines Kartenobjekts.
 - Jede Stadt und jedes Ereignis besitzt einen Interaktionsradius.
 - Eine geöffnete Ansicht berechtigt nicht dauerhaft zur Aktion.
 - Vor jeder relevanten Aktion prüft der Server die aktuelle Position erneut.
 - Eine Stadt kann aus Lambrecht heraus nicht bedient werden, wenn ihre Insel in Neustadt liegt.
 
-Auto, Bahn und Fahrrad sind grundsätzlich erlaubt. Der Radius und die erneute Positionsprüfung sollen verhindern, dass ein Spieler beim schnellen Vorbeifahren eine Stadtansicht dauerhaft offenhält und später aus der Ferne handelt.
+Die Radien und die erneute Positionsprüfung schützen die aktuelle Testwelt davor, dass eine geöffnete Stadtansicht später aus der Ferne benutzt wird. Sie werden durch serverseitige virtuelle Reise- und Ankunftsregeln ersetzt, sobald der entsprechende Slice umgesetzt ist.
 
 ## Positionsquelle
 
@@ -37,11 +39,11 @@ Die nachgelagerte Spiellogik arbeitet nur mit einer normalisierten Position aus:
 - Zeitstempel,
 - Positionsquelle beziehungsweise Metadaten, soweit technisch nötig.
 
-Für Alpha 1 wird die Position per Mausklick auf der MapLibre-Karte gesetzt. Später wird dieselbe Schnittstelle durch GPS ersetzt. Stadt-, Markt- und Handelslogik dürfen nicht direkt vom Kartenklick oder der Browser-Geolocation abhängen.
+Für Alpha 1 bis Alpha 5 wird die Position per Mausklick auf der MapLibre-Karte gesetzt. Die langfristige Eingabe ist eine serverseitig verwaltete virtuelle Flottenposition, nicht Browser-Geolocation oder GPS. Stadt-, Markt- und Handelslogik dürfen nicht direkt von Kartenklick, Browser-Geolocation oder einer späteren Positionsquelle abhängen.
 
-## Spätere Betrugsprävention
+## Historische GPS-Betrugsprävention
 
-Nicht Bestandteil von Alpha 1, aber technisch vorzubereiten:
+Nicht Bestandteil von Alpha 1; diese historische Liste ist keine Vorgabe für die virtuelle Karibik:
 
 - regelmäßige Positionsübermittlung,
 - serverseitige Prüfung von Distanz und Zeitdifferenz,
@@ -51,9 +53,9 @@ Nicht Bestandteil von Alpha 1, aber technisch vorzubereiten:
 
 Konkrete Grenzwerte und Sanktionen werden in einer späteren Alpha festgelegt.
 
-## Kartenereignisse
+## Spätere Kartenereignisse
 
-An real existierenden Punkten von Interesse können temporäre Ereignisse erscheinen.
+An virtuellen Kartenpunkten können später temporäre Ereignisse erscheinen.
 
 ### Fässer
 
@@ -80,6 +82,6 @@ Mögliche Umsetzung:
 - Community-Challenge, bei der viele Spieler Baumaterialien liefern,
 - besondere Orte und Denkmäler können dadurch zu neuen Zentren werden.
 
-## Alpha 1
+## Alpha-Testzugang
 
-Alpha 1 umfasst nur drei fest konfigurierte Inselstädte und eine Debug-Position. OSM-Import, echtes GPS, Anti-Cheat, Kartenereignisse, dynamische Inseln und Stadtgründungen sind ausgeschlossen.
+Alpha 1 bis Alpha 5 umfassen nur drei fest konfigurierte Inselstädte und eine Debug-Position. Die Orderbuch- und Wirtschaftslogik bleibt unabhängig von dieser Übergangsposition. OSM-Import, echtes GPS, Karibikkarte, virtuelle Reisen, Anti-Cheat, Kartenereignisse, dynamische Inseln und Stadtgründungen sind ausgeschlossen.

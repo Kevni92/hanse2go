@@ -2,7 +2,9 @@
 
 ## Grundidee
 
-Hanse2Go ist ein GPS-basiertes Handels- und Aufbauspiel, inspiriert von klassischen Titeln wie Port Royale 2. Die reale Umgebung wird spielerisch als Ozean interpretiert. Ausgewählte reale Orte erscheinen als Inselstädte. Der Spieler bewegt seine aktive Flotte durch seine physische Bewegung und kann nur mit Städten und Kartenobjekten interagieren, wenn er sich innerhalb ihres serverseitig geprüften Radius befindet.
+Hanse2Go ist ein browserbasiertes Handels-, Produktions- und Aufbauspiel, inspiriert von klassischen Titeln wie Port Royale 2. Langfristig zeigt es eine virtuelle Karibik mit Meer, Landmassen, Inseln, Häfen und Städten. Spieler bewegen ihre Flotten über diese zusammenhängende Welt durch serverseitig berechnete virtuelle Reisen.
+
+Die bisherige Debug-Position mit Lambrecht, Neustadt und Mannheim bleibt ausschließlich ein deterministischer Alpha-Testzugang, bis ein eigener Karten- und Reiseslice die virtuelle Karibikwelt einführt. Sie ist keine langfristige Produktanforderung.
 
 ## Gemeinsame Spielwelt
 
@@ -15,23 +17,18 @@ Hanse2Go ist ein GPS-basiertes Handels- und Aufbauspiel, inspiriert von klassisc
 
 ## Kern-Spielablauf
 
-1. Der Spieler bewegt sich real zu einer Inselstadt oder einem Kartenereignis.
-2. Der Server bestätigt, dass sich die aktive Flotte im erlaubten Radius befindet.
-3. Der Spieler kauft günstige Waren, sammelt Waren oder erfüllt Transportaufträge.
-4. Er bewegt sich zu einer anderen Stadt mit höherer Nachfrage.
+1. Der Spieler disponiert seine Flotte zu einer virtuellen Stadt oder einem späteren Kartenereignis.
+2. Der Server berechnet Strecke, Geschwindigkeit, Abfahrt und Ankunft der virtuellen Reise.
+3. Der Spieler handelt gedeckte Limit Orders, produziert Waren oder erfüllt spätere Transportaufträge.
+4. Er reist zu einer anderen Stadt mit anderen Angeboten und Nachfragen.
 5. Dort verkauft er Waren gewinnbringend.
 6. Durch Handel steigen Vermögen und lokale Beliebtheit.
 7. Später werden Kontore, Produktionsgebäude, weitere Schiffe und automatische Handelsrouten freigeschaltet.
 8. Langfristig beeinflussen Spieler gemeinsam Versorgung, Wachstum, Wohlstand und Erscheinungsbild der Städte.
 
-## Spielerische Priorität echter Bewegung
+## Virtuelle Reise und Handelsrouten
 
-Echte Bewegung soll die schnellste und direkteste Form des Handels bleiben. Automatische Handelsrouten sind später möglich, aber:
-
-- sie benötigen zusätzliche Schiffe und Flotten,
-- sie sind kostspielig,
-- sie bewegen sich virtuell deutlich langsamer als ein real reisender Spieler,
-- ihre Geschwindigkeit richtet sich nach dem langsamsten Schiff der Flotte.
+Virtuelle Flottenreisen werden in einem eigenen späteren Slice eingeführt. Geschwindigkeit, Strecke und spätere Reiseeinflüsse bestimmen die Dauer. Automatische Handelsrouten benötigen zusätzliche Schiffe, Kapital und serverseitige Routenkonfiguration; sie sind kein Alpha-5-Umfang.
 
 ## Langfristige Systeme
 
@@ -52,8 +49,8 @@ Spätere Entwicklungsstufen umfassen unter anderem:
 - **Spielspaß vor strengem Realismus:** Inseln können aus spielerischen Gründen auch an ungewöhnlichen Orten entstehen.
 - **Gemeinsame Konsequenzen:** Handel und Produktion eines Spielers verändern die wirtschaftliche Lage für alle.
 - **Verständliche Tiefe:** Wirtschaftliche Zusammenhänge sollen dynamisch sein, aber über wenige klare Werte erklärbar bleiben.
-- **Mobile First:** Die aktive Bewegung und der Handel funktionieren primär auf dem Smartphone; komplexere Verwaltung darf später zusätzlich am Desktop komfortabler sein.
+- **Mobile First:** Handel und Verwaltung funktionieren primär auf dem Smartphone; komplexere Verwaltung bleibt am Desktop komfortabel.
 
 ## Abgrenzung Alpha 1
 
-Alpha 1 bildet nur den serverautoritativen Handel mit drei statischen Städten und einer Debug-Position ab. Die langfristigen Systeme in diesem Dokument sind verbindliche Zielrichtung, aber nicht automatisch Bestandteil der ersten Alpha.
+Alpha 1 bis Alpha 5 verwenden weiterhin drei statische Teststädte und eine Debug-Position als Übergang. Die langfristige virtuelle Karibik und virtuelle Flottenreisen sind verbindliche Zielrichtung, aber nicht Bestandteil dieser Alphas.
