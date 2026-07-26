@@ -50,7 +50,7 @@ async function refreshState() { try { state.value = await fetchGameState(); if (
         <strong>{{ reachable[0] ? cityName(reachable[0].id) : '' }} ist erreichbar</strong>
         <button class="enter-city" type="button" @click="enterCity(reachable[0]!.id)">Stadt betreten</button>
       </section>
-      <CityView v-if="openCity" :city="openCity" :goods="state.goods" :fleet="state.fleet" :player="state.player" @close="openCity = undefined" @traded="refreshState" />
+      <CityView v-if="openCity" :city="openCity" :goods="state.goods" :fleet="state.fleet" :player="state.player" :state="state" @close="openCity = undefined" @traded="refreshState" />
       <PlayerHud v-if="hudView" :view="hudView" :player="state.player" :fleet="state.fleet" :goods="state.goods" @close="hudView = undefined" @change-view="hudView = $event" />
     </template>
   </main>

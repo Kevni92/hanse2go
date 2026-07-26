@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { City, Fleet, Good, Player } from '@hanse2go/shared';
+import type { City, Fleet, GameState, Good, Player } from '@hanse2go/shared';
 import { cityName, goodName } from './i18n.js';
 import BuildingsView from './BuildingsView.vue';
 import MarketView from './MarketView.vue';
 import HarborView from './HarborView.vue';
 
-defineProps<{ city: City; goods: Good[]; fleet: Fleet; player: Player }>();
+defineProps<{ city: City; goods: Good[]; fleet: Fleet; player: Player; state?: GameState }>();
 defineEmits<{ close: []; traded: [] }>();
 const tab = ref<'overview' | 'production' | 'market' | 'buildings' | 'harbor'>('overview');
 const prosperityLabel = (value: number) => value < 30 ? 'einfach' : value < 60 ? 'wohlhabend' : 'reich';
@@ -20,7 +20,7 @@ const prosperityLabel = (value: number) => value < 30 ? 'einfach' : value < 60 ?
       <h3>Stadtübersicht</h3><dl><div><dt>Bevölkerung</dt><dd>{{ city.population.toLocaleString('de-DE') }}</dd></div><div><dt>Wohlstand</dt><dd>{{ city.prosperity }} · {{ prosperityLabel(city.prosperity) }}</dd></div><div><dt>Beliebtheit</dt><dd>{{ city.popularity }} %</dd></div><div><dt>Kontor</dt><dd>{{ city.hasKontor ? 'vorhanden' : 'nicht vorhanden' }}</dd></div></dl>
     </article>
     <article v-else-if="tab === 'production'" class="city-content"><h3>Produktionsschwerpunkte</h3><p>Diese Insel ist besonders geeignet für:</p><ul><li v-for="focus in city.productionFocus" :key="focus">{{ goodName(focus) }}</li></ul></article>
-    <article v-else-if="tab === 'market'" class="city-content"><MarketView :city="city" :goods="goods" :fleet="fleet" :player="player" @traded="$emit('traded')" /></article>
+    <article v-else-if="tab === 'market'" class="city-content"><MarketView :city="city" :goods="goods" :fleet="fleet" :player="player" :state="state" @traded="$emit('traded')" /></article>
     <article v-else-if="tab === 'buildings'" class="city-content"><BuildingsView :city="city" :goods="goods" @changed="$emit('traded')" /></article>
     <article v-else class="city-content"><HarborView :city="city" /></article>
   </section>
