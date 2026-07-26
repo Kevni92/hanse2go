@@ -25,7 +25,7 @@ tests/
 - Vue 3
 - TypeScript
 - Vite
-- MapLibre GL JS
+- MapLibre GL JS für die aktuelle Alpha-Testkarte; eine virtuelle Karibikkarte erhält einen späteren eigenen Slice
 - komponentenbezogenes CSS ohne verpflichtendes UI-Framework
 - Mobile First mit Desktop-Unterstützung
 - Vitest für Komponenten- und Clientlogiktests
@@ -65,11 +65,11 @@ Der Client darf Werte zur flüssigen Bedienung voranzeigen. Der endgültige Zust
 
 Die Spiellogik erhält eine normalisierte Position und kennt deren Eingabegerät nicht.
 
-- Alpha 1: Debug-Position per Kartenklick
-- später: GPS-Position
-- spätere Alpha: serverseitige Plausibilitäts- und Geschwindigkeitsprüfung
+- Alpha 1 bis Alpha 5: Debug-Position per Kartenklick in der deterministischen Testwelt
+- später: serverseitig verwaltete virtuelle Flottenpositionen und Reisen auf der Karibikkarte
+- mögliche spätere Positions- oder Reisevalidierung bleibt von Markt und Wirtschaft getrennt
 
-Kartenklick und Browser-Geolocation dürfen nicht direkt mit Stadt- oder Handelslogik gekoppelt werden.
+Kartenklick, Browser-Geolocation und spätere virtuelle Reisen dürfen nicht direkt mit Stadt- oder Handelslogik gekoppelt werden.
 
 ## REST-Kommunikation
 

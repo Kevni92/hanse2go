@@ -4,7 +4,7 @@
 
 Ab Alpha 4 steuert der Spieler genau eine aktive Flotte aus konkreten, dauerhaft identifizierten Schiffen. Die aus Alpha 3 migrierte Startflotte enthält eine konkrete Pinasse. Kauf, Verkauf, Umbenennung und Flottenwechsel erhalten dieselbe Schiffsentität; nur Weltinitialisierung und erfolgreicher Schiffsbau erzeugen ein Schiff.
 
-Die aktive Flotte repräsentiert die GPS-Position des Spielers. Sie bewegt sich direkt mit seiner realen beziehungsweise in Alpha 1 simulierten Position. Ihre virtuelle Geschwindigkeit wird in Alpha 4 angezeigt, bewegt sie aber noch nicht automatisch.
+Die aktive Flotte verwendet in Alpha 4 und Alpha 5 die Debug-Position der Testwelt als lokalen Zugriffsnachweis. Langfristig hat sie eine serverseitige virtuelle Position auf der Karibikkarte; ihre Geschwindigkeit, Strecke und spätere Reiseeinflüsse bestimmen die Reisezeit. Alpha 5 führt diese Reise nicht ein.
 
 ## Auswirkungen mehrerer Schiffe
 
@@ -49,7 +49,7 @@ Jede Wareneinheit entspricht einer Tonne. Ist der Laderaum voll, können keine w
 
 ## Spätere automatische Handelsrouten
 
-Zusätzliche Flotten und automatische Handelsrouten werden nach Alpha 4 ergänzt. Solche Flotten bewegen sich später mit virtueller Geschwindigkeit, die sich nach dem langsamsten Schiff richtet. Sie benötigen eigene Schiffe, Kapital und Routenkonfiguration; echte Bewegung bleibt die schnellste direkte Handelsform.
+Zusätzliche Flotten und automatische Handelsrouten werden in einem späteren virtuellen Karibik-Slice ergänzt. Solche Flotten bewegen sich mit virtueller Geschwindigkeit, die sich nach dem langsamsten Schiff richtet. Sie benötigen eigene Schiffe, Kapital und Routenkonfiguration.
 
 ## Verlust und Bankrott
 
