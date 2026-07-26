@@ -193,6 +193,14 @@ Die historischen Alpha-1-bis-Alpha-4-Routen `POST /market/quote` und
 Die vollständigen Lese-/Schreibverträge, Versionen, Idempotenz und Rollback-
 Grenzen stehen in [`alpha-5/api-contracts.md`](alpha-5/api-contracts.md).
 
+Die Alpha-5-CI verwendet die Presets `alpha5-baseline`, `alpha5-order-ready`
+und `alpha5-two-players`. Bei einem Fehler bewahrt sie Trace, Screenshot,
+Browserkonsole, Serverlog, Seed, Orderbuch, Orders, Executions, Ledger,
+Konten, Reservierungen, Stadt-/Kontorbestände und den letzten Tickbericht auf.
+Die vollständige Testmatrix und die Bilanzabnahme stehen in
+[`alpha-5/test-world.md`](alpha-5/test-world.md) und
+[`alpha-5/acceptance.md`](alpha-5/acceptance.md).
+
 ## Arbeitsablauf
 
 Für jedes Issue wird ein neuer Branch vom aktuellen `main` erstellt. Es gibt genau einen Pull Request pro Issue gegen `main`. Alle GitHub-CI-Prüfungen müssen erfolgreich sein. Danach merged der Agent den PR und löscht den gemergten Branch. Details stehen in [`../AGENTS.md`](../AGENTS.md).

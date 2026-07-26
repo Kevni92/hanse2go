@@ -85,7 +85,8 @@
 - [`alpha-5/api-contracts.md`](alpha-5/api-contracts.md) – gemeinsame Vertragsgrundsätze für Orderbefehle
 - [`alpha-5/user-interface.md`](alpha-5/user-interface.md) – responsive Orderbuch-, Order- und Treasury-Oberfläche
 - [`alpha-5/tick.md`](alpha-5/tick.md) – atomare Tick-Reihenfolge, Reservierungsschutz und Tickbericht
-- [`alpha-5/acceptance.md`](alpha-5/acceptance.md) – Bilanzinvariante für Befehle und Ticks
+- [`alpha-5/test-world.md`](alpha-5/test-world.md) – Baseline und reproduzierbare Alpha-5-Presets
+- [`alpha-5/acceptance.md`](alpha-5/acceptance.md) – vollständige Orderbuch-, Bilanz- und E2E-Abnahme
 
 ## Umgang mit Lücken
 
