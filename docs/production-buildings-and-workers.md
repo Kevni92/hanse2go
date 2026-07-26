@@ -6,7 +6,7 @@ Produktionsgebäude arbeiten nicht kontinuierlich, sondern in festen, konfigurie
 
 Beispiel: Ein Forstbetrieb produziert alle 30 Minuten eine Tonne Holz. Konkrete Zykluszeiten, Mengen, Löhne und Baukosten sind Balancingwerte.
 
-Bei jedem Zyklus prüft der Server:
+Ab Alpha 3 prüft der Server bei jedem Stundentick:
 
 1. Sind die benötigten Eingangswaren im lokalen Kontor des Eigentümers vorhanden?
 2. Sind ausreichend Arbeiter zugeteilt?
@@ -22,13 +22,16 @@ Bei jedem Zyklus prüft der Server:
 - Stadtmarkt und Kontor sind getrennte Bestände. Ein Gebäude kauft seine Eingänge nicht automatisch vom Markt.
 - Der Spieler muss die Versorgung seiner Betriebe durch Handel und Lagerverwaltung sicherstellen.
 
-## Löhne
+## Alpha 3: Beschäftigung und Löhne
 
-- Jedes Gebäude benötigt eine feste Zahl allgemeiner Arbeiter.
-- Arbeiter werden pro Produktionszyklus bezahlt.
+- Jedes Produktionsgebäude besitzt zusätzlich zu seiner Bauklasse genau eine Beschäftigungsklasse: `simple`, `medium` oder `premium`.
+- Die Beschäftigungsklasse bestimmt Arbeiterbedarf und Lohn je Arbeiter; sie ist nicht die Bauklasse.
+- Jedes Gebäude benötigt eine feste Zahl allgemeiner Arbeiter und zahlt sie pro Stundentick.
 - Löhne fallen auch an, wenn wegen fehlender Eingangswaren keine Produktion stattfindet.
-- Kann ein Eigentümer Löhne nicht zahlen, muss der genaue Stillstands- und Schuldenfall später definiert werden.
-- Gezahlte Löhne fließen in das gemeinsame Bevölkerungsvermögen der Stadt.
+- Ein Eigentümer kann keine Lohnschulden erzeugen. Fehlendes Gold begrenzt die finanzierbare Arbeitsnachfrage bereits vor der Verteilung.
+- Gezahlte Löhne bilden das aggregierte Bevölkerungseinkommen des aktuellen Ticks; es gibt weder Einwohnerkonten noch ein Stadtbudget.
+
+Die vollständige Zuordnung und die verbindlichen Formeln stehen in [`alpha-3/building-workforce-classes.md`](alpha-3/building-workforce-classes.md) und [`alpha-3/workforce-and-wages.md`](alpha-3/workforce-and-wages.md).
 
 ## Arbeiterverteilung
 
@@ -40,7 +43,7 @@ Für den ersten Produktionsumfang gibt es nur einen allgemeinen Arbeitertyp ohne
 - Ein Gebäude mit 100 benötigten, aber nur 50 zugeteilten Arbeitern arbeitet mit 50 Prozent Arbeitereffizienz.
 - Ein Gebäude ohne Arbeiter steht still.
 
-Für konkurrierende Prioritäten mehrerer Spieler gilt als spätere Standardrichtung: zuerst werden höhere Prioritätsklassen berücksichtigt, innerhalb derselben Klasse fair und deterministisch verteilt. Der konkrete Algorithmus wird im Implementierungs-Issue festgelegt und darf keinen Spieler dauerhaft willkürlich bevorzugen.
+Die stadtweite faire Verteilung und die Prioritäten innerhalb eines Spielers werden verbindlich durch das nachfolgende Alpha-3-Arbeiterverteilungskonzept festgelegt. Sie ergänzen die Beschäftigungsklassen.
 
 ## Produktionseffizienz
 
@@ -115,3 +118,5 @@ Alpha 2 ersetzt für seinen Umfang die oben beschriebenen offenen Arbeits-, Lohn
 Jedes Produktionsgebäude ist eine eigene Instanz; mehrere Instanzen desselben Typs sind erlaubt. Nur das Kontor ist je Spieler und Stadt einmalig und muss vor jeder Produktionsinstanz vorhanden sein. Die verbindlichen Baukosten stehen in [`alpha-2/buildings-and-construction.md`](alpha-2/buildings-and-construction.md).
 
 Alle Alpha-2-Rezepte laufen einmal pro manuell simuliertem Stundentick. Rohstoffgebäude haben keine Eingangswaren. Verarbeitende Gebäude verbrauchen alle Eingänge und erzeugen alle Ausgänge vollständig oder bleiben ohne Teilverbrauch stehen. Die vollständige Tabelle steht in [`alpha-2/production-recipes.md`](alpha-2/production-recipes.md).
+
+Alpha 3 ersetzt diese Produktionsregel mit proportionaler Teilproduktion und Hundertstel-Tonnen. Die Lohnpflicht dieses Dokuments bleibt dabei unverändert.

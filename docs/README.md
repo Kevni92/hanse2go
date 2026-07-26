@@ -45,6 +45,12 @@
 - [`alpha-2/test-world.md`](alpha-2/test-world.md) – Startwerte und Testbetrieb
 - [`alpha-2/acceptance.md`](alpha-2/acceptance.md) – Abnahme mit realem Client und Server
 
+## Alpha 3
+
+- [`alpha-3/scope.md`](alpha-3/scope.md) – verbindlicher Umfang für Arbeitskräfte, Löhne, Wohnraum, Wohlstand und Wachstum
+- [`alpha-3/building-workforce-classes.md`](alpha-3/building-workforce-classes.md) – Beschäftigungsklassen aller Produktionsgebäude
+- [`alpha-3/workforce-and-wages.md`](alpha-3/workforce-and-wages.md) – Arbeitsnachfrage, Lohnbudget und atomare Lohnzahlung
+
 ## Umgang mit Lücken
 
 Explizite Entscheidungen in `docs/` dürfen nicht verändert oder stillschweigend ersetzt werden. Für Alpha 1 gilt zusätzlich: Fehlt nur ein technisches Detail, das die fachliche Absicht nicht verändert, wählt der Agent die einfachste deterministische, serverautoritative und testbare Lösung. Die Entscheidung wird im Pull Request begründet und bei dauerhafter Bedeutung in `docs/` ergänzt. Nur echte fachliche Widersprüche oder Änderungen am Produktumfang erfordern eine Rückfrage.
