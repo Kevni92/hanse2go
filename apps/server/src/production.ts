@@ -17,11 +17,11 @@ export function createBuildingCatalog(config: BuildingsConfig): BuildingCatalog 
   });
 
   const kontor: BuildingCatalogEntry = {
-    buildingType: config.kontorType, name: config.kontor.name, kind: 'kontor',
+    buildingType: config.kontorType, kind: 'kontor',
     cost: cost(config.kontor.gold, config.kontor.materials), inputs: {}, outputs: {},
   };
   const production: BuildingCatalogEntry[] = config.production.map((entry) => ({
-    buildingType: entry.buildingType, name: entry.name, kind: entry.kind, buildingClass: entry.buildingClass,
+    buildingType: entry.buildingType, kind: entry.kind, buildingClass: entry.buildingClass,
     cost: cost(config.classes[entry.buildingClass].gold, config.classes[entry.buildingClass].materials),
     inputs: { ...entry.inputs }, outputs: { ...entry.outputs },
   }));

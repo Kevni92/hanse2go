@@ -4,12 +4,12 @@
 
 Der Ruf ist ein ganzzahliger Wert `0..100` je Kombination aus Spieler und Stadt. Er beginnt bei `0`; Bruchteile werden nicht gespeichert. Nach jeder erfolgreichen Markttransaktion prüft ausschließlich der Server den Bestand der gehandelten Ware vor und nach der Buchung.
 
-| Ruf | Status |
-|---:|---|
-| 0–19 | Fremder |
-| 20–49 | Bekannter Händler |
-| 50–79 | Angesehener Händler |
-| 80–100 | Vertrauenswürdiger Bürger |
+| Ruf | Status | Technische ID |
+|---:|---|---|
+| 0–19 | Fremder | `stranger` |
+| 20–49 | Bekannter Händler | `known_trader` |
+| 50–79 | Angesehener Händler | `respected_trader` |
+| 80–100 | Vertrauenswürdiger Bürger | `trusted_citizen` |
 
 ## Nützlicher Handel und Berechnung
 

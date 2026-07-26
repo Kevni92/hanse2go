@@ -2,6 +2,7 @@
 import maplibregl, { type Map } from 'maplibre-gl';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { City, Fleet, ReachableCity } from '@hanse2go/shared';
+import { cityName } from './i18n.js';
 
 const props = defineProps<{ cities: City[]; fleet: Fleet; reachableCities: ReachableCity[]; disabled?: boolean }>();
 const emit = defineEmits<{ debugPosition: [position: { longitude: number; latitude: number }] }>();
@@ -10,7 +11,7 @@ let map: Map | undefined;
 
 const cityFeatures = computed(() => props.cities.map((city) => ({
   type: 'Feature' as const,
-  properties: { id: city.id, name: city.name, reachable: props.reachableCities.some((entry) => entry.cityId === city.id && entry.reachable) },
+  properties: { id: city.id, name: cityName(city.id), reachable: props.reachableCities.some((entry) => entry.cityId === city.id && entry.reachable) },
   geometry: { type: 'Point' as const, coordinates: [city.position.longitude, city.position.latitude] },
 })));
 

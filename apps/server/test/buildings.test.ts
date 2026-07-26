@@ -31,12 +31,12 @@ describe('building API', () => {
     expect(current.catalog).toHaveLength(21);
     expect(current.kontor).toMatchObject({ buildingType: 'kontor', cost: { landGold: 5_000, buildGold: 5_000, totalGold: 10_000, materials: kontorMaterials } });
     expect(current.catalog.find((entry: { buildingType: string }) => entry.buildingType === 'sawmill')).toMatchObject({
-      name: 'Sägewerk', kind: 'processing', buildingClass: 'einfach',
+      kind: 'processing', buildingClass: 'simple',
       cost: { landGold: 5_000, buildGold: 2_500, totalGold: 7_500, materials: simpleMaterials },
       inputs: { wood: 10 }, outputs: { planks: 10 },
     });
     expect(current.catalog.find((entry: { buildingType: string }) => entry.buildingType === 'smithy')).toMatchObject({
-      buildingClass: 'hochwertig', cost: { buildGold: 7_500, totalGold: 12_500, materials: { wood: 40, planks: 30, bricks: 30, tools: 20 } },
+      buildingClass: 'premium', cost: { buildGold: 7_500, totalGold: 12_500, materials: { wood: 40, planks: 30, bricks: 30, tools: 20 } },
       inputs: { iron: 10, charcoal: 10 }, outputs: { tools: 10 },
     });
   });

@@ -86,14 +86,15 @@ Zeigt die konfigurierten Produktionsschwerpunkte der Stadt, nach Bedeutung sorti
 
 ## Marktübersicht
 
-Alle 22 Waren werden nach Kategorien gruppiert:
+Alle 22 Waren werden nach Kategorien gruppiert. Verbindlich ist die technische
+ID; der deutsche Anzeigename kommt aus der Sprachdatei:
 
-- Nahrung
-- Baustoffe
-- Handwerk
-- Kleidung
-- Haushaltswaren
-- Luxuswaren
+- `food` – Nahrung
+- `building_materials` – Baustoffe
+- `crafts` – Handwerk
+- `clothing` – Kleidung
+- `household` – Haushaltswaren
+- `luxury` – Luxuswaren
 
 Jede Warenzeile besitzt vier Informationsbereiche:
 

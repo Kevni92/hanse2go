@@ -32,6 +32,9 @@ importers:
 
   apps/client:
     dependencies:
+      '@hanse2go/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@hanse2go/shared':
         specifier: workspace:*
         version: link:../../packages/shared

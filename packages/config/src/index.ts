@@ -1,7 +1,9 @@
 import rawGameConfig from '../game-config.json' with { type: 'json' };
+import type { Locale } from './locale.js';
 import type { GameConfig } from './types.js';
 
 export type * from './types.js';
+export type { Locale, LocaleCode } from './locale.js';
 
 /**
  * Lädt die zentrale Spielkonfiguration. Alle statischen Spieleigenschaften stehen ausschließlich
@@ -81,6 +83,7 @@ export function validateGameConfig(config: GameConfig): void {
       throw new ConfigError(`Die Bevölkerung von "${city.id}" muss eine ganze Zahl ab null sein.`);
     }
     for (const goodId of goodIds) requireTons(city.stock[goodId], `Der Startbestand von "${city.id}"/"${goodId}"`);
+    for (const goodId of city.productionFocus) requireGood(goodId, `Der Produktionsschwerpunkt von "${city.id}"`);
   }
 
   const buildings = config.buildings;
@@ -117,6 +120,26 @@ export function validateGameConfig(config: GameConfig): void {
       requireTons(amount, `Die Rezeptmenge "${goodId}" von "${entry.buildingType}"`);
     }
   }
+}
+
+/** Stellt sicher, dass eine Sprachdatei jeden fachlichen Bezeichner der Konfiguration benennt. */
+export function validateLocale(config: GameConfig, locale: Locale): void {
+  const missing: string[] = [];
+  const require = (names: Record<string, string>, id: string, group: string) => {
+    if (!names[id]) missing.push(`${group}.${id}`);
+  };
+  for (const good of config.goods) {
+    require(locale.goods, good.id, 'goods');
+    require(locale.goodCategories, good.category, 'goodCategories');
+  }
+  for (const city of config.cities) require(locale.cities, city.id, 'cities');
+  require(locale.buildings, config.buildings.kontorType, 'buildings');
+  for (const entry of config.buildings.production) {
+    require(locale.buildings, entry.buildingType, 'buildings');
+    require(locale.buildingClasses, entry.buildingClass, 'buildingClasses');
+  }
+  for (const threshold of config.reputation.statusThresholds) require(locale.reputationStatuses, threshold.status, 'reputationStatuses');
+  if (missing.length) throw new ConfigError(`Der Sprachdatei fehlen Anzeigenamen: ${missing.join(', ')}.`);
 }
 
 export class ConfigError extends Error {

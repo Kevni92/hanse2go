@@ -54,7 +54,7 @@ export class BuildingService {
       }
       const instance: Building = {
         id: `${cityId}-${entry.buildingType}-${state.buildings.filter((building) => building.cityId === cityId && building.buildingType === entry.buildingType).length + 1}`,
-        playerId: state.player.id, cityId, buildingType: entry.buildingType, name: entry.name, kind: entry.kind, buildingClass: entry.buildingClass,
+        playerId: state.player.id, cityId, buildingType: entry.buildingType, kind: entry.kind, buildingClass: entry.buildingClass,
         status: 'built', lastInputs: {}, lastOutputs: {},
       };
       state.buildings.push(instance);

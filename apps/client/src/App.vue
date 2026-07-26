@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import type { City, GameState, ReachableCity } from '@hanse2go/shared';
 import { fetchGameState, fetchReachableCity, setDebugPosition } from './api.js';
+import { cityName } from './i18n.js';
 import CityView from './CityView.vue';
 import MapCanvas from './MapCanvas.vue';
 import PlayerHud from './PlayerHud.vue';
@@ -46,7 +47,7 @@ async function refreshState() { try { state.value = await fetchGameState(); if (
     <template v-else-if="state">
       <MapCanvas :cities="state.cities" :fleet="state.fleet" :reachable-cities="reachableCities" :disabled="isMoving" @debug-position="moveFleet" />
       <section v-if="reachable.length" class="city-entry" aria-live="polite">
-        <strong>{{ reachable[0]?.name }} ist erreichbar</strong>
+        <strong>{{ reachable[0] ? cityName(reachable[0].id) : '' }} ist erreichbar</strong>
         <button class="enter-city" type="button" @click="enterCity(reachable[0]!.id)">Stadt betreten</button>
       </section>
       <CityView v-if="openCity" :city="openCity" :goods="state.goods" :fleet="state.fleet" :player="state.player" @close="openCity = undefined" @traded="refreshState" />

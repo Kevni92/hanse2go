@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import type { BuildingOffer, City, CityBuildingsOverview, Good, TickReport, TransferDirection } from '@hanse2go/shared';
 import { ApiRequestError, buildBuilding, buyConcession, fetchBuildings, simulateNextHour, transferKontorGoods } from './api.js';
+import { buildingClassName, buildingName, cityName, goodName, reputationStatusName } from './i18n.js';
 
 const props = defineProps<{ city: City; goods: Good[] }>();
 const emit = defineEmits<{ changed: [] }>();
@@ -14,7 +15,6 @@ const busy = ref(false);
 const ticking = ref(false);
 const error = ref('');
 
-const goodName = (goodId: string) => props.goods.find((good) => good.id === goodId)?.name ?? goodId;
 const formatGold = (value: number) => value.toLocaleString('de-DE');
 const amounts = (entries: Record<string, number>) => Object.entries(entries).map(([goodId, amount]) => `${amount} t ${goodName(goodId)}`).join(', ');
 
@@ -99,7 +99,7 @@ onMounted(load);
         <h4>Örtlicher Ruf</h4>
         <dl>
           <div><dt>Ruf</dt><dd>{{ overview.reputation.value }} / 100</dd></div>
-          <div><dt>Status</dt><dd>{{ overview.reputation.status }}</dd></div>
+          <div><dt>Status</dt><dd>{{ reputationStatusName(overview.reputation.status) }}</dd></div>
           <div v-if="!overview.hasConcession"><dt>Fehlender Ruf</dt><dd>{{ missingReputation }}</dd></div>
           <div><dt>Baukonzession</dt><dd>{{ overview.hasConcession ? 'vorhanden' : `${formatGold(overview.concessionPrice)} Gold` }}</dd></div>
         </dl>
@@ -130,15 +130,15 @@ onMounted(load);
           <p class="hint">Freier Laderaum: {{ freeCapacity }} t</p>
           <p v-if="!transferGoods.length" class="hint">Es sind keine Waren in Flotte oder Kontor vorhanden.</p>
           <div v-for="good in transferGoods" :key="good.id" class="transfer" :data-testid="`kontor-transfer-${good.id}`">
-            <strong>{{ good.name }}</strong>
+            <strong>{{ goodName(good.id) }}</strong>
             <span><small>Flotte</small>{{ fleetCargo[good.id] ?? 0 }} t</span>
             <span><small>Kontor</small>{{ overview.kontorInventory[good.id] ?? 0 }} t</span>
-            <label :for="`transfer-${good.id}`" class="visually-hidden">Menge {{ good.name }}</label>
+            <label :for="`transfer-${good.id}`" class="visually-hidden">Menge {{ goodName(good.id) }}</label>
             <input :id="`transfer-${good.id}`" type="number" min="1" step="1" :value="quantityFor(good.id)" @input="setQuantity(good.id, Number(($event.target as HTMLInputElement).value))">
             <span class="transfer-actions">
-              <button type="button" :aria-label="`Höchstmenge ${good.name} einlagern`" :disabled="maximumFor(good.id, 'store') < 1 || busy" @click="setQuantity(good.id, maximumFor(good.id, 'store'))">Max</button>
+              <button type="button" :aria-label="`Höchstmenge ${goodName(good.id)} einlagern`" :disabled="maximumFor(good.id, 'store') < 1 || busy" @click="setQuantity(good.id, maximumFor(good.id, 'store'))">Max</button>
               <button type="button" :disabled="busy" @click="transfer(good.id, 'store')">Einlagern</button>
-              <button type="button" :aria-label="`Höchstmenge ${good.name} auslagern`" :disabled="maximumFor(good.id, 'retrieve') < 1 || busy" @click="setQuantity(good.id, maximumFor(good.id, 'retrieve'))">Max</button>
+              <button type="button" :aria-label="`Höchstmenge ${goodName(good.id)} auslagern`" :disabled="maximumFor(good.id, 'retrieve') < 1 || busy" @click="setQuantity(good.id, maximumFor(good.id, 'retrieve'))">Max</button>
               <button type="button" :disabled="busy" @click="transfer(good.id, 'retrieve')">Auslagern</button>
             </span>
           </div>
@@ -148,7 +148,7 @@ onMounted(load);
           <h4>Eigene Gebäude</h4>
           <ul class="own-buildings">
             <li v-for="building in overview.buildings" :key="building.id">
-              <strong>{{ building.name }}</strong>
+              <strong>{{ buildingName(building.buildingType) }}</strong>
               <span>{{ statusLabels[building.status] }}</span>
               <small v-if="building.reason === 'missing_inputs'">Grund: fehlende Eingangswaren</small>
               <small v-else-if="Object.keys(building.lastOutputs).length">Letzter Tick: {{ amounts(building.lastInputs) || 'kein Verbrauch' }} → {{ amounts(building.lastOutputs) }}</small>
@@ -159,12 +159,12 @@ onMounted(load);
         <section v-for="group in catalogGroups" :key="group.key" class="panel" :aria-label="group.title">
           <h4>{{ group.title }}</h4>
           <article v-for="entry in group.entries" :key="entry.buildingType" class="building-card" :data-testid="`building-card-${entry.buildingType}`">
-            <header><strong>{{ entry.name }}</strong><span>{{ entry.buildingClass }}</span></header>
+            <header><strong>{{ buildingName(entry.buildingType) }}</strong><span>{{ buildingClassName(entry.buildingClass) }}</span></header>
             <p>{{ formatGold(entry.cost.landGold) }} Gold Grundstück + {{ formatGold(entry.cost.buildGold) }} Gold Bau = {{ formatGold(entry.cost.totalGold) }} Gold</p>
             <p>Material: {{ amounts(entry.cost.materials) }}</p>
             <p>Je Stunde: {{ Object.keys(entry.inputs).length ? amounts(entry.inputs) : 'kein Eingang' }} → {{ amounts(entry.outputs) }}</p>
             <p v-if="entry.availability === 'requirements_missing'" class="missing">{{ (entry.missingRequirements as BuildingOffer['missingRequirements']).map((requirement) => requirementLabels[requirement]).join(' · ') }}<span v-if="entry.missingGold"> ({{ formatGold(entry.missingGold) }} Gold, {{ amounts(entry.missingMaterials) || 'kein Material' }})</span><span v-else-if="Object.keys(entry.missingMaterials).length"> ({{ amounts(entry.missingMaterials) }})</span></p>
-            <button type="button" :disabled="entry.availability !== 'buildable' || busy" @click="build(entry.buildingType)">{{ entry.name }} bauen</button>
+            <button type="button" :disabled="entry.availability !== 'buildable' || busy" @click="build(entry.buildingType)">{{ buildingName(entry.buildingType) }} bauen</button>
           </article>
         </section>
       </template>
@@ -184,7 +184,7 @@ onMounted(load);
               {{ entry.buildingId }}: {{ statusLabels[entry.status] }}<span v-if="entry.reason === 'missing_inputs'"> · fehlende Eingangswaren</span><span v-else> · {{ amounts(entry.inputs) || 'kein Verbrauch' }} → {{ amounts(entry.outputs) }}</span>
             </li>
           </ul>
-          <h5>Verbrauch in {{ city.name }}</h5>
+          <h5>Verbrauch in {{ cityName(city.id) }}</h5>
           <ul>
             <li v-for="entry in cityConsumption" :key="entry.goodId">
               {{ goodName(entry.goodId) }}: {{ entry.consumed }} / {{ entry.requested }} t · Fehlmenge {{ entry.requested - entry.consumed }} t · Bestand {{ entry.remainingStock }} t

@@ -31,7 +31,7 @@ describe('Playwright test reset', () => {
     const seeded = await app.inject({ method: 'POST', url: '/test/seed', payload: { gold: 42_000, reputation: { lambrecht: 80 }, cargo: { wood: 10 } } });
     expect(seeded.statusCode).toBe(200);
     expect(seeded.json().player.gold).toBe(42_000);
-    expect(seeded.json().reputations.find((entry: { cityId: string }) => entry.cityId === 'lambrecht')).toEqual({ cityId: 'lambrecht', value: 80, status: 'Vertrauenswürdiger Bürger' });
+    expect(seeded.json().reputations.find((entry: { cityId: string }) => entry.cityId === 'lambrecht')).toEqual({ cityId: 'lambrecht', value: 80, status: 'trusted_citizen' });
 
     const tooMuch = await app.inject({ method: 'POST', url: '/test/seed', payload: { cargo: { wood: 151 } } });
     expect(tooMuch.statusCode).toBe(409);
