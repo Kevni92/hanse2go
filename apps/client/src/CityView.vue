@@ -4,23 +4,25 @@ import type { City, Fleet, Good, Player } from '@hanse2go/shared';
 import { cityName, goodName } from './i18n.js';
 import BuildingsView from './BuildingsView.vue';
 import MarketView from './MarketView.vue';
+import HarborView from './HarborView.vue';
 
 defineProps<{ city: City; goods: Good[]; fleet: Fleet; player: Player }>();
 defineEmits<{ close: []; traded: [] }>();
-const tab = ref<'overview' | 'production' | 'market' | 'buildings'>('overview');
+const tab = ref<'overview' | 'production' | 'market' | 'buildings' | 'harbor'>('overview');
 const prosperityLabel = (value: number) => value < 30 ? 'einfach' : value < 60 ? 'wohlhabend' : 'reich';
 </script>
 
 <template>
   <section class="city-view" role="dialog" aria-modal="true" :aria-label="`${cityName(city.id)} Stadtansicht`">
     <header class="city-header"><div><small>Inselstadt</small><h2>{{ cityName(city.id) }}</h2></div><div class="city-hud"><span>{{ player.gold.toLocaleString('de-DE') }} G</span><span>{{ Object.values(fleet.cargo).reduce((total, amount) => total + amount, 0) }} / {{ fleet.capacity }} t</span></div><button type="button" aria-label="Stadtansicht schließen" @click="$emit('close')">×</button></header>
-    <nav aria-label="Stadtbereiche"><button :class="{ active: tab === 'overview' }" @click="tab = 'overview'">Übersicht</button><button :class="{ active: tab === 'production' }" @click="tab = 'production'">Produktion</button><button :class="{ active: tab === 'market' }" @click="tab = 'market'">Markt</button><button :class="{ active: tab === 'buildings' }" @click="tab = 'buildings'">Gebäude</button></nav>
+    <nav aria-label="Stadtbereiche"><button :class="{ active: tab === 'overview' }" @click="tab = 'overview'">Übersicht</button><button :class="{ active: tab === 'production' }" @click="tab = 'production'">Produktion</button><button :class="{ active: tab === 'market' }" @click="tab = 'market'">Markt</button><button :class="{ active: tab === 'buildings' }" @click="tab = 'buildings'">Gebäude</button><button data-testid="harbor-tab" :class="{ active: tab === 'harbor' }" @click="tab = 'harbor'">Hafen</button></nav>
     <article v-if="tab === 'overview'" class="city-content">
       <h3>Stadtübersicht</h3><dl><div><dt>Bevölkerung</dt><dd>{{ city.population.toLocaleString('de-DE') }}</dd></div><div><dt>Wohlstand</dt><dd>{{ city.prosperity }} · {{ prosperityLabel(city.prosperity) }}</dd></div><div><dt>Beliebtheit</dt><dd>{{ city.popularity }} %</dd></div><div><dt>Kontor</dt><dd>{{ city.hasKontor ? 'vorhanden' : 'nicht vorhanden' }}</dd></div></dl>
     </article>
     <article v-else-if="tab === 'production'" class="city-content"><h3>Produktionsschwerpunkte</h3><p>Diese Insel ist besonders geeignet für:</p><ul><li v-for="focus in city.productionFocus" :key="focus">{{ goodName(focus) }}</li></ul></article>
     <article v-else-if="tab === 'market'" class="city-content"><MarketView :city="city" :goods="goods" :fleet="fleet" :player="player" @traded="$emit('traded')" /></article>
-    <article v-else class="city-content"><BuildingsView :city="city" :goods="goods" @changed="$emit('traded')" /></article>
+    <article v-else-if="tab === 'buildings'" class="city-content"><BuildingsView :city="city" :goods="goods" @changed="$emit('traded')" /></article>
+    <article v-else class="city-content"><HarborView :city="city" /></article>
   </section>
 </template>
 
