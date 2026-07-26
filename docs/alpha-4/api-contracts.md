@@ -13,3 +13,9 @@ Der Kaufbefehl enthält mindestens `shipId`, `shipMarketVersion` und `idempotenc
 Der Verkaufsbefehl enthält mindestens `shipId` und `idempotencyKey`. Er überträgt ausschließlich ein eigenes, unzugeordnetes Schiff im aktuellen Hafen an den Systemmakler und schützt das letzte Spielerschiff.
 
 `SHIP_MARKET_VERSION_CONFLICT` signalisiert eine veraltete Kaufansicht. `IDEMPOTENCY_KEY_REQUIRED` signalisiert einen fehlenden Schlüssel. Die übrigen Fehlercodes und ihre fachlichen Bedingungen stehen in [`ports-and-ship-market.md`](ports-and-ship-market.md).
+
+## Schiffsbauauftrag
+
+Der Schiffsbau-Befehl enthält mindestens `shipTypeId`, einen optionalen `requestedShipName` und `idempotencyKey`. Er prüft Reichweite, lokale Werft, eigenes Kontor, Typ, Name, vollständiges Gold und Material. Bei Erfolg zieht der Server alles atomar ab und liefert den angelegten `shipBuildOrder`; er erzeugt noch kein Schiff.
+
+Fehlercodes sind `CITY_NOT_REACHABLE`, `SHIPYARD_NOT_AVAILABLE`, `KONTOR_REQUIRED`, `UNKNOWN_SHIP_TYPE`, `INSUFFICIENT_GOLD`, `INSUFFICIENT_SHIPBUILDING_MATERIALS`, `INVALID_SHIP_NAME`, `IDEMPOTENCY_KEY_REQUIRED`, `SHIP_BUILD_ORDER_NOT_FOUND` und `SHIP_BUILD_ORDER_STATE_CONFLICT`. Die Warteschlangen- und Ticksemantik steht in [`shipbuilding.md`](shipbuilding.md).
