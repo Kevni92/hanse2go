@@ -5,5 +5,5 @@
     "outDir": "dist",
     "resolveJsonModule": true
   },
-  "include": ["src", "game-config.json"]
+  "include": ["src", "game-config.json", "locales"]
 }

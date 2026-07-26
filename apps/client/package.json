@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@hanse2go/config": "workspace:*",
     "@hanse2go/shared": "workspace:*",
     "maplibre-gl": "^5.6.2",
     "vue": "^3.5.18"

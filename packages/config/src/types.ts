@@ -11,10 +11,11 @@ export interface WorldConfig {
 export interface PlayerConfig { id: string; name: string; startingGold: number }
 export interface FleetConfig { id: string; capacity: number; startPosition: GeoPoint }
 
-export interface GoodConfig { id: string; name: string; category: GoodCategory; basePrice: number; targetStock: number }
+export interface GoodConfig { id: string; category: GoodCategory; basePrice: number; targetStock: number }
 export interface CityConfig {
-  id: string; name: string; position: GeoPoint; radiusMeters: number;
+  id: string; position: GeoPoint; radiusMeters: number;
   population: number; prosperity: number; popularity: number;
+  /** Waren-IDs; der Anzeigename kommt aus der Sprachdatei. */
   productionFocus: string[];
   stock: Record<string, number>;
 }
@@ -35,9 +36,8 @@ export interface ConsumptionConfig { populationUnit: number; perPopulationUnit: 
 
 export interface BuildingClassCost { gold: number; materials: Record<string, number> }
 export interface ConcessionConfig { price: number; requiredReputation: number }
-export interface KontorConfig extends BuildingClassCost { name: string }
 export interface ProductionBuildingConfig {
-  buildingType: string; name: string; kind: BuildingKind; buildingClass: BuildingClass;
+  buildingType: string; kind: BuildingKind; buildingClass: BuildingClass;
   inputs: Record<string, number>; outputs: Record<string, number>;
 }
 export interface BuildingsConfig {
@@ -46,7 +46,7 @@ export interface BuildingsConfig {
   landPrice: number;
   concession: ConcessionConfig;
   classes: Record<BuildingClass, BuildingClassCost>;
-  kontor: KontorConfig;
+  kontor: BuildingClassCost;
   production: ProductionBuildingConfig[];
 }
 

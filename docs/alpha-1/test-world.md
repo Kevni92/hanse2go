@@ -16,13 +16,13 @@ Die Testwelt ist bewusst klein und vollständig deterministisch. Ihre Werte dien
 
 ## Städte
 
-Die Namen orientieren sich an den besprochenen Beispielorten. Die Koordinaten sind für Alpha 1 fest konfiguriert; sie werden nicht aus OpenStreetMap importiert.
+Die Namen orientieren sich an den besprochenen Beispielorten; sie sind Anzeigenamen aus der Sprachdatei und nicht Teil der Stadtdaten. Der Schwerpunkt einer Stadt ist eine Liste von Waren-IDs. Die Koordinaten sind für Alpha 1 fest konfiguriert; sie werden nicht aus OpenStreetMap importiert.
 
 | ID | Name | Längengrad | Breitengrad | Radius | Bevölkerung | Wohlstand | Beliebtheit | Kontor | Schwerpunkt |
 |---|---|---:|---:|---:|---:|---:|---:|---|---|
-| `lambrecht` | Lambrecht | 8.0700 | 49.3700 | 800 m | 1.000 | 24 | 10 % | nein | Holz, Bretter, Kohle |
-| `neustadt` | Neustadt | 8.1400 | 49.4000 | 800 m | 2.500 | 38 | 10 % | nein | Getreide, Lehm, Ziegel |
-| `mannheim` | Mannheim | 8.2300 | 49.4400 | 800 m | 5.000 | 65 | 10 % | nein | Baumwolle, Zucker, Rum |
+| `lambrecht` | Lambrecht | 8.0700 | 49.3700 | 800 m | 1.000 | 24 | 10 % | nein | `wood`, `planks`, `charcoal` |
+| `neustadt` | Neustadt | 8.1400 | 49.4000 | 800 m | 2.500 | 38 | 10 % | nein | `grain`, `clay`, `bricks` |
+| `mannheim` | Mannheim | 8.2300 | 49.4400 | 800 m | 5.000 | 65 | 10 % | nein | `cotton`, `sugar`, `rum` |
 
 Die Inseln müssen auf der Alpha-Karte klar getrennt sein. Im Debug-Modus darf der Interaktionsradius visualisiert werden.
 
@@ -57,35 +57,36 @@ Alle Werte sind Tonnen beziehungsweise Goldmünzen pro Tonne. Der Zielbestand gi
 
 ### Technische Warenzuordnung
 
-Die folgende Reihenfolge ordnet jede Zeile der Startwerttabelle eindeutig der
-technischen Waren-ID und der Marktgruppe zu. Sie ist Teil der Alpha-1-
+Der Anzeigename steht ausschließlich in den Sprachdateien; verbindlich sind die
+technischen IDs. Die folgende Reihenfolge ordnet jede Zeile der Startwerttabelle
+eindeutig der technischen Waren-ID und der Marktgruppe zu. Sie ist Teil der Alpha-1-
 Konfiguration; weitere fachliche Zuordnungen sind für die Initialisierung nicht
 erforderlich.
 
-| Ware | Technische ID | Marktgruppe |
-|---|---|---|
-| Getreide | `grain` | Nahrung |
-| Mehl | `flour` | Nahrung |
-| Brot | `bread` | Nahrung |
-| Vieh | `livestock` | Nahrung |
-| Milch | `milk` | Nahrung |
-| Fleisch | `meat` | Nahrung |
-| Käse | `cheese` | Nahrung |
-| Holz | `wood` | Baustoffe |
-| Bretter | `planks` | Baustoffe |
-| Lehm | `clay` | Baustoffe |
-| Ziegel | `bricks` | Baustoffe |
-| Kohle | `charcoal` | Handwerk |
-| Eisen | `iron` | Handwerk |
-| Werkzeug | `tools` | Handwerk |
-| Baumwolle | `cotton` | Kleidung |
-| Stoff | `cloth` | Kleidung |
-| Kleidung | `clothing` | Kleidung |
-| Keramik | `ceramics` | Haushaltswaren |
-| Möbel | `furniture` | Haushaltswaren |
-| Zuckerrohr | `sugarcane` | Luxuswaren |
-| Zucker | `sugar` | Luxuswaren |
-| Rum | `rum` | Luxuswaren |
+| Ware | Technische ID | Marktgruppe | Technische Gruppen-ID |
+|---|---|---|---|
+| Getreide | `grain` | Nahrung | `food` |
+| Mehl | `flour` | Nahrung | `food` |
+| Brot | `bread` | Nahrung | `food` |
+| Vieh | `livestock` | Nahrung | `food` |
+| Milch | `milk` | Nahrung | `food` |
+| Fleisch | `meat` | Nahrung | `food` |
+| Käse | `cheese` | Nahrung | `food` |
+| Holz | `wood` | Baustoffe | `building_materials` |
+| Bretter | `planks` | Baustoffe | `building_materials` |
+| Lehm | `clay` | Baustoffe | `building_materials` |
+| Ziegel | `bricks` | Baustoffe | `building_materials` |
+| Kohle | `charcoal` | Handwerk | `crafts` |
+| Eisen | `iron` | Handwerk | `crafts` |
+| Werkzeug | `tools` | Handwerk | `crafts` |
+| Baumwolle | `cotton` | Kleidung | `clothing` |
+| Stoff | `cloth` | Kleidung | `clothing` |
+| Kleidung | `clothing` | Kleidung | `clothing` |
+| Keramik | `ceramics` | Haushaltswaren | `household` |
+| Möbel | `furniture` | Haushaltswaren | `household` |
+| Zuckerrohr | `sugarcane` | Luxuswaren | `luxury` |
+| Zucker | `sugar` | Luxuswaren | `luxury` |
+| Rum | `rum` | Luxuswaren | `luxury` |
 
 ## Verbindlicher Haupt-Handelsweg
 

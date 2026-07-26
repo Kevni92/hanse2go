@@ -25,10 +25,11 @@ vi.mock('./api.js', () => ({
 }));
 api.fetchMarketHistory.mockResolvedValue([]);
 
-const categories = ['Nahrung', 'Baustoffe', 'Handwerk', 'Kleidung', 'Haushaltswaren', 'Luxuswaren'] as const;
-const goods: Good[] = Array.from({ length: 22 }, (_, index) => ({ id: `good-${index}`, name: index === 0 ? 'Holz' : `Ware ${index + 1}`, category: categories[index % categories.length]!, basePrice: 100, targetStock: 100 }));
-const city: City = { id: 'lambrecht', name: 'Lambrecht', position: { longitude: 8.07, latitude: 49.37, recordedAt: '' }, radiusMeters: 800, population: 1000, prosperity: 24, popularity: 10, hasKontor: false, productionFocus: [], stock: Object.fromEntries(goods.map((good) => [good.id, 200])) };
-const fleet: Fleet = { id: 'fleet-alpha', capacity: 60, position: city.position, cargo: { 'good-0': 10 } };
+const categories = ['food', 'building_materials', 'crafts', 'clothing', 'household', 'luxury'] as const;
+// Die Warennamen kommen aus der Sprachdatei; `wood` steht stellvertretend für die erste Zeile.
+const goods: Good[] = Array.from({ length: 22 }, (_, index) => ({ id: index === 0 ? 'wood' : `good-${index}`, category: categories[index % categories.length]!, basePrice: 100, targetStock: 100 }));
+const city: City = { id: 'lambrecht', position: { longitude: 8.07, latitude: 49.37, recordedAt: '' }, radiusMeters: 800, population: 1000, prosperity: 24, popularity: 10, hasKontor: false, productionFocus: [], stock: Object.fromEntries(goods.map((good) => [good.id, 200])) };
+const fleet: Fleet = { id: 'fleet-alpha', capacity: 60, position: city.position, cargo: { wood: 10 } };
 const player: Player = { id: 'player-alpha', name: 'Testkapitän', gold: 30_000, activeFleetId: fleet.id };
 
 function render() { return mount(MarketView, { props: { city, goods, fleet, player } }); }
@@ -57,7 +58,7 @@ describe('MarketView', () => {
     expect(wrapper.get('output').text()).toBe('11 t');
     await wrapper.get('.trade').trigger('click');
     await flushPromises();
-    expect(submitTrade).toHaveBeenCalledWith('lambrecht', expect.objectContaining({ goodId: 'good-0', quantity: 11, direction: 'buy' }));
+    expect(submitTrade).toHaveBeenCalledWith('lambrecht', expect.objectContaining({ goodId: 'wood', quantity: 11, direction: 'buy' }));
     expect(wrapper.emitted('traded')).toHaveLength(1);
   });
 });

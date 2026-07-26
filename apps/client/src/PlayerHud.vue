@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Fleet, Good, Player } from '@hanse2go/shared';
+import { goodName } from './i18n.js';
 
 const props = defineProps<{ player: Player; fleet: Fleet; goods: Good[]; view: 'player' | 'fleet' }>();
 defineEmits<{ close: []; changeView: [view: 'player' | 'fleet'] }>();
 
 const usedCapacity = computed(() => Object.values(props.fleet.cargo).reduce((total, amount) => total + amount, 0));
 const freeCapacity = computed(() => props.fleet.capacity - usedCapacity.value);
-const cargo = computed(() => Object.entries(props.fleet.cargo).map(([goodId, quantity]) => ({ name: props.goods.find((good) => good.id === goodId)?.name ?? goodId, quantity })).sort((left, right) => left.name.localeCompare(right.name, 'de')));
+const cargo = computed(() => Object.entries(props.fleet.cargo).map(([goodId, quantity]) => ({ name: goodName(goodId), quantity })).sort((left, right) => left.name.localeCompare(right.name, 'de')));
 const formatGold = (value: number) => value.toLocaleString('de-DE');
 </script>
 

@@ -2,12 +2,13 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import type { City, Fleet, Good, GoodCategory, MarketHistoryEntry, MarketQuote, Player, TradeDirection } from '@hanse2go/shared';
 import { ApiRequestError, fetchMarketHistory, fetchQuote, submitTrade } from './api.js';
+import { goodCategoryName, goodName } from './i18n.js';
 
 const props = defineProps<{ city: City; goods: Good[]; fleet: Fleet; player: Player }>();
 const emit = defineEmits<{ traded: [] }>();
 
-const categoryOrder: GoodCategory[] = ['Nahrung', 'Baustoffe', 'Handwerk', 'Kleidung', 'Haushaltswaren', 'Luxuswaren'];
-const icons: Record<GoodCategory, string> = { Nahrung: '🍞', Baustoffe: '🪵', Handwerk: '🔨', Kleidung: '🧵', Haushaltswaren: '🏺', Luxuswaren: '🥃' };
+const categoryOrder: GoodCategory[] = ['food', 'building_materials', 'crafts', 'clothing', 'household', 'luxury'];
+const icons: Record<GoodCategory, string> = { food: '🍞', building_materials: '🪵', crafts: '🔨', clothing: '🧵', household: '🏺', luxury: '🥃' };
 const selected = ref<Good>();
 const direction = ref<TradeDirection>('buy');
 const quantity = ref(1);
@@ -199,9 +200,9 @@ onMounted(refreshOverview);
       <p v-if="overviewLoading" class="status">Aktuelle Marktpreise werden geladen …</p>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
       <section v-for="group in groupedGoods" :key="group.category" class="market-group">
-        <h4>{{ group.category }}</h4>
+        <h4>{{ goodCategoryName(group.category) }}</h4>
         <button v-for="good in group.goods" :key="good.id" class="good-row" :data-testid="`market-good-${good.id}`" type="button" @click="selectGood(good)">
-          <span class="good-name"><span aria-hidden="true">{{ icons[good.category] }}</span>{{ good.name }}</span>
+          <span class="good-name"><span aria-hidden="true">{{ icons[good.category] }}</span>{{ goodName(good.id) }}</span>
           <span class="price" :class="priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).tone" :aria-label="priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).label">
             <strong v-if="quotes[good.id]">{{ formatGold(quotes[good.id]?.averageUnitPrice ?? 0) }} G</strong> {{ priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).coins }}<small>{{ priceIndicator(quotes[good.id]?.averageUnitPrice, good.basePrice).label }}</small>
           </span>
@@ -213,7 +214,7 @@ onMounted(refreshOverview);
 
     <template v-else>
       <button class="back" type="button" @click="selected = undefined">← Marktübersicht</button>
-      <header class="detail-header"><span class="detail-icon" aria-hidden="true">{{ icons[selected.category] }}</span><div><h4>{{ selected.name }}</h4><p>{{ selected.category }}</p></div></header>
+      <header class="detail-header"><span class="detail-icon" aria-hidden="true">{{ icons[selected.category] }}</span><div><h4>{{ goodName(selected.id) }}</h4><p>{{ goodCategoryName(selected.category) }}</p></div></header>
       <p v-if="quoteLoading" class="status">Aktuelles Serverangebot wird geladen …</p>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
 

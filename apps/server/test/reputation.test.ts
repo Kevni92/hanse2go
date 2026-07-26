@@ -17,7 +17,7 @@ describe('reputation and concession API', () => {
 
   it('starts every city at zero reputation with the documented status', async () => {
     await atLambrecht();
-    expect(await reputation()).toEqual({ cityId: 'lambrecht', value: 0, status: 'Fremder' });
+    expect(await reputation()).toEqual({ cityId: 'lambrecht', value: 0, status: 'stranger' });
   });
 
   it('grants one point per full ten tons of useful improvement', async () => {
@@ -25,7 +25,7 @@ describe('reputation and concession API', () => {
     // Lehm steht in Lambrecht bei 45 Tonnen unter dem Zielbestand 100: ein Verkauf ist nützlich.
     await seed({ cargo: { clay: 40 } });
     expect((await trade('lambrecht', 'clay', 'sell', 20, 'clay-sell')).statusCode).toBe(200);
-    expect(await reputation()).toMatchObject({ value: 2, status: 'Fremder' });
+    expect(await reputation()).toMatchObject({ value: 2, status: 'stranger' });
   });
 
   it('counts a trade beyond the target stock only up to the target stock', async () => {
@@ -79,7 +79,7 @@ describe('reputation and concession API', () => {
 
   it('reports the four documented reputation levels and caps at one hundred', async () => {
     await atLambrecht();
-    for (const [value, status] of [[0, 'Fremder'], [19, 'Fremder'], [20, 'Bekannter Händler'], [49, 'Bekannter Händler'], [50, 'Angesehener Händler'], [79, 'Angesehener Händler'], [80, 'Vertrauenswürdiger Bürger'], [100, 'Vertrauenswürdiger Bürger']] as const) {
+    for (const [value, status] of [[0, 'stranger'], [19, 'stranger'], [20, 'known_trader'], [49, 'known_trader'], [50, 'respected_trader'], [79, 'respected_trader'], [80, 'trusted_citizen'], [100, 'trusted_citizen']] as const) {
       await seed({ reputation: { lambrecht: value } });
       expect(await reputation()).toEqual({ cityId: 'lambrecht', value, status });
     }

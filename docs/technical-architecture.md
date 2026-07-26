@@ -92,6 +92,14 @@ Rechnende Module kennen keinen dieser Werte. Sie erhalten die für sie zuständi
 
 Rein technische Konstanten bleiben im Code, weil sie keine Spieleigenschaften sind: der Erdradius der Entfernungsberechnung und das Rundungs-Epsilon der Radiusprüfung.
 
+## Bezeichner und Sprachdateien
+
+Daten-Definitionen, Domänentypen und API verwenden ausschließlich englische Bezeichner. Das gilt für Waren-, Stadt- und Gebäudetyp-IDs ebenso wie für die Aufzählungen `GoodCategory` (`food`, `building_materials`, `crafts`, `clothing`, `household`, `luxury`), `BuildingClass` (`simple`, `medium`, `premium`) und `ReputationStatus` (`stranger`, `known_trader`, `respected_trader`, `trusted_citizen`). `City.productionFocus` enthält Waren-IDs.
+
+Anzeigenamen sind kein Bestandteil des Datenmodells. Sie stehen in den Sprachdateien unter `packages/config/locales/` und werden über den Unterpfad `@hanse2go/config/locale` bereitgestellt. Der Server liefert deshalb weder Waren-, Stadt- noch Gebäudenamen; `Good`, `City`, `Building` und `BuildingCatalogEntry` besitzen kein Feld `name`. Ausschließlich der Client löst Bezeichner in Anzeigenamen auf, in `apps/client/src/i18n.ts`; fehlt eine Übersetzung, zeigt er den technischen Bezeichner. Fehlermeldungen des Servers bleiben davon unberührt und sind weiterhin deutsche Klartexte.
+
+`validateLocale()` stellt sicher, dass eine Sprachdatei jeden Bezeichner der Spielkonfiguration benennt. Eine neue Ware, Stadt oder ein neuer Gebäudetyp erfordert damit immer auch einen Eintrag in jeder Sprachdatei.
+
 ## Zustandsmodell Alpha 1
 
 Alpha 1 verwendet einen vollständig deterministischen In-Memory-Zustand. Der Startzustand entsteht ausschließlich aus der zentralen Spielkonfiguration; ein Serverneustart erzeugt wieder die Werte aus [`alpha-1/test-world.md`](alpha-1/test-world.md).

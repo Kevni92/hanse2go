@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { Fleet, Good, Player } from '@hanse2go/shared';
 import PlayerHud from './PlayerHud.vue';
 
-const goods: Good[] = [{ id: 'wood', name: 'Holz', category: 'Baustoffe', basePrice: 80, targetStock: 100 }];
+const goods: Good[] = [{ id: 'wood', category: 'building_materials', basePrice: 80, targetStock: 100 }];
 const fleet: Fleet = { id: 'fleet-alpha', capacity: 60, cargo: { wood: 10 }, position: { longitude: 8.07, latitude: 49.37, recordedAt: '' } };
 const player: Player = { id: 'player-alpha', name: 'Testkapitän', gold: 30_000, activeFleetId: fleet.id };
 

@@ -10,11 +10,11 @@ Der Bau beginnt und endet sofort. Gold und Baumaterialien werden ausschließlich
 
 Jedes Gebäude enthält immer einen getrennt ausgewiesenen Grundstückspreis von 5.000 Gold. Hinzu kommen Klassenkosten und Baumaterialien. Alle Mengen sind ganze Tonnen.
 
-| Klasse | zusätzliche Goldkosten | Holz | Bretter | Ziegel | Werkzeug |
-|---|---:|---:|---:|---:|---:|
-| einfach | 2.500 | 20 | 10 | 10 | 5 |
-| mittel | 5.000 | 30 | 20 | 20 | 10 |
-| hochwertig | 7.500 | 40 | 30 | 30 | 20 |
+| Klasse | Technische ID | zusätzliche Goldkosten | Holz | Bretter | Ziegel | Werkzeug |
+|---|---|---:|---:|---:|---:|---:|
+| einfach | `simple` | 2.500 | 20 | 10 | 10 | 5 |
+| mittel | `medium` | 5.000 | 30 | 20 | 20 | 10 |
+| hochwertig | `premium` | 7.500 | 40 | 30 | 30 | 20 |
 
 Das Kontor hat keine Gebäudeklasse. Seine Kosten sind 5.000 Gold Grundstückspreis plus 5.000 Gold Baukosten sowie 50 Holz, 25 Bretter, 40 Ziegel und 10 Werkzeug. Damit kostet es insgesamt 10.000 Gold; die separat vorher erworbene Baukonzession kostet zusätzlich 10.000 Gold. Der spätere Gebäudekatalog ordnet jede Produktionsinstanz genau einer der drei Klassen zu und darf diese Klassenwerte nicht verändern.
 

@@ -20,9 +20,9 @@ export class InMemoryGameRepository implements GameRepository {
   constructor(private readonly config: GameConfig = loadGameConfig()) { this.state = this.createInitialState(); }
   private createInitialState(): GameState {
     const { world, player, fleet } = this.config;
-    const goods: Good[] = this.config.goods.map(({ id, name, category, basePrice, targetStock }) => ({ id, name, category, basePrice, targetStock }));
+    const goods: Good[] = this.config.goods.map(({ id, category, basePrice, targetStock }) => ({ id, category, basePrice, targetStock }));
     const cities: City[] = this.config.cities.map((city) => ({
-      id: city.id, name: city.name, position: { ...city.position, recordedAt: world.startTimestamp }, radiusMeters: city.radiusMeters,
+      id: city.id, position: { ...city.position, recordedAt: world.startTimestamp }, radiusMeters: city.radiusMeters,
       population: city.population, prosperity: city.prosperity, popularity: city.popularity, hasKontor: false,
       productionFocus: [...city.productionFocus], stock: { ...city.stock },
     }));

@@ -1,0 +1,74 @@
+{
+  "goods": {
+    "grain": "Getreide",
+    "flour": "Mehl",
+    "bread": "Brot",
+    "livestock": "Vieh",
+    "milk": "Milch",
+    "meat": "Fleisch",
+    "cheese": "Käse",
+    "wood": "Holz",
+    "planks": "Bretter",
+    "clay": "Lehm",
+    "bricks": "Ziegel",
+    "charcoal": "Kohle",
+    "iron": "Eisen",
+    "tools": "Werkzeug",
+    "cotton": "Baumwolle",
+    "cloth": "Stoff",
+    "clothing": "Kleidung",
+    "ceramics": "Keramik",
+    "furniture": "Möbel",
+    "sugarcane": "Zuckerrohr",
+    "sugar": "Zucker",
+    "rum": "Rum"
+  },
+  "goodCategories": {
+    "food": "Nahrung",
+    "building_materials": "Baustoffe",
+    "crafts": "Handwerk",
+    "clothing": "Kleidung",
+    "household": "Haushaltswaren",
+    "luxury": "Luxuswaren"
+  },
+  "cities": {
+    "lambrecht": "Lambrecht",
+    "neustadt": "Neustadt",
+    "mannheim": "Mannheim"
+  },
+  "buildings": {
+    "kontor": "Kontor",
+    "grain_farm": "Getreidehof",
+    "windmill": "Windmühle",
+    "bakery": "Bäckerei",
+    "cattle_farm": "Rinderhof",
+    "butchery": "Metzgerei",
+    "dairy": "Käserei",
+    "forestry": "Forstbetrieb",
+    "sawmill": "Sägewerk",
+    "clay_pit": "Lehmgrube",
+    "brickyard": "Ziegelei",
+    "pottery": "Töpferei",
+    "charcoal_kiln": "Köhlerei",
+    "iron_mine": "Eisenmine",
+    "smithy": "Schmiede",
+    "cotton_plantation": "Baumwollplantage",
+    "weavery": "Weberei",
+    "tailor": "Schneiderei",
+    "carpentry": "Tischlerei",
+    "sugarcane_plantation": "Zuckerrohrplantage",
+    "sugar_refinery": "Zuckerraffinerie",
+    "distillery": "Brennerei"
+  },
+  "buildingClasses": {
+    "simple": "einfach",
+    "medium": "mittel",
+    "premium": "hochwertig"
+  },
+  "reputationStatuses": {
+    "stranger": "Fremder",
+    "known_trader": "Bekannter Händler",
+    "respected_trader": "Angesehener Händler",
+    "trusted_citizen": "Vertrauenswürdiger Bürger"
+  }
+}

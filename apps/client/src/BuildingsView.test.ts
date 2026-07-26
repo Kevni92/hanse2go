@@ -11,22 +11,22 @@ vi.mock('./api.js', () => ({
 }));
 
 const goods: Good[] = [
-  { id: 'wood', name: 'Holz', category: 'Baustoffe', basePrice: 80, targetStock: 100 },
-  { id: 'planks', name: 'Bretter', category: 'Baustoffe', basePrice: 130, targetStock: 80 },
-  { id: 'bread', name: 'Brot', category: 'Nahrung', basePrice: 190, targetStock: 80 },
+  { id: 'wood', category: 'building_materials', basePrice: 80, targetStock: 100 },
+  { id: 'planks', category: 'building_materials', basePrice: 130, targetStock: 80 },
+  { id: 'bread', category: 'food', basePrice: 190, targetStock: 80 },
 ];
-const city: City = { id: 'lambrecht', name: 'Lambrecht', position: { longitude: 8.07, latitude: 49.37, recordedAt: '' }, radiusMeters: 800, population: 1_000, prosperity: 24, popularity: 10, hasKontor: false, productionFocus: [], stock: { wood: 200 } };
+const city: City = { id: 'lambrecht', position: { longitude: 8.07, latitude: 49.37, recordedAt: '' }, radiusMeters: 800, population: 1_000, prosperity: 24, popularity: 10, hasKontor: false, productionFocus: [], stock: { wood: 200 } };
 
 const offer = (buildingType: string, extra: Partial<BuildingOffer> = {}): BuildingOffer => ({
-  buildingType, name: buildingType === 'kontor' ? 'Kontor' : 'Sägewerk', kind: buildingType === 'kontor' ? 'kontor' : 'processing',
-  buildingClass: buildingType === 'kontor' ? undefined : 'einfach',
+  buildingType, kind: buildingType === 'kontor' ? 'kontor' : 'processing',
+  buildingClass: buildingType === 'kontor' ? undefined : 'simple',
   cost: { landGold: 5_000, buildGold: buildingType === 'kontor' ? 5_000 : 2_500, totalGold: buildingType === 'kontor' ? 10_000 : 7_500, materials: { wood: 20, planks: 10 } },
   inputs: buildingType === 'kontor' ? {} : { wood: 10 }, outputs: buildingType === 'kontor' ? {} : { planks: 10 },
   availability: 'buildable', missingRequirements: [], missingGold: 0, missingMaterials: {}, ...extra,
 });
 
 const overview = (extra: Partial<CityBuildingsOverview> = {}): CityBuildingsOverview => ({
-  cityId: 'lambrecht', reputation: { cityId: 'lambrecht', value: 0, status: 'Fremder' },
+  cityId: 'lambrecht', reputation: { cityId: 'lambrecht', value: 0, status: 'stranger' },
   hasConcession: false, concessionPrice: 10_000, hasKontor: false, kontorInventory: {},
   kontor: offer('kontor'), buildings: [], catalog: [offer('sawmill')],
   world: { tickNumber: 0, simulatedHour: 0 },
@@ -41,7 +41,7 @@ beforeEach(() => { for (const mock of Object.values(api)) mock.mockReset(); });
 
 describe('BuildingsView', () => {
   it('shows reputation, missing reputation and a locked concession button below eighty', async () => {
-    api.fetchBuildings.mockResolvedValue(overview({ reputation: { cityId: 'lambrecht', value: 35, status: 'Bekannter Händler' } }));
+    api.fetchBuildings.mockResolvedValue(overview({ reputation: { cityId: 'lambrecht', value: 35, status: 'known_trader' } }));
     const wrapper = render();
     await flushPromises();
 
@@ -54,8 +54,8 @@ describe('BuildingsView', () => {
   });
 
   it('enables the concession button at eighty reputation and enough gold', async () => {
-    api.fetchBuildings.mockResolvedValue(overview({ reputation: { cityId: 'lambrecht', value: 80, status: 'Vertrauenswürdiger Bürger' } }));
-    api.buyConcession.mockResolvedValue(overview({ reputation: { cityId: 'lambrecht', value: 80, status: 'Vertrauenswürdiger Bürger' }, hasConcession: true }));
+    api.fetchBuildings.mockResolvedValue(overview({ reputation: { cityId: 'lambrecht', value: 80, status: 'trusted_citizen' } }));
+    api.buyConcession.mockResolvedValue(overview({ reputation: { cityId: 'lambrecht', value: 80, status: 'trusted_citizen' }, hasConcession: true }));
     const wrapper = render();
     await flushPromises();
 
@@ -70,7 +70,7 @@ describe('BuildingsView', () => {
 
   it('locks the concession button without enough gold', async () => {
     api.fetchBuildings.mockResolvedValue(overview({
-      reputation: { cityId: 'lambrecht', value: 80, status: 'Vertrauenswürdiger Bürger' },
+      reputation: { cityId: 'lambrecht', value: 80, status: 'trusted_citizen' },
       player: { id: 'player-alpha', name: 'Testkapitän', gold: 9_999, activeFleetId: 'fleet-alpha' },
     }));
     const wrapper = render();
@@ -94,7 +94,7 @@ describe('BuildingsView', () => {
     api.fetchBuildings.mockResolvedValue(overview({ hasConcession: true }));
     api.buildBuilding.mockResolvedValue(overview({
       hasConcession: true, hasKontor: true, kontorInventory: { wood: 30 },
-      buildings: [{ id: 'lambrecht-kontor-1', playerId: 'player-alpha', cityId: 'lambrecht', buildingType: 'kontor', name: 'Kontor', kind: 'kontor', status: 'built', lastInputs: {}, lastOutputs: {} }],
+      buildings: [{ id: 'lambrecht-kontor-1', playerId: 'player-alpha', cityId: 'lambrecht', buildingType: 'kontor', kind: 'kontor', status: 'built', lastInputs: {}, lastOutputs: {} }],
     }));
     const wrapper = render();
     await flushPromises();
