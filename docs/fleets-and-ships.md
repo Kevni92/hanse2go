@@ -29,6 +29,8 @@ Von einem anderen Hafen aus kann der Spieler nicht auf ein dort nicht vorhandene
 
 ## Neutraler Schiffsmarkt
 
+Ab Alpha 5 ersetzt die Stadtkasse den historischen unbegrenzt liquiden Makler: Kaufpreise gehen an sie, Verkäufe werden nur bei ausreichender Stadtkasse bezahlt und erhalten Ledger-Einträge gemäß [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md).
+
 Jede Alpha-4-Stadt besitzt einen neutralen Hafen und Schiffsmakler. Dessen Angebot ist endlich und enthält nur konkrete, unzugeordnete Schiffsentitäten. Ein Kauf überträgt exakt dieses Schiff an den Spieler; ein Verkauf überträgt ein unzugeordnetes eigenes Schiff im selben Hafen zurück an den Makler. Beide Vorgänge erhalten ID, Name und Herkunft und ändern die lokale Marktversion. Regeln, Preise und feste Testschiffe stehen in [`alpha-4/ports-and-ship-market.md`](alpha-4/ports-and-ship-market.md).
 
 ## Schiffsbau
