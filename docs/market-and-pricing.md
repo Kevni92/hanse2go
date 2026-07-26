@@ -4,6 +4,22 @@
 
 Die Pflichtfelder, Reservierungen, Status und Lebenszyklus der Alpha-5-Orders stehen in [`alpha-5/orders.md`](alpha-5/orders.md).
 
+## Alpha 5: verbindlicher Marktweg
+
+Ab Alpha 5 ist das folgende Modell maßgeblich und überschreibt die historischen
+Direktkauf-/Direktverkauf-Regeln dieser Datei:
+
+- Jede Stadt und Ware besitzt ein lokales Orderbuch mit gedeckten Limit Orders.
+- Preise entstehen ausschließlich durch das Preis-Zeit-Matching realer Buy- und Sell Orders.
+- `POST /market/quote` und `POST /market/trade` sind kein Alpha-5-Spielweg und dürfen nicht für Buchungen verwendet werden.
+- Basispreis, Zielbestand, alter Spread und Preisformel sind nur Referenz- beziehungsweise Migrationswerte.
+- Spieler, Stadt und Bevölkerung nutzen dieselbe Order-, Matching- und Settlement-Logik.
+- Keine Order darf Gold oder Ware erzeugen; alle Reservierungen werden in den vorhandenen Konten und Lagern geführt.
+
+Die technischen Verträge und die atomaren Grenzen stehen in
+[`alpha-5/api-contracts.md`](alpha-5/api-contracts.md) und
+[`alpha-5/tick.md`](alpha-5/tick.md).
+
 ## Gemeinsamer Stadtmarkt
 
 Jede Stadt besitzt einen eigenen gemeinsamen Markt. Alle Spieler sehen und verändern denselben Bestand.
