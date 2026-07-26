@@ -165,6 +165,10 @@ Der Alpha-Server läuft wie die Debug-Position ausschließlich als Debug-Build. 
 
 Alle Alpha-2-Endpunkte prüfen den Stadtradius serverseitig und melden eine unerreichbare Stadt mit dem Alpha-2-Fehlercode `CITY_NOT_REACHABLE`; die Alpha-1-Endpunkte behalten `CITY_OUT_OF_RANGE`. Jede schreibende Antwort liefert die vollständige Stadtübersicht einschließlich Gold, Flotte und Kontorbestand, damit der Client ausschließlich serverbestätigte Werte anzeigt. Ein erfolgreicher Tick erhöht die Marktversion jeder Stadt mit verändertem Bestand, sodass vor dem Tick geholte Preisangebote als veraltet abgelehnt werden.
 
+## Alpha 3: atomare Stadtwirtschaft
+
+Der bestehende Debug-Stundentick wird erweitert, nicht dupliziert. Er arbeitet auf einem vollständigen Weltsnapshot und schreibt alle Phasen nur gemeinsam zurück. Bauen, Handeln, Umlagern und Prioritätsänderungen können einen laufenden Tick nicht teilweise verändern. Die verbindliche Phasenfolge und die Alpha-3-Fachverträge stehen in [`alpha-3/tick.md`](alpha-3/tick.md) und [`alpha-3/api-contracts.md`](alpha-3/api-contracts.md).
+
 Zusätzlich zu `POST /test/reset` bereitet `POST /test/seed` im Testbetrieb Gold, Flottenladung und Ruf gemäß [`alpha-2/test-world.md`](alpha-2/test-world.md) vor.
 
 ## Arbeitsablauf

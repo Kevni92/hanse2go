@@ -59,6 +59,8 @@
 - [`alpha-3/consumption-and-wealth.md`](alpha-3/consumption-and-wealth.md) – Verbrauch, Kaufkraft und Wohlstand
 - [`alpha-3/population-growth.md`](alpha-3/population-growth.md) – Wachstum, Reste und Stadtstartwerte
 - [`alpha-3/test-world.md`](alpha-3/test-world.md) – deterministische Alpha-3-Referenzwelt
+- [`alpha-3/tick.md`](alpha-3/tick.md) – atomare Tickphasen und Bericht
+- [`alpha-3/api-contracts.md`](alpha-3/api-contracts.md) – fachliche Alpha-3-Schnittstellen
 
 ## Umgang mit Lücken
 

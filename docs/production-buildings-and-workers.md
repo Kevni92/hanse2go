@@ -124,3 +124,5 @@ Alle Alpha-2-Rezepte laufen einmal pro manuell simuliertem Stundentick. Rohstoff
 Alpha 3 ersetzt diese Produktionsregel mit proportionaler Teilproduktion und Hundertstel-Tonnen. Die Lohnpflicht dieses Dokuments bleibt dabei unverändert.
 
 Bei Teilbesetzung werden Input und Output derselben Rezeptposition im Verhältnis `assignedWorkers / requiredWorkers` geplant. Fehlt auch nur eine geplante Inputmenge, bleibt die Instanz vollständig stehen; Löhne bleiben fällig. Die verbindliche Berechnung und sämtliche Alpha-3-Rezepte stehen in [`alpha-3/production-and-fractions.md`](alpha-3/production-and-fractions.md) und [`alpha-3/production-recipes.md`](alpha-3/production-recipes.md).
+
+Im Alpha-3-Tick folgen Arbeiterzuteilung und atomare Lohnbuchung vor der Produktion. Kontorbestände zu Produktionsbeginn sind ein fester Snapshot; Outputs stehen erst im Folgetick bereit. Siehe [`alpha-3/tick.md`](alpha-3/tick.md).
