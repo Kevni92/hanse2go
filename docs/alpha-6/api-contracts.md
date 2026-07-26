@@ -70,9 +70,23 @@ Eine Abfahrt ist eine einzige Fachtransaktion:
 
 Schlägt ein Schritt fehl, bleiben Flotte, Hafen, Ladung, Versionen und Reiseliste vollständig unverändert.
 
+## KI-Entscheidungen
+
+| Methode und Route | Antwort | Zweck |
+|---|---|---|
+| `GET /api/ai/decisions` | `AiDecisionListResponse` | Entscheidungsprotokoll mit Filtern `tick`, `actorId`, `cityId`, `goodId`, `cycle`, `outcome` |
+| `GET /api/ai/decisions/:decisionId` | `AiDecisionResponse` | einzelne Entscheidung mit Eingangsmetriken, Kandidatenliste, Scores und Fachbefehlen |
+| `GET /api/ai/actors` | `AiActorListResponse` | öffentliche Handelshausübersicht |
+
+`GET /api/ai/actors` ist öffentlich und liefert ausschließlich öffentlich vertretbare Felder. Die beiden Entscheidungsrouten sind wie `GET /api/ai/logistics-plans` ausschließlich im Debug- und Testbetrieb registriert.
+
+Es existiert **keine** schreibende KI-Route. Weder Spieler noch Administratoren können eine KI-Entscheidung auslösen, verändern, überstimmen oder unterdrücken. KI-Aktivität entsteht ausschließlich als Phase des Welt-Ticks.
+
 ## Tickvertrag
 
 Der Reisefortschritt ist eine eigene Phase des atomaren Welt-Ticks. Sie verarbeitet alle offenen Reisen aufsteigend nach `voyageId`, reduziert je Reise `remainingTravelTicks` genau einmal und schließt bei null die Ankunft ab. Eine im selben Tick neu gestartete Reise macht ihren ersten Fortschritt erst im folgenden Tick.
+
+Die vollständige Alpha-6-Tickreihenfolge mit allen dreizehn Phasen, der Akteursreihenfolge, den Entscheidungsbudgets und der Trennung von fachlicher Ablehnung und technischem Rollback steht in [`tick.md`](tick.md).
 
 Ein Fehler in der Reisephase rollt den vollständigen Welt-Tick zurück. Eine idempotente Tickwiederholung liefert exakt denselben gespeicherten Tickbericht und erzeugt keinen doppelten Fortschritt und keine doppelte Ankunft.
 

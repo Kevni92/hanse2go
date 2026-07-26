@@ -106,6 +106,8 @@
 - [`alpha-6/ai-building-plans.md`](alpha-6/ai-building-plans.md) – Bauablauf, Kettenprüfung, Materialbedarf und Kandidatenauswahl
 - [`alpha-6/ai-ships-and-fleets.md`](alpha-6/ai-ships-and-fleets.md) – Kapazitätsengpass, Schiffskauf, Schiffsbau, Flottenbildung und Verkauf
 - [`alpha-6/ai-investment.md`](alpha-6/ai-investment.md) – gemeinsame Investitionsgrenzen, Raten und Amortisationsform
+- [`alpha-6/tick.md`](alpha-6/tick.md) – dreizehnstufige Tickreihenfolge, Akteursreihenfolge, Budgets und Rollbackgrenzen
+- [`alpha-6/decision-engine.md`](alpha-6/decision-engine.md) – Zyklusablauf, Vorfilterung, Sortierung und Determinismusregeln
 
 ## Umgang mit Lücken
 
