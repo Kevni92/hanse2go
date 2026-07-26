@@ -177,6 +177,22 @@ Alpha 4 ergänzt die Welt um versionsgesicherte Schiffsentitäten, Flotten, Hafe
 
 Die Alpha-4-CI bewahrt bei End-to-End-Fehlern zusätzlich vollständigen Hafen-, Flotten-, Werft- und Schiffszustand, Testpreset/Seed, Tickbericht sowie Schiffszahl und IDs vor/nach dem Fehler auf. Die konkrete Abnahme steht in [`alpha-4/acceptance.md`](alpha-4/acceptance.md).
 
+## Alpha 5: Orderbuch und geschlossener Goldkreislauf
+
+Jede Stadt-Ware-Kombination besitzt ein eigenes serialisiertes Orderbuch. Buy
+Orders reservieren verfügbares Gold einschließlich der maximalen Käufergebühr;
+Sell Orders reservieren freie Kontorware. Jede Execution überträgt vorhandene
+Ware und vorhandenes Gold, bucht beide Gebühren in die lokale Stadtkasse und
+prüft die konstante Geldmenge. Stadtkassen und Bevölkerungskassen sind reale,
+endliche Konten. Der Wirtschaftstick folgt der atomaren Reihenfolge aus
+[`alpha-5/tick.md`](alpha-5/tick.md) und berücksichtigt in allen älteren
+Zahlungs- und Warenbefehlen ausschließlich freie Bestände.
+
+Die historischen Alpha-1-bis-Alpha-4-Routen `POST /market/quote` und
+`POST /market/trade` sind ab Alpha 5 kein registrierter regulärer Spielweg.
+Die vollständigen Lese-/Schreibverträge, Versionen, Idempotenz und Rollback-
+Grenzen stehen in [`alpha-5/api-contracts.md`](alpha-5/api-contracts.md).
+
 ## Arbeitsablauf
 
 Für jedes Issue wird ein neuer Branch vom aktuellen `main` erstellt. Es gibt genau einen Pull Request pro Issue gegen `main`. Alle GitHub-CI-Prüfungen müssen erfolgreich sein. Danach merged der Agent den PR und löscht den gemergten Branch. Details stehen in [`../AGENTS.md`](../AGENTS.md).
