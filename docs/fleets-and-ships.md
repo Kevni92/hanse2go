@@ -6,6 +6,16 @@ Ab Alpha 4 steuert der Spieler genau eine aktive Flotte aus konkreten, dauerhaft
 
 Die aktive Flotte verwendet in Alpha 4 und Alpha 5 die Debug-Position der Testwelt als lokalen Zugriffsnachweis. Langfristig hat sie eine serverseitige virtuelle Position auf der Karibikkarte; ihre Geschwindigkeit, Strecke und spätere Reiseeinflüsse bestimmen die Reisezeit. Alpha 5 führt diese Reise nicht ein.
 
+## Alpha 6: virtuelle Reisen zwischen den Teststädten
+
+Ab Alpha 6 bewegt sich eine Flotte real zwischen Städten. Eine Flotte ist entweder `in_port` in genau einem Hafen oder `traveling` auf genau einer Reise – niemals beides und niemals keines von beidem. Der Status `active` bleibt ausschließlich als Übergangsstatus der bisherigen Spieler-Debugflotte erhalten; beim Start einer Reise wird auch sie `traveling` und nach der Ankunft `in_port` der Zielstadt.
+
+Die Fahrzeit ist `ceil(Distanz / Geschwindigkeit des langsamsten Schiffes)` auf einem statischen Drei-Städte-Graph mit 48 km Lambrecht–Neustadt, 96 km Neustadt–Mannheim und 120 km Lambrecht–Mannheim. Während der Reise sind Schiffszusammensetzung, Ladung und Eigentum gesperrt; Umleitung, Zwischenstopp und Abbruch existieren nicht. Eine Reise erzeugt und verbraucht weder Ware noch Gold, und Alpha 6 kennt keine Reisegebühr.
+
+Spieler und KI-Handelshäuser verwenden denselben Abfahrtsbefehl und dieselben Voraussetzungen. Ein Handelshaus besitzt dabei keine aktive Flotte und keine Debug-Position; seine Lokalität ergibt sich aus dem eigenen Kontor beziehungsweise dem Hafen, in dem die Flotte liegt.
+
+Die vollständigen Regeln stehen in [`alpha-6/virtual-voyages.md`](alpha-6/virtual-voyages.md), der Streckengraph mit allen Referenzfahrzeiten in [`alpha-6/test-world-routes.md`](alpha-6/test-world-routes.md) und der technische Vertrag in [`alpha-6/api-contracts.md`](alpha-6/api-contracts.md).
+
 ## Auswirkungen mehrerer Schiffe
 
 - Der gesamte Laderaum ist die Summe der Kapazitäten aller Schiffe der Flotte.
@@ -51,7 +61,7 @@ Jede Wareneinheit entspricht einer Tonne. Ist der Laderaum voll, können keine w
 
 ## Spätere automatische Handelsrouten
 
-Zusätzliche Flotten und automatische Handelsrouten werden in einem späteren virtuellen Karibik-Slice ergänzt. Solche Flotten bewegen sich mit virtueller Geschwindigkeit, die sich nach dem langsamsten Schiff richtet. Sie benötigen eigene Schiffe, Kapital und Routenkonfiguration.
+Alpha 6 liefert die einzelne virtuelle Reise, aber noch keine dauerhaft wiederholte Handelsroute. Fest konfigurierte Rundrouten mit automatischer Wiederholung werden in einem späteren Slice ergänzt. Sie benötigen eigene Schiffe, Kapital und Routenkonfiguration und bewegen sich mit derselben virtuellen Geschwindigkeit des langsamsten Schiffs.
 
 ## Verlust und Bankrott
 

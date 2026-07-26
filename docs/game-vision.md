@@ -28,7 +28,9 @@ Die bisherige Debug-Position mit Lambrecht, Neustadt und Mannheim bleibt ausschl
 
 ## Virtuelle Reise und Handelsrouten
 
-Virtuelle Flottenreisen werden in einem eigenen späteren Slice eingeführt. Geschwindigkeit, Strecke und spätere Reiseeinflüsse bestimmen die Dauer. Automatische Handelsrouten benötigen zusätzliche Schiffe, Kapital und serverseitige Routenkonfiguration; sie sind kein Alpha-5-Umfang.
+Alpha 6 führt die virtuelle Flottenreise ein. Der Server berechnet die Dauer aus der Streckendistanz und der Geschwindigkeit des langsamsten Schiffes einer Flotte; während der Reise sind Zusammensetzung und Ladung gesperrt. Spieler und autonome Handelshäuser verwenden denselben Befehl und dieselben Regeln.
+
+Der Alpha-6-Streckengraph umfasst bewusst nur die drei Teststädte. Er ist eine Zwischenstufe, keine Weltkarte: Die spätere Karibikkarte ersetzt ausschließlich die Kantenliste, während Reiseentität, Flottenstatus und Fahrzeitformel bestehen bleiben. Wind, Wetter, Gefahren, freie Navigation und automatisch wiederholte Handelsrouten folgen in späteren Slices.
 
 ## Langfristige Systeme
 
@@ -53,4 +55,6 @@ Spätere Entwicklungsstufen umfassen unter anderem:
 
 ## Abgrenzung Alpha 1
 
-Alpha 1 bis Alpha 5 verwenden weiterhin drei statische Teststädte und eine Debug-Position als Übergang. Die langfristige virtuelle Karibik und virtuelle Flottenreisen sind verbindliche Zielrichtung, aber nicht Bestandteil dieser Alphas.
+Alpha 1 bis Alpha 5 verwenden weiterhin drei statische Teststädte und eine Debug-Position als Übergang. Die langfristige virtuelle Karibik ist verbindliche Zielrichtung, aber nicht Bestandteil dieser Alphas.
+
+Ab Alpha 6 sind virtuelle Flottenreisen auf dem statischen Drei-Städte-Graph vorhanden; die Debug-Position bleibt ausschließlich Übergangsmechanik für nicht reisende Flotten. Die grafische Karibikkarte bleibt weiterhin außerhalb des Umfangs.
