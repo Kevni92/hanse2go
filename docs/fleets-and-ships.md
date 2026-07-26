@@ -39,6 +39,10 @@ Jede Alpha-4-Stadt besitzt eine neutrale Werft mit einem aktiven Bauplatz und ei
 
 Ein Spieler steuert genau eine aktive Flotte; weitere eigene Flotten liegen in einem Hafen. Jede Flotte hat mindestens ein konkretes Schiff, einen gemeinsamen Warenbestand und aus ihren Schiffen abgeleitete Kapazität und Geschwindigkeit. Neue Flotten entstehen mit ihrem ersten unzugeordneten Schiff, und der Aktivwechsel ist nur mit einer lokalen inaktiven Flotte im selben Hafen möglich. Vollständige Regeln stehen in [`alpha-4/fleet-management.md`](alpha-4/fleet-management.md).
 
+## Ladung und lokale Transfers
+
+Jede Flotte führt einen eigenen gemeinsamen Bestand, nicht die einzelnen Schiffe. Der Markt handelt weiter nur mit der aktiven Flotte. Bei Anwesenheit im Hafen kann der Spieler Waren kostenlos und atomar zwischen seinen lokalen aktiven oder inaktiven Flotten und seinem Kontor verschieben. Regeln und Kapazitätsprüfung stehen in [`alpha-4/fleet-cargo-and-transfers.md`](alpha-4/fleet-cargo-and-transfers.md).
+
 ## Laderaum
 
 Jede Wareneinheit entspricht einer Tonne. Ist der Laderaum voll, können keine weiteren Waren aufgenommen werden; Verkaufen und Entladen bleiben möglich. Die konkrete Alpha-4-Kapazität ist nicht mehr fest 60 Tonnen, sondern wird aus den der aktiven Flotte zugeordneten Schifftypen abgeleitet.

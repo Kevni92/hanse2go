@@ -26,6 +26,8 @@ Ein Transfer ist nur für die aktuelle, serverseitig erreichbare Stadt möglich 
 
 Bei jeder Ablehnung bleiben Flotten- und Kontorbestände unverändert. Ein Transfer zwischen Städten, gemeinsames Lager, Lagerkosten, Verderb sowie automatischer Marktankauf oder -verkauf existieren nicht.
 
+Ab Alpha 4 ersetzt [`../alpha-4/fleet-cargo-and-transfers.md`](../alpha-4/fleet-cargo-and-transfers.md) die Beschränkung auf die einzelne aktive Flotte für lokale Transfers. Der Markthandel bleibt dagegen weiterhin auf die aktive Flotte beschränkt.
+
 ## Produktion
 
 Produktionsgebäude lesen ausschließlich ihr eigenes Kontor. Der Tick verarbeitet Gebäudeinstanzen in stabiler Erstellungsreihenfolge. Für jede Instanz prüft und entnimmt er sämtliche Inputs als eine atomare Buchung; fehlt eine Menge, bleibt die Instanz mit `stalled` und dem Grund `missing_inputs` unverändert. Erfolgreiche Outputs werden in einem Puffer gesammelt und erst nach der vollständigen Produktionsphase in die jeweiligen Kontore eingelagert. Kein Output kann daher einen späteren Betrieb desselben Ticks versorgen.
