@@ -1,0 +1,9 @@
+# Alpha 5: Bevölkerungskäufe und Konsum
+
+Jede Stadt besitzt eine reale Bevölkerungskasse; Startwerte sind Lambrecht 97.920,00, Neustadt 244.800,00 und Mannheim 489.600,00 Gold. Vollständig gezahlte Löhne werden ihr dauerhaft gutgeschrieben. Eine Konsumperiode ist ein Stundentick: Pro Stadt und Konsumware existiert eine System-Buy-Order für die nächste Periode. Ihr offener Rest läuft beim nächsten Tick ab und gibt Gold frei; dann entsteht die neue Order.
+
+Die Alpha-3-Raten bleiben Brot 4 t/1.000/h (25 %), Fleisch/Käse/Kleidung je 2 (15 %), Keramik/Möbel/Rum je 2 (10 %). Maximalpreis ist `max(1, floor(basePrice × (0,5 + wealth / 100)))`. Die Bevölkerung reserviert Wert samt Käufergebühr. Reicht ihr Budget nicht, werden Grundbedarf Brot/Fleisch/Käse/Kleidung und danach Zusatzbedarf Keramik/Möbel/Rum je proportional finanziert; Reste folgen sortierter `goodId`.
+
+Ausgeführte Ware wird sofort konsumiert und nicht gelagert. Periodendeckung ist ausgeführte/Sollmenge (bei Soll 0: 1); gewichtet ergibt sie Versorgung. Kaufkraft ist finanzierbarer Maximalwert inklusive Gebühren geteilt durch erforderlichen Maximalwert, begrenzt auf 0–1. Daher senkt fehlendes Angebot Versorgung, fehlendes Budget Kaufkraft. `targetWealth = 100 × overallCoverage × (0,4 + 0,6 × purchasingPower)`; die bestehende 2%-Tagesglättung und das Wachstum danach bleiben erhalten.
+
+Tickberichte enthalten Soll-, finanzierbare, bestellte und ausgeführte Menge, Preis, Reservierung, Gebühren, Deckung sowie Kassen-, Kaufkraft- und Wohlstandswerte. Inkonsistenzen `POPULATION_ORDER_BUDGET_MISMATCH`, `POPULATION_ORDER_STATE_CONFLICT`, `POPULATION_CONSUMPTION_PERIOD_CONFLICT` oder `POPULATION_TREASURY_INVARIANT_VIOLATION` rollen den ganzen Tick zurück. Individualkonten, Sell-Orders, Kredite und verborgenes Bevölkerungsinventar sind ausgeschlossen.
