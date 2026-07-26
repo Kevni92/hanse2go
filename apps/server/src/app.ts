@@ -12,6 +12,7 @@ import { MarketService } from './market.js';
 import { createBuildingCatalog } from './production.js';
 import { ReputationService } from './reputation.js';
 import { TickService } from './tick.js';
+import { HarborService } from './harbor.js';
 
 export interface AppOptions {
   enableTestReset?: boolean;
@@ -30,6 +31,7 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   const market = new MarketService(repository, cityAccess, config.market, reputation);
   const buildings = new BuildingService(repository, cityAccess, reputation, catalog);
   const tick = new TickService(repository, reputation, market, catalog, new ConsumptionModel(config.consumption), config.alpha3);
+  const harbor = new HarborService(repository, cityAccess, config.alpha4);
   const enableDebugTick = options.enableDebugTick ?? true;
 
   app.register(cors, { origin: true, methods: ['GET', 'HEAD', 'POST', 'PUT'] });
@@ -94,6 +96,14 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   app.post<{ Params: { cityId: string }; Body: TradeRequest }>('/api/cities/:cityId/market/trade', { schema: { tags: ['Markt'] } }, ({ params, body }) => market.commit({ cityId: params.cityId, ...body }));
   app.get<{ Params: { cityId: string; goodId: string } }>('/api/cities/:cityId/market/:goodId/history', { schema: { tags: ['Markt'] } }, ({ params }) => market.getHistory(params.cityId, params.goodId));
   app.get('/api/world', { schema: { tags: ['Alpha 2'] } }, () => { const state = repository.getState(); return { ...state.world, lastTickReport: state.lastTickReport }; });
+  app.get('/api/player/fleets', { schema: { tags: ['Alpha 4'] } }, () => harbor.fleets());
+  app.get<{ Params: { cityId: string } }>('/api/cities/:cityId/harbor', { schema: { tags: ['Alpha 4'] } }, ({ params }) => harbor.overview(params.cityId));
+  app.post<{ Params: { cityId: string; shipId: string }; Body: { shipMarketVersion: number; idempotencyKey: string } }>('/api/cities/:cityId/ships/:shipId/buy', { schema: { tags: ['Alpha 4'] } }, ({ params, body }) => {
+    if (!body.idempotencyKey) throw new DomainError('IDEMPOTENCY_KEY_REQUIRED', 'Ein Idempotenzschlüssel ist erforderlich.', 400);
+    return harbor.buy(params.cityId, params.shipId, body.shipMarketVersion);
+  });
+  app.patch<{ Params: { shipId: string }; Body: { customName: string } }>('/api/ships/:shipId/name', { schema: { tags: ['Alpha 4'] } }, ({ params, body }) => harbor.renameShip(params.shipId, body.customName));
+  app.post<{ Params: { cityId: string }; Body: { shipId: string; customName?: string } }>('/api/cities/:cityId/fleets', { schema: { tags: ['Alpha 4'] } }, ({ params, body }) => harbor.createFleet(params.cityId, body.shipId, body.customName));
   app.get<{ Params: { cityId: string } }>('/api/cities/:cityId/buildings', { schema: { tags: ['Alpha 2'] } }, ({ params }) => buildings.getOverview(params.cityId));
   app.post<{ Params: { cityId: string } }>('/api/cities/:cityId/concession', { schema: { tags: ['Alpha 2'] } }, ({ params }) => buildings.buyConcession(params.cityId));
   app.post<{ Params: { cityId: string }; Body: BuildBuildingRequest }>('/api/cities/:cityId/buildings', {
