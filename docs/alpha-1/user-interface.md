@@ -4,6 +4,8 @@
 
 Die Oberfläche ist Mobile First und soll freundlich, übersichtlich und leicht historisch wirken.
 
+Ab Alpha 4 ergänzt die Stadtansicht den mobilen und Desktop-fähigen Tab `Hafen`; seine verbindlichen Zustände, Tastaturbedienung und Test-IDs stehen in [`../alpha-4/user-interface.md`](../alpha-4/user-interface.md).
+
 - helle, pastellige Farbwelt
 - warme Holzoptik für Flächen, Rahmen und Bedienelemente
 - keine überladenen Ornamente
