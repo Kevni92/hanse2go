@@ -1,8 +1,9 @@
 import type { Alpha5Config, ConsumptionConfig } from '@hanse2go/config';
 import type { GameState, InventoryBalance, Order, OrderBookLevel, OrderBookSnapshot, OrderExecution, OrderOwnerType, OrderSide } from '@hanse2go/shared';
-import { account, CITY_ACCOUNT, moveAvailableMoney, moveReservedMoney, PLAYER_ACCOUNT, POPULATION_ACCOUNT, releaseMoney, reserveMoney } from './money.js';
+import { account, CITY_ACCOUNT, moveAvailableMoney, moveReservedMoney, PLAYER_ACCOUNT, POPULATION_ACCOUNT, releaseMoney, reserveMoney, syncLegacyPlayerGold } from './money.js';
 import { DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
+import type { ReputationService } from './reputation.js';
 
 interface CreateOrderInput {
   cityId: string;
@@ -24,15 +25,16 @@ interface ReplaceOrderInput extends CancelOrderInput { limitPriceGoldPerTon: num
  * the whole command together with its ledger entries.
  */
 export class OrderBookService {
-  constructor(private readonly repository: GameRepository, private readonly config: Alpha5Config) {}
+  constructor(private readonly repository: GameRepository, private readonly config: Alpha5Config, private readonly reputation?: ReputationService) {}
 
   create(input: CreateOrderInput): Order {
     return this.repository.runTransaction((state) => {
       const fingerprint = fingerprintOf({ ...input, ownerType: input.ownerType ?? 'player', ownerId: input.ownerId ?? state.player.id });
       const replay = this.replay(state, input.idempotencyKey, fingerprint, 'create');
-      if (replay) return this.requireOrder(state, replay.orderId);
+      if (replay) { syncLegacyPlayerGold(state); return this.requireOrder(state, replay.orderId); }
       const order = this.createInternal(state, input, input.ownerType ?? 'player', input.ownerId ?? state.player.id);
       this.remember(state, input.idempotencyKey, fingerprint, 'create', order);
+      syncLegacyPlayerGold(state);
       return order;
     });
   }
@@ -41,7 +43,7 @@ export class OrderBookService {
     return this.repository.runTransaction((state) => {
       const fingerprint = fingerprintOf(input);
       const replay = this.replay(state, input.idempotencyKey, fingerprint, 'cancel');
-      if (replay) return this.requireOrder(state, replay.orderId);
+      if (replay) { syncLegacyPlayerGold(state); return this.requireOrder(state, replay.orderId); }
       const order = this.requireOwnedOrder(state, input.orderId);
       this.checkVersion(order, input.orderVersion);
       this.releaseOrderReservations(state, order);
@@ -50,6 +52,7 @@ export class OrderBookService {
       order.updatedAtTick = state.world.tickNumber;
       this.bumpVersion(state, order.cityId, order.goodId);
       this.remember(state, input.idempotencyKey, fingerprint, 'cancel', order);
+      syncLegacyPlayerGold(state);
       return order;
     });
   }
@@ -58,7 +61,7 @@ export class OrderBookService {
     return this.repository.runTransaction((state) => {
       const fingerprint = fingerprintOf(input);
       const replay = this.replay(state, input.idempotencyKey, fingerprint, 'replace');
-      if (replay) return this.requireOrder(state, replay.orderId);
+      if (replay) { syncLegacyPlayerGold(state); return this.requireOrder(state, replay.orderId); }
       const oldOrder = this.requireOwnedOrder(state, input.orderId);
       this.checkVersion(oldOrder, input.orderVersion);
       this.releaseOrderReservations(state, oldOrder);
@@ -76,6 +79,7 @@ export class OrderBookService {
         idempotencyKey: input.idempotencyKey,
       }, oldOrder.ownerType, oldOrder.ownerId, oldOrder.orderId);
       this.remember(state, input.idempotencyKey, fingerprint, 'replace', newOrder);
+      syncLegacyPlayerGold(state);
       return newOrder;
     });
   }
@@ -128,7 +132,8 @@ export class OrderBookService {
   }
 
   /** Rebuilds the deterministic system side at a tick boundary. */
-  refreshSystemOrders(state: GameState, consumption?: ConsumptionConfig): void {
+  refreshSystemOrders(state: GameState, consumption?: ConsumptionConfig, matchOrders = true): void {
+    const systemOrderIds = new Set(state.orders.filter((entry) => entry.ownerType === 'city' || entry.ownerType === 'population').map((entry) => entry.orderId));
     for (const order of state.orders.filter((entry) => this.isActive(entry) && (entry.ownerType === 'city' || entry.ownerType === 'population'))) {
       this.releaseOrderReservations(state, order);
       order.status = 'cancelled';
@@ -136,6 +141,8 @@ export class OrderBookService {
       order.updatedAtTick = state.world.tickNumber;
       this.bumpVersion(state, order.cityId, order.goodId);
     }
+    state.orders = state.orders.filter((order) => !systemOrderIds.has(order.orderId));
+    for (const [key, record] of Object.entries(state.idempotencyRecords)) if (systemOrderIds.has(record.orderId)) delete state.idempotencyRecords[key];
     for (const city of state.cities) {
       for (const good of state.goods) {
         const warehouse = state.cityWarehouses[city.id]![good.id]!;
@@ -145,31 +152,31 @@ export class OrderBookService {
           const requested = targetUnits - warehouse.totalUnits;
           const price = Math.max(1, Math.floor(good.basePrice * 0.9));
           const affordable = affordableQuantity(state, CITY_ACCOUNT(city.id), requested, price, this.config.buyerFeePermille);
-          if (affordable > 0) this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'buy', limitPriceGoldPerTon: price, quantityUnits: affordable, idempotencyKey: `${keyBase}-city-buy` }, 'city', city.id);
+          if (affordable > 0) this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'buy', limitPriceGoldPerTon: price, quantityUnits: affordable, idempotencyKey: `${keyBase}-city-buy` }, 'city', city.id, undefined, matchOrders);
         } else if (warehouse.totalUnits > targetUnits) {
           const quantity = warehouse.totalUnits - targetUnits;
           const price = Math.max(1, Math.ceil(good.basePrice * 1.1));
-          this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'sell', limitPriceGoldPerTon: price, quantityUnits: quantity, idempotencyKey: `${keyBase}-city-sell` }, 'city', city.id);
+          this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'sell', limitPriceGoldPerTon: price, quantityUnits: quantity, idempotencyKey: `${keyBase}-city-sell` }, 'city', city.id, undefined, matchOrders);
         }
         const consumptionRate = consumption?.perPopulationUnit[good.id];
         if (consumptionRate) {
           const requested = Math.ceil(city.population / consumption!.populationUnit) * consumptionRate * 100;
           const price = Math.max(1, Math.floor(good.basePrice * (0.5 + (state.cityEconomies[city.id]?.wealth ?? city.prosperity) / 100)));
           const affordable = affordableQuantity(state, POPULATION_ACCOUNT(city.id), requested, price, this.config.buyerFeePermille);
-          if (affordable > 0) this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'buy', limitPriceGoldPerTon: price, quantityUnits: affordable, idempotencyKey: `${keyBase}-population-buy` }, 'population', city.id);
+          if (affordable > 0) this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'buy', limitPriceGoldPerTon: price, quantityUnits: affordable, idempotencyKey: `${keyBase}-population-buy` }, 'population', city.id, undefined, matchOrders);
         }
       }
     }
   }
 
-  private createInternal(state: GameState, input: CreateOrderInput, ownerType: OrderOwnerType, ownerId: string, replacesOrderId?: string): Order {
+  private createInternal(state: GameState, input: CreateOrderInput, ownerType: OrderOwnerType, ownerId: string, replacesOrderId?: string, matchOrder = true): Order {
     this.validate(state, input, ownerType, ownerId);
     const orderId = `order-${++state.orderIdSequence}`;
     const order: Order = {
       orderId, cityId: input.cityId, goodId: input.goodId, side: input.side, ownerType, ownerId,
       limitPriceGoldPerTon: input.limitPriceGoldPerTon, originalQuantityUnits: input.quantityUnits,
       remainingQuantityUnits: input.quantityUnits, reservedMoney: 0, reservedGoodsUnits: 0,
-      status: 'open', orderVersion: 1, createdAtTick: state.world.tickNumber, updatedAtTick: state.world.tickNumber,
+      status: 'open', orderVersion: 1, createdSequence: state.orderIdSequence, createdAtTick: state.world.tickNumber, updatedAtTick: state.world.tickNumber,
       idempotencyKey: input.idempotencyKey, replacesOrderId,
     };
     if (order.side === 'buy') {
@@ -181,15 +188,15 @@ export class OrderBookService {
     }
     state.orders.push(order);
     this.bumpVersion(state, input.cityId, input.goodId);
-    this.match(state, input.cityId, input.goodId);
+    if (matchOrder) this.match(state, input.cityId, input.goodId);
     return order;
   }
 
   private match(state: GameState, cityId: string, goodId: string): void {
     const buys = state.orders.filter((order) => order.cityId === cityId && order.goodId === goodId && order.side === 'buy' && this.isActive(order))
-      .sort((a, b) => b.limitPriceGoldPerTon - a.limitPriceGoldPerTon || a.createdAtTick - b.createdAtTick || a.orderId.localeCompare(b.orderId));
+      .sort((a, b) => b.limitPriceGoldPerTon - a.limitPriceGoldPerTon || a.createdSequence - b.createdSequence || a.orderId.localeCompare(b.orderId));
     const sells = state.orders.filter((order) => order.cityId === cityId && order.goodId === goodId && order.side === 'sell' && this.isActive(order))
-      .sort((a, b) => a.limitPriceGoldPerTon - b.limitPriceGoldPerTon || a.createdAtTick - b.createdAtTick || a.orderId.localeCompare(b.orderId));
+      .sort((a, b) => a.limitPriceGoldPerTon - b.limitPriceGoldPerTon || a.createdSequence - b.createdSequence || a.orderId.localeCompare(b.orderId));
     let buyIndex = 0;
     let sellIndex = 0;
     while (buyIndex < buys.length && sellIndex < sells.length) {
@@ -208,6 +215,8 @@ export class OrderBookService {
   }
 
   private execute(state: GameState, buy: Order, sell: Order, quantityUnits: number): void {
+    const city = state.cities.find((entry) => entry.id === buy.cityId);
+    const stockBefore = city?.stock[buy.goodId] ?? 0;
     const grossMoney = safeMoney(quantityUnits * sell.limitPriceGoldPerTon);
     const buyerFeeMoney = fee(grossMoney, this.config.buyerFeePermille);
     const sellerFeeMoney = fee(grossMoney, this.config.sellerFeePermille);
@@ -216,7 +225,7 @@ export class OrderBookService {
     const treasuryId = CITY_ACCOUNT(buy.cityId);
     const totalBuyerDebit = grossMoney + buyerFeeMoney;
     if (buy.reservedMoney < totalBuyerDebit) throw new DomainError('MONEY_RESERVATION_CONFLICT', 'Die Kauforder ist nicht vollständig gedeckt.', 409, { orderId: buy.orderId });
-    moveReservedMoney(state, buyerAccountId, sellerAccountId, grossMoney, 'market_trade', 'order_execution', `execution-${state.executionIdSequence + 1}`, buy.idempotencyKey);
+    moveReservedMoney(state, buyerAccountId, sellerAccountId, grossMoney, buy.ownerType === 'population' ? 'population_purchase' : 'market_trade', 'order_execution', `execution-${state.executionIdSequence + 1}`, buy.idempotencyKey);
     if (buyerAccountId === treasuryId) releaseMoney(account(state, buyerAccountId), buyerFeeMoney);
     else moveReservedMoney(state, buyerAccountId, treasuryId, buyerFeeMoney, 'market_buyer_fee', 'order_execution', `execution-${state.executionIdSequence + 1}`, buy.idempotencyKey);
     if (sellerAccountId !== treasuryId && sellerFeeMoney > 0) moveAvailableMoney(state, sellerAccountId, treasuryId, sellerFeeMoney, 'market_seller_fee', 'order_execution', `execution-${state.executionIdSequence + 1}`, sell.idempotencyKey);
@@ -235,6 +244,8 @@ export class OrderBookService {
     };
     state.executions.push(execution);
     this.bumpVersion(state, buy.cityId, buy.goodId);
+    if (sell.ownerType === 'player' && buy.ownerType !== 'player' && city) this.reputation?.registerTrade(state, { cityId: buy.cityId, goodId: buy.goodId, targetStock: state.goods.find((good) => good.id === buy.goodId)!.targetStock, stockBefore, quantity: quantityUnits / 100, direction: 'sell' });
+    syncLegacyPlayerGold(state);
   }
 
   private releaseExcessBuyerReservation(state: GameState, order: Order): void {
@@ -274,12 +285,17 @@ export class OrderBookService {
     const levels = (side: OrderSide): OrderBookLevel[] => {
       const byPrice = new Map<number, OrderBookLevel>();
       for (const order of active.filter((entry) => entry.side === side)) {
-        const level = byPrice.get(order.limitPriceGoldPerTon) ?? { limitPriceGoldPerTon: order.limitPriceGoldPerTon, quantityUnits: 0, orderCount: 0 };
+        const level = byPrice.get(order.limitPriceGoldPerTon) ?? { limitPriceGoldPerTon: order.limitPriceGoldPerTon, quantityUnits: 0, cumulativeQuantityUnits: 0, ownQuantityUnits: 0, orderCount: 0 };
         level.quantityUnits += order.remainingQuantityUnits;
+        if (order.ownerType === 'player' && order.ownerId === state.player.id) level.ownQuantityUnits += order.remainingQuantityUnits;
         level.orderCount += 1;
         byPrice.set(order.limitPriceGoldPerTon, level);
       }
-      return [...byPrice.values()].sort((a, b) => side === 'buy' ? b.limitPriceGoldPerTon - a.limitPriceGoldPerTon : a.limitPriceGoldPerTon - b.limitPriceGoldPerTon);
+      let cumulative = 0;
+      return [...byPrice.values()].sort((a, b) => side === 'buy' ? b.limitPriceGoldPerTon - a.limitPriceGoldPerTon : a.limitPriceGoldPerTon - b.limitPriceGoldPerTon).map((level) => {
+        cumulative += level.quantityUnits;
+        return { ...level, cumulativeQuantityUnits: cumulative };
+      });
     };
     return { cityId, goodId, version: state.orderBookVersions[orderKey(cityId, goodId)] ?? 0, bids: levels('buy'), asks: levels('sell'), recentExecutions: state.executions.filter((entry) => entry.cityId === cityId && entry.goodId === goodId).slice(-50) };
   }
@@ -391,6 +407,19 @@ function transferGoods(state: GameState, sell: Order, buy: Order, amount: number
   buyer.inventoryVersion += 1;
   assertInventory(seller);
   assertInventory(buyer);
+  const city = state.cities.find((entry) => entry.id === buy.cityId);
+  if (city) {
+    if (sell.ownerType !== 'player') city.stock[sell.goodId] = (city.stock[sell.goodId] ?? 0) - amount / 100;
+    if (buy.ownerType !== 'player') city.stock[buy.goodId] = (city.stock[buy.goodId] ?? 0) + amount / 100;
+  }
+  for (const order of [sell, buy]) {
+    if (order.ownerType === 'player') {
+      const warehouse = state.kontorWarehouses[order.cityId]![order.goodId]!;
+      state.kontors[order.cityId] ??= {};
+      if (warehouse.totalUnits > 0) state.kontors[order.cityId]![order.goodId] = warehouse.totalUnits / 100;
+      else delete state.kontors[order.cityId]![order.goodId];
+    }
+  }
 }
 function assertInventory(value: InventoryBalance): void {
   if (value.availableUnits < 0 || value.reservedUnits < 0 || value.availableUnits + value.reservedUnits !== value.totalUnits) throw new DomainError('ORDER_MATCHING_FAILED', 'Die Warenbilanz ist inkonsistent.', 500);

@@ -2,6 +2,7 @@ import type { Alpha4Config } from '@hanse2go/config';
 import type { ManagedFleet, Ship } from '@hanse2go/shared';
 import { CityAccessService, DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
+import { payCityFromPlayer } from './money.js';
 
 export class HarborService {
   constructor(private readonly repository: GameRepository, private readonly cityAccess: CityAccessService, private readonly alpha4: Alpha4Config) {}
@@ -20,7 +21,7 @@ export class HarborService {
       if (ship.ownerType !== 'system' || ship.portCityId !== cityId) throw new DomainError('SHIP_NOT_FOR_SALE', 'Das Schiff steht nicht mehr zum Kauf.', 409);
       const type = this.type(ship);
       if (state.player.gold < type.purchasePrice) throw new DomainError('INSUFFICIENT_GOLD', 'Es ist nicht genug Gold vorhanden.', 409);
-      state.player.gold -= type.purchasePrice; ship.ownerType = 'player'; ship.ownerId = state.player.id; ship.shipVersion += 1; state.shipMarketVersions[cityId] += 1;
+      payCityFromPlayer(state, cityId, type.purchasePrice, 'ship_purchase', 'ship', ship.shipId, `ship-purchase-${ship.shipId}-${state.world.tickNumber}`); ship.ownerType = 'player'; ship.ownerId = state.player.id; ship.shipVersion += 1; state.shipMarketVersions[cityId] += 1;
       return this.stateFor(state, cityId);
     });
   }

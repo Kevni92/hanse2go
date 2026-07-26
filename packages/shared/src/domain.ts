@@ -59,6 +59,7 @@ export interface Order {
   reservedGoodsUnits: number;
   status: OrderStatus;
   orderVersion: number;
+  createdSequence: number;
   createdAtTick: number;
   updatedAtTick: number;
   idempotencyKey: string;
@@ -77,7 +78,7 @@ export interface OrderExecution {
   sellerFeeMoney: number;
   tickNumber: number;
 }
-export interface OrderBookLevel { limitPriceGoldPerTon: number; quantityUnits: number; orderCount: number }
+export interface OrderBookLevel { limitPriceGoldPerTon: number; quantityUnits: number; cumulativeQuantityUnits: number; ownQuantityUnits: number; orderCount: number }
 export interface OrderBookSnapshot {
   cityId: string;
   goodId: string;

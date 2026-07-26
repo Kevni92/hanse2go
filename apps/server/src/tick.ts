@@ -1,4 +1,4 @@
-import type { Building, BuildingProductionReport, City, ConsumptionReport, Player, TickReport, WorkforcePriority } from '@hanse2go/shared';
+import type { Building, BuildingProductionReport, City, ConsumptionReport, GameState, Player, TickReport, WorkforcePriority } from '@hanse2go/shared';
 import type { Alpha3Config } from '@hanse2go/config';
 import { DomainError } from './city-access.js';
 import type { ConsumptionModel } from './consumption.js';
@@ -7,6 +7,7 @@ import type { MarketService } from './market.js';
 import type { BuildingCatalog } from './production.js';
 import type { ReputationService } from './reputation.js';
 import type { OrderBookService } from './order-book.js';
+import { moveAvailableMoney, PLAYER_ACCOUNT, POPULATION_ACCOUNT } from './money.js';
 
 /** Stundentick aus `docs/alpha-2/production-tick.md`: eine simulierte Stunde, als Ganzes atomar. */
 export class TickService {
@@ -32,26 +33,32 @@ export class TickService {
       const { report, changedCities } = this.repository.runTransaction((state) => {
         // Bis zum Schreiben am Ende arbeitet der Tick auf Kopien; ein Fehler lässt den Weltzustand unverändert.
         const buildings = structuredClone(state.buildings);
+        const kontorsBefore = structuredClone(state.kontors);
         const kontors = structuredClone(state.kontors);
         const cities = structuredClone(state.cities);
         const cityEconomies = structuredClone(state.cityEconomies);
         const player = structuredClone(state.player);
+        const executionStart = state.executions.length;
 
-        this.allocateAndPay(buildings, cities, player);
-        const production = this.produce(buildings, kontors);
-        const consumption = this.consume(cities, cityEconomies);
-        this.updateWealthAndGrowth(cities, cityEconomies, consumption, buildings);
+        this.allocateAndPay(buildings, cities, player, state);
+        const production = this.produce(buildings, kontors, state.kontorWarehouses);
         const world = { tickNumber: state.world.tickNumber + 1, simulatedHour: state.world.simulatedHour + 1 };
-        const tickReport: TickReport = { tickNumber: world.tickNumber, simulatedHour: world.simulatedHour, production, consumption };
 
         state.buildings = buildings;
         state.kontors = kontors;
+        this.syncKontorWarehouses(state, kontorsBefore, kontors);
         state.cities = cities;
         state.cityEconomies = cityEconomies;
         state.player = player;
-        this.orderBook?.matchAll(state);
-        this.orderBook?.refreshSystemOrders(state, this.consumption.config);
         state.world = world;
+        this.orderBook?.matchAll(state);
+        const populationOrderIds = new Set(state.orders.filter((order) => order.ownerType === 'population' && order.side === 'buy').map((order) => order.orderId));
+        this.orderBook?.refreshSystemOrders(state, this.consumption.config);
+        for (const order of state.orders) if (order.ownerType === 'population' && order.side === 'buy') populationOrderIds.add(order.orderId);
+        const populationPurchases = this.consumePopulationPurchases(state, executionStart, populationOrderIds);
+        const consumption = this.consume(state, cityEconomies, populationPurchases);
+        this.updateWealthAndGrowth(state.cities, cityEconomies, consumption, buildings);
+        const tickReport: TickReport = { tickNumber: world.tickNumber, simulatedHour: world.simulatedHour, production, consumption };
         state.lastTickReport = tickReport;
         return { report: tickReport, changedCities: consumption.filter((entry) => entry.consumed > 0).map((entry) => entry.cityId) };
       });
@@ -68,7 +75,7 @@ export class TickService {
   reset(): void { this.completed.clear(); }
 
   /** Alpha 3: financeable demand is allocated before wages and production. The current in-memory alpha has one player; priority still defines deterministic per-city allocation. */
-  private allocateAndPay(buildings: Building[], cities: City[], player: Player): void {
+  private allocateAndPay(buildings: Building[], cities: City[], player: Player, state: ReturnType<GameRepository['getState']>): void {
     const rank: Record<WorkforcePriority, number> = { very_high: 5, high: 4, normal: 3, low: 2, very_low: 1 };
     for (const city of cities) {
       let workersLeft = Math.floor(city.population);
@@ -76,19 +83,20 @@ export class TickService {
         .sort((a, b) => rank[b.workforcePriority ?? 'normal'] - rank[a.workforcePriority ?? 'normal'] || a.id.localeCompare(b.id));
       for (const building of candidates) {
         const workforce = this.alpha3.workforce[building.workforceClass!];
-        const financiallyPossible = Math.floor(player.gold / workforce.wagePerWorker);
+        const financiallyPossible = Math.floor((state.accounts[PLAYER_ACCOUNT(player.id)]?.availableMoney ?? player.gold * 100) / (workforce.wagePerWorker * 100));
         const assigned = Math.min(workersLeft, workforce.workers, financiallyPossible);
         const wageCost = assigned * workforce.wagePerWorker;
         building.assignedWorkers = assigned;
         building.lastWageCost = wageCost;
         workersLeft -= assigned;
-        player.gold -= wageCost;
+        if (wageCost > 0) moveAvailableMoney(state, PLAYER_ACCOUNT(player.id), POPULATION_ACCOUNT(city.id), wageCost * 100, 'wage_payment', 'tick', `tick-${state.world.tickNumber + 1}`, `tick-${state.world.tickNumber + 1}`);
+        player.gold = Math.floor((state.accounts[PLAYER_ACCOUNT(player.id)]?.availableMoney ?? player.gold * 100) / 100);
       }
     }
   }
 
   /** Entnimmt alle Eingänge atomar je Instanz und lagert alle Ausgänge erst nach der Produktionsphase ein. */
-  private produce(buildings: Building[], kontors: Record<string, Record<string, number>>): BuildingProductionReport[] {
+  private produce(buildings: Building[], kontors: Record<string, Record<string, number>>, warehouses: GameState['kontorWarehouses']): BuildingProductionReport[] {
     const reports: BuildingProductionReport[] = [];
     const buffered: Array<{ cityId: string; outputs: Record<string, number> }> = [];
     for (const building of buildings) {
@@ -106,7 +114,7 @@ export class TickService {
       if (utilization <= 0) {
         building.status = 'stalled';
         building.reason = 'missing_inputs';
-      } else if (Object.entries(proportionalInputs).some(([goodId, amount]) => (store[goodId] ?? 0) + 1e-9 < amount)) {
+      } else if (Object.entries(proportionalInputs).some(([goodId, amount]) => (store[goodId] ?? 0) + 1e-9 < amount || (warehouses[building.cityId]?.[goodId]?.availableUnits ?? 0) + 1e-9 < amount * 100)) {
         building.status = 'stalled';
         building.reason = 'missing_inputs';
       } else {
@@ -130,22 +138,65 @@ export class TickService {
   }
 
   /** Zieht den festen Bevölkerungsverbrauch je Stadt und Ware ab; Bestände werden nie negativ. */
-  private consume(cities: City[], economies: Record<string, { consumptionRemainders: Record<string, number> }>): ConsumptionReport[] {
+  private consume(state: GameState, economies: Record<string, { consumptionRemainders: Record<string, number> }>, populationPurchases: Record<string, Record<string, number>>): ConsumptionReport[] {
     const reports: ConsumptionReport[] = [];
-    for (const city of cities) {
+    for (const city of state.cities) {
       for (const goodId of this.consumption.consumedGoodIds) {
         const rate = this.consumption.required(this.consumption.config.populationUnit, goodId);
         const remainder = economies[city.id]!.consumptionRemainders[goodId] ?? 0;
         const raw = rate * city.population + remainder;
         const requested = Math.floor(raw / this.consumption.config.populationUnit);
         economies[city.id]!.consumptionRemainders[goodId] = raw % this.consumption.config.populationUnit;
+        const purchased = Math.min(requested, populationPurchases[city.id]?.[goodId] ?? 0);
         const stock = city.stock[goodId] ?? 0;
-        const consumed = Math.min(requested, stock);
-        city.stock[goodId] = stock - consumed;
-        reports.push({ cityId: city.id, goodId, requested, consumed, remainingStock: stock - consumed });
+        const remainingDemand = Math.max(0, requested - purchased);
+        const consumedFromStock = Math.min(remainingDemand, stock);
+        const consumed = purchased + consumedFromStock;
+        const warehouse = state.cityWarehouses[city.id]![goodId]!;
+        if (consumedFromStock > 0) {
+          const units = consumedFromStock * 100;
+          if (warehouse.availableUnits < units) throw new DomainError('ORDER_MATCHING_FAILED', 'Das Stadtlager ist nicht mit dem Stadtbestand synchron.', 500);
+          warehouse.availableUnits -= units;
+          warehouse.totalUnits -= units;
+          warehouse.inventoryVersion += 1;
+          city.stock[goodId] = stock - consumedFromStock;
+        }
+        reports.push({ cityId: city.id, goodId, requested, consumed, remainingStock: city.stock[goodId] ?? stock });
       }
     }
     return reports;
+  }
+
+  private syncKontorWarehouses(state: GameState, before: Record<string, Record<string, number>>, after: Record<string, Record<string, number>>): void {
+    for (const city of state.cities) {
+      for (const good of state.goods) {
+        const deltaUnits = Math.round(((after[city.id]?.[good.id] ?? 0) - (before[city.id]?.[good.id] ?? 0)) * 100);
+        if (deltaUnits === 0) continue;
+        const warehouse = state.kontorWarehouses[city.id]![good.id]!;
+        if (deltaUnits < 0 && warehouse.availableUnits < -deltaUnits) throw new DomainError('ORDER_MATCHING_FAILED', 'Die Produktion verwendet reservierte Kontorware.', 409);
+        warehouse.availableUnits += deltaUnits;
+        warehouse.totalUnits += deltaUnits;
+        warehouse.inventoryVersion += 1;
+      }
+    }
+  }
+
+  private consumePopulationPurchases(state: GameState, executionStart: number, populationOrderIds: Set<string>): Record<string, Record<string, number>> {
+    const purchased: Record<string, Record<string, number>> = {};
+    for (const execution of state.executions.slice(executionStart)) {
+      if (!populationOrderIds.has(execution.buyOrderId)) continue;
+      const warehouse = state.cityWarehouses[execution.cityId]![execution.goodId]!;
+      const units = execution.quantityUnits;
+      if (warehouse.availableUnits < units) throw new DomainError('ORDER_MATCHING_FAILED', 'Die gekaufte Bevölkerungsware ist nicht verfügbar.', 500);
+      warehouse.availableUnits -= units;
+      warehouse.totalUnits -= units;
+      warehouse.inventoryVersion += 1;
+      const city = state.cities.find((entry) => entry.id === execution.cityId)!;
+      city.stock[execution.goodId] = Math.max(0, (city.stock[execution.goodId] ?? 0) - units / 100);
+      purchased[execution.cityId] ??= {};
+      purchased[execution.cityId]![execution.goodId] = (purchased[execution.cityId]![execution.goodId] ?? 0) + units / 100;
+    }
+    return purchased;
   }
 
   private updateWealthAndGrowth(cities: City[], economies: Record<string, { baseHousing: number; wealth: number; wealthRemainder: number; growthRemainder: number }>, consumption: ConsumptionReport[], buildings: Building[]): void {

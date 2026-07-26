@@ -3,6 +3,7 @@ import { CityAccessService, DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
 import type { BuildingCatalog } from './production.js';
 import { ReputationService } from './reputation.js';
+import { account, payCityFromPlayer, PLAYER_ACCOUNT } from './money.js';
 
 interface TransferInput { goodId: string; quantity: number; direction: TransferDirection }
 
@@ -27,7 +28,8 @@ export class BuildingService {
       const reputation = this.reputation.get(state, cityId);
       if (reputation.value < requiredReputation) throw new DomainError('REPUTATION_TOO_LOW', `Für die Baukonzession sind ${requiredReputation} Ruf nötig.`, 409, { reputation: reputation.value, required: requiredReputation });
       if (state.player.gold < price) throw new DomainError('INSUFFICIENT_GOLD', 'Es ist nicht genug Gold für die Baukonzession vorhanden.', 409, { gold: state.player.gold, required: price });
-      state.player.gold -= price;
+      if (account(state, PLAYER_ACCOUNT(state.player.id)).availableMoney < price * 100) throw new DomainError('INSUFFICIENT_GOLD', 'Nicht genug verfÃ¼gbares Gold.', 409, { gold: state.player.gold, required: price });
+      payCityFromPlayer(state, cityId, price, 'concession_fee', 'concession', cityId, `concession-${cityId}-${state.world.tickNumber}`);
       state.concessions.push(cityId);
       return this.overview(state, cityId);
     });
@@ -47,7 +49,10 @@ export class BuildingService {
       const missingMaterials = this.missingMaterials(state, entry);
       if (Object.keys(missingMaterials).length) throw new DomainError('INSUFFICIENT_BUILD_MATERIALS', 'Im Laderaum der Flotte fehlen Baumaterialien.', 409, { missingMaterials });
 
-      state.player.gold -= entry.cost.totalGold;
+      if (account(state, PLAYER_ACCOUNT(state.player.id)).availableMoney < entry.cost.totalGold * 100) throw new DomainError('INSUFFICIENT_GOLD', 'Nicht genug verfÃ¼gbares Gold.', 409, { gold: state.player.gold, required: entry.cost.totalGold });
+      const buildReference = `${cityId}-${entry.buildingType}-${state.buildings.length + 1}`;
+      if (entry.cost.landGold > 0) payCityFromPlayer(state, cityId, entry.cost.landGold, 'land_purchase_fee', 'building', buildReference, `land-${buildReference}`);
+      if (entry.cost.buildGold > 0) payCityFromPlayer(state, cityId, entry.cost.buildGold, 'building_construction_fee', 'building', buildReference, `build-${buildReference}`);
       for (const [goodId, amount] of Object.entries(entry.cost.materials)) {
         state.fleet.cargo[goodId] = (state.fleet.cargo[goodId] ?? 0) - amount;
         if (state.fleet.cargo[goodId] === 0) delete state.fleet.cargo[goodId];
@@ -82,13 +87,22 @@ export class BuildingService {
         state.fleet.cargo[input.goodId] = fleetStock - input.quantity;
         if (state.fleet.cargo[input.goodId] === 0) delete state.fleet.cargo[input.goodId];
         store[input.goodId] = kontorStock + input.quantity;
+        const warehouse = state.kontorWarehouses[cityId]![input.goodId]!;
+        warehouse.availableUnits += input.quantity * 100;
+        warehouse.totalUnits += input.quantity * 100;
+        warehouse.inventoryVersion += 1;
       } else {
         if (kontorStock < input.quantity) throw new DomainError('INSUFFICIENT_KONTOR_GOODS', 'Das Kontor besitzt nicht genug von dieser Ware.', 409, { available: kontorStock });
         const freeCapacity = state.fleet.capacity - Object.values(state.fleet.cargo).reduce((total, amount) => total + amount, 0);
         if (freeCapacity < input.quantity) throw new DomainError('INSUFFICIENT_FLEET_CAPACITY', 'Der freie Laderaum der Flotte reicht nicht aus.', 409, { freeCapacity });
+        const warehouse = state.kontorWarehouses[cityId]![input.goodId]!;
+        if (warehouse.availableUnits < input.quantity * 100) throw new DomainError('INSUFFICIENT_KONTOR_GOODS', 'Das Kontor besitzt nicht genug frei verfÃ¼gbare Ware.', 409, { available: Math.floor(warehouse.availableUnits / 100) });
         store[input.goodId] = kontorStock - input.quantity;
         if (store[input.goodId] === 0) delete store[input.goodId];
         state.fleet.cargo[input.goodId] = fleetStock + input.quantity;
+        warehouse.availableUnits -= input.quantity * 100;
+        warehouse.totalUnits -= input.quantity * 100;
+        warehouse.inventoryVersion += 1;
       }
       return this.overview(state, cityId);
     });
