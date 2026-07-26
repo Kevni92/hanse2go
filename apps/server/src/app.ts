@@ -24,7 +24,7 @@ export interface AppOptions {
 export function buildApp(repository: GameRepository = new InMemoryGameRepository(), options: AppOptions = {}) {
   const app = Fastify({ logger: true });
   const config = options.config ?? loadGameConfig();
-  const catalog = createBuildingCatalog(config.buildings);
+  const catalog = createBuildingCatalog(config.buildings, config.alpha3);
   const cityAccess = new CityAccessService(repository);
   const reputation = new ReputationService(config.reputation);
   const market = new MarketService(repository, cityAccess, config.market, reputation);

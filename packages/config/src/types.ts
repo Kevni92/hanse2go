@@ -1,4 +1,4 @@
-import type { BuildingClass, BuildingKind, GoodCategory, ReputationStatus } from '@hanse2go/shared';
+import type { BuildingClass, BuildingKind, GoodCategory, ReputationStatus, WorkforceClass } from '@hanse2go/shared';
 
 /** Typen der zentralen Spielkonfiguration in `game-config.json`. */
 
@@ -41,6 +41,13 @@ export interface ProductionBuildingConfig {
   buildingType: string; kind: BuildingKind; buildingClass: BuildingClass;
   inputs: Record<string, number>; outputs: Record<string, number>;
 }
+export interface WorkforceClassConfig { workers: number; wagePerWorker: number }
+export interface Alpha3Config {
+  workforce: Record<WorkforceClass, WorkforceClassConfig>;
+  buildingWorkforce: Record<string, WorkforceClass>;
+  housing: { buildingType: string; capacity: number; buildGold: number; materials: Record<string, number> };
+  cities: Record<string, { baseHousing: number; wealth: number }>;
+}
 export interface BuildingsConfig {
   kontorType: string;
   /** Der Grundstückspreis gilt für jedes Gebäude zusätzlich zu den Klassenkosten. */
@@ -61,4 +68,5 @@ export interface GameConfig {
   goods: GoodConfig[];
   cities: CityConfig[];
   buildings: BuildingsConfig;
+  alpha3: Alpha3Config;
 }

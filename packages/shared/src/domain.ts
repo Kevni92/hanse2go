@@ -16,6 +16,9 @@ export type ReputationStatus = 'stranger' | 'known_trader' | 'respected_trader' 
 export interface Reputation { cityId: string; value: number; status: ReputationStatus }
 
 export type BuildingClass = 'simple' | 'medium' | 'premium';
+/** Alpha 3 keeps the construction class separate from the workforce class. */
+export type WorkforceClass = 'simple' | 'medium' | 'premium';
+export type WorkforcePriority = 'very_high' | 'high' | 'normal' | 'low' | 'very_low';
 /** `kontor` ist Pflichtgebäude ohne Produktion, `raw` produziert ohne Eingang, `processing` verarbeitet. */
 export type BuildingKind = 'kontor' | 'raw' | 'processing';
 export type BuildingStatus = 'built' | 'production_ready' | 'stalled';
@@ -24,9 +27,9 @@ export type BuildingAvailability = 'buildable' | 'requirements_missing';
 export type BuildingRequirement = 'concession' | 'kontor' | 'kontor_already_exists' | 'gold' | 'materials';
 
 export interface BuildingCost { landGold: number; buildGold: number; totalGold: number; materials: Record<string, number> }
-export interface BuildingCatalogEntry { buildingType: string; kind: BuildingKind; buildingClass?: BuildingClass; cost: BuildingCost; inputs: Record<string, number>; outputs: Record<string, number> }
+export interface BuildingCatalogEntry { buildingType: string; kind: BuildingKind; buildingClass?: BuildingClass; workforceClass?: WorkforceClass; cost: BuildingCost; inputs: Record<string, number>; outputs: Record<string, number> }
 export interface BuildingOffer extends BuildingCatalogEntry { availability: BuildingAvailability; missingRequirements: BuildingRequirement[]; missingGold: number; missingMaterials: Record<string, number> }
-export interface Building { id: string; playerId: string; cityId: string; buildingType: string; kind: BuildingKind; buildingClass?: BuildingClass; status: BuildingStatus; reason?: BuildingStallReason; lastInputs: Record<string, number>; lastOutputs: Record<string, number> }
+export interface Building { id: string; playerId: string; cityId: string; buildingType: string; kind: BuildingKind; buildingClass?: BuildingClass; workforceClass?: WorkforceClass; workforcePriority?: WorkforcePriority; assignedWorkers?: number; lastWageCost?: number; status: BuildingStatus; reason?: BuildingStallReason; lastInputs: Record<string, number>; lastOutputs: Record<string, number> }
 
 export interface WorldClock { tickNumber: number; simulatedHour: number }
 export interface BuildingProductionReport { buildingId: string; buildingType: string; cityId: string; status: BuildingStatus; reason?: BuildingStallReason; inputs: Record<string, number>; outputs: Record<string, number> }
@@ -36,4 +39,5 @@ export interface TickReport { tickNumber: number; simulatedHour: number; product
 export type TransferDirection = 'store' | 'retrieve';
 export interface CityBuildingsOverview { cityId: string; reputation: Reputation; hasConcession: boolean; concessionPrice: number; hasKontor: boolean; kontorInventory: Record<string, number>; kontor: BuildingOffer; buildings: Building[]; catalog: BuildingOffer[]; world: WorldClock; player: Player; fleet: Fleet }
 
-export interface GameState { player: Player; fleet: Fleet; goods: Good[]; cities: City[]; world: WorldClock; reputations: Reputation[]; concessions: string[]; buildings: Building[]; kontors: Record<string, Record<string, number>>; lastTickReport?: TickReport }
+export interface CityEconomy { baseHousing: number; wealth: number; consumptionRemainders: Record<string, number>; productionRemainders: Record<string, Record<string, number>>; wealthRemainder: number; growthRemainder: number }
+export interface GameState { player: Player; fleet: Fleet; goods: Good[]; cities: City[]; cityEconomies: Record<string, CityEconomy>; world: WorldClock; reputations: Reputation[]; concessions: string[]; buildings: Building[]; kontors: Record<string, Record<string, number>>; lastTickReport?: TickReport }
