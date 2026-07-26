@@ -27,6 +27,10 @@ In einem Hafen kann der Spieler ab Alpha 4:
 
 Von einem anderen Hafen aus kann der Spieler nicht auf ein dort nicht vorhandenes Schiff zugreifen.
 
+## Neutraler Schiffsmarkt
+
+Jede Alpha-4-Stadt besitzt einen neutralen Hafen und Schiffsmakler. Dessen Angebot ist endlich und enthält nur konkrete, unzugeordnete Schiffsentitäten. Ein Kauf überträgt exakt dieses Schiff an den Spieler; ein Verkauf überträgt ein unzugeordnetes eigenes Schiff im selben Hafen zurück an den Makler. Beide Vorgänge erhalten ID, Name und Herkunft und ändern die lokale Marktversion. Regeln, Preise und feste Testschiffe stehen in [`alpha-4/ports-and-ship-market.md`](alpha-4/ports-and-ship-market.md).
+
 ## Laderaum
 
 Jede Wareneinheit entspricht einer Tonne. Ist der Laderaum voll, können keine weiteren Waren aufgenommen werden; Verkaufen und Entladen bleiben möglich. Die konkrete Alpha-4-Kapazität ist nicht mehr fest 60 Tonnen, sondern wird aus den der aktiven Flotte zugeordneten Schifftypen abgeleitet.
