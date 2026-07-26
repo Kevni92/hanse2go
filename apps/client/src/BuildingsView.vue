@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import type { BuildingOffer, City, CityBuildingsOverview, Good, TickReport, TransferDirection } from '@hanse2go/shared';
-import { ApiRequestError, buildBuilding, buyConcession, fetchBuildings, simulateNextHour, transferKontorGoods } from './api.js';
+import type { BuildingOffer, City, CityBuildingsOverview, Good, TickReport, TransferDirection, WorkforcePriority } from '@hanse2go/shared';
+import { ApiRequestError, buildBuilding, buyConcession, fetchBuildings, setBuildingPriority, simulateNextHour, transferKontorGoods } from './api.js';
 import { buildingClassName, buildingName, cityName, goodName, reputationStatusName } from './i18n.js';
 
 const props = defineProps<{ city: City; goods: Good[] }>();
@@ -23,8 +23,9 @@ const fleetCargo = computed(() => overview.value?.fleet.cargo ?? {});
 const freeCapacity = computed(() => (overview.value?.fleet.capacity ?? 0) - Object.values(fleetCargo.value).reduce((total, amount) => total + amount, 0));
 const canBuyConcession = computed(() => Boolean(overview.value) && missingReputation.value === 0 && (overview.value?.player.gold ?? 0) >= (overview.value?.concessionPrice ?? 0));
 const catalogGroups = computed(() => [
-  { key: 'raw', title: 'Rohstoffbetriebe', entries: overview.value?.catalog.filter((entry) => entry.kind === 'raw') ?? [] },
+  { key: 'raw', title: 'Rohstoffbetriebe', entries: overview.value?.catalog.filter((entry) => entry.kind === 'raw' && entry.workforceClass) ?? [] },
   { key: 'processing', title: 'Verarbeitung', entries: overview.value?.catalog.filter((entry) => entry.kind === 'processing') ?? [] },
+  { key: 'housing', title: 'Wohnen', entries: overview.value?.catalog.filter((entry) => entry.buildingType === 'town_house') ?? [] },
 ].filter((group) => group.entries.length));
 const transferGoods = computed(() => props.goods.filter((good) => (fleetCargo.value[good.id] ?? 0) > 0 || (overview.value?.kontorInventory[good.id] ?? 0) > 0));
 const cityConsumption = computed(() => report.value?.consumption.filter((entry) => entry.cityId === props.city.id) ?? []);
@@ -65,6 +66,7 @@ async function run(operation: () => Promise<CityBuildingsOverview>) {
 
 const purchaseConcession = () => run(() => buyConcession(props.city.id));
 const build = (buildingType: string) => run(() => buildBuilding(props.city.id, buildingType));
+const changePriority = (buildingId: string, priority: WorkforcePriority) => run(() => setBuildingPriority(props.city.id, buildingId, priority));
 
 function quantityFor(goodId: string) { return quantities.value[goodId] ?? 1; }
 function setQuantity(goodId: string, value: number) { quantities.value = { ...quantities.value, [goodId]: Math.max(1, Math.floor(value) || 1) }; }
@@ -151,6 +153,8 @@ onMounted(load);
               <strong>{{ buildingName(building.buildingType) }}</strong>
               <span>{{ statusLabels[building.status] }}</span>
               <small v-if="building.reason === 'missing_inputs'">Grund: fehlende Eingangswaren</small>
+              <small v-if="building.workforceClass">{{ building.assignedWorkers ?? 0 }} Arbeiter · {{ building.lastWageCost ?? 0 }} Gold Lohn</small>
+              <label v-if="building.workforceClass">Priorität <select :data-testid="`building-priority-${building.id}`" :value="building.workforcePriority" :disabled="busy" @change="changePriority(building.id, ($event.target as HTMLSelectElement).value as WorkforcePriority)"><option value="very_high">Sehr hoch</option><option value="high">Hoch</option><option value="normal">Normal</option><option value="low">Niedrig</option><option value="very_low">Sehr niedrig</option></select></label>
               <small v-else-if="Object.keys(building.lastOutputs).length">Letzter Tick: {{ amounts(building.lastInputs) || 'kein Verbrauch' }} → {{ amounts(building.lastOutputs) }}</small>
             </li>
           </ul>
@@ -163,6 +167,7 @@ onMounted(load);
             <p>{{ formatGold(entry.cost.landGold) }} Gold Grundstück + {{ formatGold(entry.cost.buildGold) }} Gold Bau = {{ formatGold(entry.cost.totalGold) }} Gold</p>
             <p>Material: {{ amounts(entry.cost.materials) }}</p>
             <p>Je Stunde: {{ Object.keys(entry.inputs).length ? amounts(entry.inputs) : 'kein Eingang' }} → {{ amounts(entry.outputs) }}</p>
+            <p v-if="entry.buildingType === 'town_house'">+100 Wohnraum · keine Arbeiter · keine Lohnkosten</p>
             <p v-if="entry.availability === 'requirements_missing'" class="missing">{{ (entry.missingRequirements as BuildingOffer['missingRequirements']).map((requirement) => requirementLabels[requirement]).join(' · ') }}<span v-if="entry.missingGold"> ({{ formatGold(entry.missingGold) }} Gold, {{ amounts(entry.missingMaterials) || 'kein Material' }})</span><span v-else-if="Object.keys(entry.missingMaterials).length"> ({{ amounts(entry.missingMaterials) }})</span></p>
             <button type="button" :disabled="entry.availability !== 'buildable' || busy" @click="build(entry.buildingType)">{{ buildingName(entry.buildingType) }} bauen</button>
           </article>
@@ -175,7 +180,7 @@ onMounted(load);
           <div><dt>Tick</dt><dd>{{ overview.world.tickNumber }}</dd></div>
           <div><dt>Simulierte Stunde</dt><dd>{{ overview.world.simulatedHour }}</dd></div>
         </dl>
-        <button data-testid="next-hour-button" type="button" :disabled="ticking" @click="nextHour">{{ ticking ? 'Stunde wird simuliert …' : 'Nächste Stunde simulieren' }}</button>
+        <button data-testid="next-hour-button" type="button" :disabled="ticking" @click="nextHour">{{ ticking ? 'Stadtwirtschaft wird berechnet …' : 'Nächste Stunde simulieren' }}</button>
         <div v-if="report" data-testid="tick-report" class="tick-report">
           <h5>Bericht der Stunde {{ report.simulatedHour }}</h5>
           <p v-if="!report.production.length">Keine Produktionsgebäude in dieser Welt.</p>
