@@ -32,7 +32,7 @@ export interface BuildingOffer extends BuildingCatalogEntry { availability: Buil
 export interface Building { id: string; playerId: string; cityId: string; buildingType: string; kind: BuildingKind; buildingClass?: BuildingClass; workforceClass?: WorkforceClass; workforcePriority?: WorkforcePriority; assignedWorkers?: number; lastWageCost?: number; status: BuildingStatus; reason?: BuildingStallReason; lastInputs: Record<string, number>; lastOutputs: Record<string, number> }
 
 export interface WorldClock { tickNumber: number; simulatedHour: number }
-export interface BuildingProductionReport { buildingId: string; buildingType: string; cityId: string; status: BuildingStatus; reason?: BuildingStallReason; inputs: Record<string, number>; outputs: Record<string, number> }
+export interface BuildingProductionReport { buildingId: string; buildingType: string; cityId: string; status: BuildingStatus; reason?: BuildingStallReason; assignedWorkers?: number; wageCost?: number; utilization?: number; inputs: Record<string, number>; outputs: Record<string, number> }
 export interface ConsumptionReport { cityId: string; goodId: string; requested: number; consumed: number; remainingStock: number }
 export interface TickReport { tickNumber: number; simulatedHour: number; production: BuildingProductionReport[]; consumption: ConsumptionReport[] }
 

@@ -1,7 +1,7 @@
 export type { HealthResponse } from './api.js';
 export type { ApiError, ApiErrorCode, DebugPositionRequest, ReachableCity } from './api.js';
 export type { MarketQuoteRequest, TradeRequest } from './api.js';
-export type { BuildBuildingRequest, KontorTransferRequest, TickRequest } from './api.js';
+export type { BuildBuildingRequest, KontorTransferRequest, TickRequest, WorkforcePriorityRequest } from './api.js';
 export type { City, Fleet, GameState, Good, GoodCategory, Player, Position } from './domain.js';
 export type { MarketHistoryEntry, MarketQuote, TradeDirection } from './domain.js';
 export type { Reputation, ReputationStatus } from './domain.js';

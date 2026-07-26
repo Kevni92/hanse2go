@@ -22,7 +22,7 @@ export type ApiErrorCode =
   | 'CITY_NOT_REACHABLE' | 'REPUTATION_TOO_LOW' | 'CONCESSION_ALREADY_OWNED' | 'CONCESSION_REQUIRED'
   | 'KONTOR_REQUIRED' | 'KONTOR_ALREADY_EXISTS' | 'UNKNOWN_BUILDING_TYPE' | 'INSUFFICIENT_BUILD_MATERIALS'
   | 'INVALID_TRANSFER_QUANTITY' | 'INSUFFICIENT_FLEET_GOODS' | 'INSUFFICIENT_KONTOR_GOODS' | 'INSUFFICIENT_FLEET_CAPACITY'
-  | 'TICK_IN_PROGRESS';
+  | 'TICK_IN_PROGRESS' | 'BUILDING_NOT_FOUND' | 'BUILDING_NOT_OWNED' | 'BUILDING_HAS_NO_WORKFORCE' | 'INVALID_WORKFORCE_PRIORITY';
 
 export interface ApiError {
   error: {
@@ -38,3 +38,4 @@ export interface TradeRequest extends MarketQuoteRequest { marketVersion: number
 export interface BuildBuildingRequest { buildingType: string; }
 export interface KontorTransferRequest { goodId: string; quantity: number; direction: 'store' | 'retrieve'; }
 export interface TickRequest { idempotencyKey: string; }
+export interface WorkforcePriorityRequest { priority: 'very_high' | 'high' | 'normal' | 'low' | 'very_low'; }
