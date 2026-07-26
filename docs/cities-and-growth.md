@@ -96,3 +96,5 @@ Der Bau erfolgt sofort und nur, wenn sich die aktive Flotte im servergeprüften 
 ## Alpha 3: gemeinsamer Wohnraum
 
 Der Alpha-3-Grundwohnraum ist stadtweit und neutral; spielereigene Wohnhäuser erhöhen denselben gemeinsamen Pool unmittelbar, ohne Einwohner zu reservieren. Das Wohnhaus gehört seinem Erbauer, aber sein Wohnraum unterstützt das Wachstum der gesamten Stadt. Kosten, Voraussetzungen und Kapazitätsformeln stehen in [`alpha-3/housing.md`](alpha-3/housing.md).
+
+Alpha 3 erlaubt ausschließlich positives, langsames Wachstum oder Stillstand. Der Wohnraum ist die harte Obergrenze; Wohlstand und freier Wohnraum bestimmen die Rate. Formel, Festkommareste und verbindliche Startwerte stehen in [`alpha-3/population-growth.md`](alpha-3/population-growth.md).
