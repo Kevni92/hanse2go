@@ -23,3 +23,13 @@ Eine eigene `in_port`-Flotte darf nur bei exakt leerer Ladung aufgelöst werden.
 Der Wechsel verlangt, dass die aktuelle aktive Flotte den Stadtradius erreicht und die Ziel-Flotte dem Spieler gehört, `in_port` ist und im selben Hafen liegt. Beide besitzen mindestens ein Schiff; der Befehl enthält einen Idempotenzschlüssel. Atomar wird die alte Flotte `in_port`, erhält den Hafen und verliert ihre Position; die Ziel-Flotte wird `active`, verliert ihren Hafen und übernimmt exakt die aktuelle normalisierte Position. Ladung und Schiffszuordnung beider Flotten bleiben unverändert. Außerhalb oder zwischen Häfen ist ein Wechsel ausgeschlossen.
 
 Im erreichten Hafen sieht und verwaltet der Spieler nur eigene lokale unzugeordnete Schiffe und inaktive Flotten. Fremde Flottenzusammensetzungen und Schiffsnamen sind nicht öffentlich. Automatische Bewegung, Handelsrouten, mehrere GPS-gesteuerte Flotten, einzelne Schiffsladungen, Kampf, Eskorte und Ausspionieren gehören nicht zu Alpha 4.
+
+## Alpha 6: Flotten autonomer Handelshäuser
+
+Ab Alpha 6 besitzen auch KI-Handelshäuser Flotten. Modell, abgeleitete Werte, Namensregeln, lokale Änderungen und Auflösungsbedingungen dieses Dokuments gelten für sie unverändert. Drei Punkte sind zu konkretisieren:
+
+- Ein Handelshaus besitzt **keine** aktive Flotte. Der Status `active` ist für `ownerType = ai` ausgeschlossen; eine KI-Flotte ist immer `in_port` oder `traveling`. Die Regel „jeder Spieler besitzt genau eine aktive Flotte“ gilt für Handelshäuser nicht.
+- Der lokale Nachweis für Flottenbefehle ist nicht die Position einer aktiven Flotte, sondern ein eigenes Kontor in dieser Stadt beziehungsweise eine eigene, nicht reisende Flotte in diesem Hafen.
+- Eine reisende Flotte ist vollständig gesperrt: keine Schiffszuweisung, keine Entnahme, kein Transfer, keine Auflösung. Verstöße liefern `FLEET_LOCKED_FOR_VOYAGE`.
+
+Ansonsten unverändert: Jede Flotte enthält mindestens ein Schiff, jedes Schiff gehört höchstens einer Flotte, Kapazität ist die Summe der Schiffe, Geschwindigkeit die des langsamsten Schiffs, und eine Flotte darf nur mit exakt leerer Ladung aufgelöst werden. Die Flottenbildung nach Kauf oder Fertigstellung steht in [`../alpha-6/ai-ships-and-fleets.md`](../alpha-6/ai-ships-and-fleets.md).

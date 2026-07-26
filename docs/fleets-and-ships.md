@@ -71,6 +71,14 @@ Jede Wareneinheit entspricht einer Tonne. Ist der Laderaum voll, können keine w
 
 Alpha 6 liefert die einzelne virtuelle Reise, aber noch keine dauerhaft wiederholte Handelsroute. Fest konfigurierte Rundrouten mit automatischer Wiederholung werden in einem späteren Slice ergänzt. Sie benötigen eigene Schiffe, Kapital und Routenkonfiguration und bewegen sich mit derselben virtuellen Geschwindigkeit des langsamsten Schiffs.
 
+## Alpha 6: Schiffe und Flotten der Handelshäuser
+
+Ab Alpha 6 besitzen autonome Handelshäuser eigene konkrete Schiffe und Flotten nach denselben Regeln wie Spieler. Ein Handelshaus kauft ein vorhandenes Schiff zum regulären neutralen Preis oder erteilt einen regulären Werftauftrag mit voller Gebühr und vollständigen Materialien aus seinem Kontor; es erhält keine bevorzugte Warteschlangenposition. Ein Kauf erzeugt kein Schiff, ein Verkauf löscht keines, und das letzte Schiff eines Handelshauses ist geschützt.
+
+Zusätzliche Transportkapazität ist keine freie Entscheidung: Sie setzt einen über 72 Ticks gemessenen Engpass von mindestens 80 % Auslastung und mindestens 60,00 t abgelehnter rentabler Transporte voraus, muss innerhalb von 1.440 Ticks amortisieren und ist auf höchstens ein Schiff je Handelshaus und 72 Ticks begrenzt. Ein dauerhaft ungenutztes Schiff wird frühestens nach 240 Ticks für einen regulären Verkauf geprüft.
+
+Anders als ein Spieler besitzt ein Handelshaus keine aktive Flotte; seine Flotten sind immer `in_port` oder `traveling`. Die vollständigen Regeln stehen in [`alpha-6/ai-ships-and-fleets.md`](alpha-6/ai-ships-and-fleets.md) und [`alpha-6/ai-investment.md`](alpha-6/ai-investment.md).
+
 ## Verlust und Bankrott
 
 Das vom Spieler persönlich gesteuerte Mindestschiff beziehungsweise die grundlegende aktive Flotte soll nicht endgültig zerstört werden. Reparatur, Kampf, Piraterie, Kapern und konkrete Verlustregeln liegen außerhalb von Alpha 4.
