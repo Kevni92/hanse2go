@@ -3,6 +3,7 @@ import type { GameState, MarketHistoryEntry, MarketQuote, TradeDirection } from 
 import { CityAccessService, DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
 import type { ReputationService } from './reputation.js';
+import { payCityFromPlayer, payPlayerFromCity } from './money.js';
 
 type QuoteInput = { cityId: string; goodId: string; direction: TradeDirection; quantity: number };
 type CommitInput = QuoteInput & { marketVersion: number; idempotencyKey: string };
@@ -39,12 +40,21 @@ export class MarketService {
       if (input.direction === 'buy') {
         city.stock[good.id]! -= input.quantity;
         state.fleet.cargo[good.id] = (state.fleet.cargo[good.id] ?? 0) + input.quantity;
-        state.player.gold -= quote.total;
+        const warehouse = state.cityWarehouses[city.id]![good.id]!;
+        if (warehouse.availableUnits < input.quantity * 100) throw new DomainError('INSUFFICIENT_CITY_STOCK', 'Das Alpha-5-Stadtlager besitzt nicht genug freie Ware.', 409);
+        warehouse.availableUnits -= input.quantity * 100;
+        warehouse.totalUnits -= input.quantity * 100;
+        warehouse.inventoryVersion += 1;
+        payCityFromPlayer(state, input.cityId, quote.total, 'market_trade', 'legacy_market_trade', input.idempotencyKey, input.idempotencyKey);
       } else {
         city.stock[good.id]! += input.quantity;
         state.fleet.cargo[good.id]! -= input.quantity;
         if (state.fleet.cargo[good.id] === 0) delete state.fleet.cargo[good.id];
-        state.player.gold += quote.total;
+        const warehouse = state.cityWarehouses[city.id]![good.id]!;
+        warehouse.availableUnits += input.quantity * 100;
+        warehouse.totalUnits += input.quantity * 100;
+        warehouse.inventoryVersion += 1;
+        payPlayerFromCity(state, input.cityId, quote.total, 'market_trade', 'legacy_market_trade', input.idempotencyKey, input.idempotencyKey);
       }
       this.versions.set(input.cityId, currentVersion + 1);
       this.reputation?.registerTrade(state, { cityId: city.id, goodId: good.id, targetStock: good.targetStock, stockBefore, quantity: input.quantity, direction: input.direction });

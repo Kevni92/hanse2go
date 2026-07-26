@@ -14,7 +14,7 @@ import { ReputationService } from './reputation.js';
 import { TickService } from './tick.js';
 import { HarborService } from './harbor.js';
 import { OrderBookService } from './order-book.js';
-import { CITY_ACCOUNT, PLAYER_ACCOUNT } from './money.js';
+import { assertAccount, CITY_ACCOUNT, PLAYER_ACCOUNT } from './money.js';
 
 export interface AppOptions {
   enableTestReset?: boolean;
@@ -33,11 +33,12 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   const market = new MarketService(repository, cityAccess, config.market, reputation);
   const buildings = new BuildingService(repository, cityAccess, reputation, catalog);
   const harbor = new HarborService(repository, cityAccess, config.alpha4);
-  const orderBook = new OrderBookService(repository, config.alpha5);
+  const orderBook = new OrderBookService(repository, config.alpha5, reputation);
   const tick = new TickService(repository, reputation, market, catalog, new ConsumptionModel(config.consumption), config.alpha3, orderBook);
+  repository.runTransaction((state) => orderBook.refreshSystemOrders(state, config.consumption, false));
   const enableDebugTick = options.enableDebugTick ?? true;
 
-  app.register(cors, { origin: true, methods: ['GET', 'HEAD', 'POST', 'PUT'] });
+  app.register(cors, { origin: true, methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH'] });
   app.register(swagger, {
     openapi: {
       info: { title: 'Hanse2Go API', version: '0.1.0' },
@@ -160,7 +161,7 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
     }, ({ body }) => tick.run(body.idempotencyKey));
   }
   if (options.enableTestReset) {
-    app.post('/test/reset', { schema: { tags: ['Tests'] } }, () => { repository.reset(); market.reset(); reputation.reset(); tick.reset(); return repository.getState(); });
+    app.post('/test/reset', { schema: { tags: ['Tests'] } }, () => { repository.reset(); market.reset(); reputation.reset(); tick.reset(); repository.runTransaction((state) => orderBook.refreshSystemOrders(state, config.consumption, false)); return repository.getState(); });
     // `docs/alpha-2/test-world.md`: der Testzustand darf Ruf und Flottenmaterial vorbereiten.
     app.post<{ Body: TestSeedRequest }>('/test/seed', {
       schema: {
@@ -173,6 +174,30 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
     }, ({ body }) => repository.runTransaction((state) => {
       if (body.gold !== undefined) {
         if (!Number.isInteger(body.gold) || body.gold < 0) throw new DomainError('INVALID_QUANTITY', 'Das Testgold muss eine ganze Zahl ab null sein.', 400);
+        const playerAccount = state.accounts[PLAYER_ACCOUNT(state.player.id)]!;
+        const delta = body.gold * 100 - playerAccount.availableMoney;
+        if (delta > 0) {
+          let remaining = delta;
+          for (const candidate of Object.values(state.accounts).filter((entry) => entry.accountId !== playerAccount.accountId)) {
+            const moved = Math.min(candidate.availableMoney, remaining);
+            candidate.availableMoney -= moved;
+            candidate.totalMoney -= moved;
+            playerAccount.availableMoney += moved;
+            playerAccount.totalMoney += moved;
+            remaining -= moved;
+            if (remaining === 0) break;
+          }
+          if (remaining > 0) throw new DomainError('INSUFFICIENT_GOLD', 'Die Testanpassung überschreitet die vorhandene Geldmenge.', 409);
+        } else if (delta < 0) {
+          const treasuryAccount = state.accounts[CITY_ACCOUNT('lambrecht')]!;
+          const returned = -delta;
+          playerAccount.availableMoney -= returned;
+          playerAccount.totalMoney -= returned;
+          treasuryAccount.availableMoney += returned;
+          treasuryAccount.totalMoney += returned;
+        }
+        assertAccount(playerAccount);
+        for (const candidate of Object.values(state.accounts)) assertAccount(candidate);
         state.player.gold = body.gold;
       }
       if (body.cargo) {

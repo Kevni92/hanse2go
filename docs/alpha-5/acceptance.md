@@ -87,6 +87,15 @@ Der Happy Path läuft mindestens auf Desktop Chromium und einem mobilen Chromium
 
 ## CI-Diagnosen
 
+Die ausführbare Abnahme ist in folgenden Tests verankert:
+
+- `apps/server/test/alpha5-foundation.test.ts` prüft Konten, Migration und transaktionales Rollback.
+- `apps/server/test/order-book.test.ts` und `apps/server/test/order-book-api.test.ts` prüfen Deckung, Matching, Gebühren, Versionen und Idempotenz.
+- `apps/server/test/alpha5-acceptance.test.ts` führt 720 deterministische Ticks aus und prüft nach jedem Tick Geld-, Konto- und Warenreservierungsinvarianten.
+- `apps/client/src/MarketView.test.ts` prüft die Orderbuch-Komponente; `tests/e2e/health.spec.ts` prüft den echten Fastify-/Vue-Happy-Path auf Desktop und Mobile.
+
+Die historischen Alpha-4-Quote-/Trade-Endpunkte bleiben ausschließlich für die bereits abgeschlossenen Kompatibilitätstests registriert. Die Alpha-5-Oberfläche und die neuen Alpha-5-Handelsbefehle verwenden ausschließlich gedeckte Limit Orders.
+
 Bei Fehlern bewahrt CI Playwright-Trace, Screenshot, Browserkonsole, Serverlog, Preset/Seed, Orderbuch, Orders, Executions, Ledger, alle Kontostände, alle Stadt-/Kontorbestände und den letzten Tickbericht auf. Die Diagnose darf keine privaten fremden Spieleridentitäten offenlegen.
 
 ## Abnahmesperren
