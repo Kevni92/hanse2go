@@ -3,7 +3,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
 import { loadGameConfig, type GameConfig } from '@hanse2go/config';
-import type { ApiError, BuildBuildingRequest, DebugPositionRequest, HealthResponse, KontorTransferRequest, MarketQuoteRequest, TickRequest, TradeRequest } from '@hanse2go/shared';
+import type { ApiError, BuildBuildingRequest, DebugPositionRequest, HealthResponse, KontorTransferRequest, MarketQuoteRequest, TickRequest, TradeRequest, WorkforcePriorityRequest } from '@hanse2go/shared';
 import { BuildingService } from './buildings.js';
 import { CityAccessService, DomainError } from './city-access.js';
 import { ConsumptionModel } from './consumption.js';
@@ -29,7 +29,7 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   const reputation = new ReputationService(config.reputation);
   const market = new MarketService(repository, cityAccess, config.market, reputation);
   const buildings = new BuildingService(repository, cityAccess, reputation, catalog);
-  const tick = new TickService(repository, reputation, market, catalog, new ConsumptionModel(config.consumption));
+  const tick = new TickService(repository, reputation, market, catalog, new ConsumptionModel(config.consumption), config.alpha3);
   const enableDebugTick = options.enableDebugTick ?? true;
 
   app.register(cors, { origin: true, methods: ['GET', 'HEAD', 'POST', 'PUT'] });
@@ -102,6 +102,9 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
   app.post<{ Params: { cityId: string }; Body: KontorTransferRequest }>('/api/cities/:cityId/kontor/transfer', {
     schema: { tags: ['Alpha 2'], body: { type: 'object', required: ['goodId', 'quantity', 'direction'], additionalProperties: false, properties: { goodId: { type: 'string' }, quantity: { type: 'number' }, direction: { type: 'string', enum: ['store', 'retrieve'] } } } },
   }, ({ params, body }) => buildings.transfer(params.cityId, body));
+  app.put<{ Params: { cityId: string; buildingId: string }; Body: WorkforcePriorityRequest }>('/api/cities/:cityId/buildings/:buildingId/priority', {
+    schema: { tags: ['Alpha 3'], body: { type: 'object', required: ['priority'], additionalProperties: false, properties: { priority: { type: 'string', enum: ['very_high', 'high', 'normal', 'low', 'very_low'] } } } },
+  }, ({ params, body }) => buildings.setPriority(params.cityId, params.buildingId, body.priority));
   if (enableDebugTick) {
     app.post<{ Body: TickRequest }>('/api/debug/tick', {
       schema: { tags: ['Alpha 2'], body: { type: 'object', required: ['idempotencyKey'], additionalProperties: false, properties: { idempotencyKey: { type: 'string', minLength: 1 } } } },

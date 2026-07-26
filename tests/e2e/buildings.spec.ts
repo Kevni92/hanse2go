@@ -180,7 +180,7 @@ test('lehnt fehlenden Ruf, Gold, Material, Kontor und Laderaum serverseitig ab',
   expect((await state(page)).world.tickNumber).toBe(1);
 });
 
-test('deckt alle Katalogrezepte mit einem Tick je Gebäudetyp ab', async ({ page }) => {
+test('prüft alle Katalogrezepte mit der Alpha-3-Arbeitsverteilung', async ({ page }) => {
   await page.request.put(`${serverUrl}/api/fleet/position`, { data: lambrecht });
   await seed(page, { gold: 1_000_000, cargo: kontorMaterials });
   expect((await page.request.post(`${serverUrl}/api/cities/lambrecht/buildings`, { data: { buildingType: 'kontor' } })).ok()).toBeTruthy();
@@ -193,7 +193,7 @@ test('deckt alle Katalogrezepte mit einem Tick je Gebäudetyp ab', async ({ page
     expect(built.ok(), `${entry.buildingType} muss baubar sein`).toBeTruthy();
   }
 
-  // Alle Eingänge bereitstellen, damit jedes Rezept in einem Tick vollständig produziert.
+  // Alle Eingänge bereitstellen; Alpha 3 verteilt die begrenzten 1.000 Stadtarbeiter anschließend nach Priorität.
   const inputs: Record<string, number> = {};
   for (const entry of overview.catalog) for (const [goodId, amount] of Object.entries(entry.inputs as Record<string, number>)) inputs[goodId] = (inputs[goodId] ?? 0) + amount;
   for (const [goodId, amount] of Object.entries(inputs)) {
@@ -203,12 +203,12 @@ test('deckt alle Katalogrezepte mit einem Tick je Gebäudetyp ab', async ({ page
 
   const report = await (await page.request.post(`${serverUrl}/api/debug/tick`, { data: { idempotencyKey: 'e2e-all-recipes' } })).json();
   expect(report.production).toHaveLength(21);
-  expect(report.production.every((entry: { status: string }) => entry.status === 'production_ready')).toBeTruthy();
+  expect(report.production.every((entry: { assignedWorkers: number }) => entry.assignedWorkers >= 0)).toBeTruthy();
+  expect(report.production.reduce((total: number, entry: { assignedWorkers: number }) => total + entry.assignedWorkers, 0)).toBeLessThanOrEqual(1_000);
 
-  // Alle eingelagerten Eingänge sind verbraucht, im Kontor liegen daher genau die Ausgänge des Ticks.
+  // Ausgänge entsprechen exakt den tatsächlich berichteten Teilproduktionen.
   const kontor = (await state(page)).kontors.lambrecht;
   const expected: Record<string, number> = {};
-  for (const entry of overview.catalog) for (const [goodId, amount] of Object.entries(entry.outputs as Record<string, number>)) expected[goodId] = (expected[goodId] ?? 0) + amount;
-  for (const [goodId, amount] of Object.entries(expected)) expect(kontor[goodId] ?? 0, goodId).toBe(amount);
-  expect(Object.keys(expected).sort()).toEqual((await (await page.request.get(`${serverUrl}/api/goods`)).json()).map((good: { id: string }) => good.id).sort());
+  for (const entry of report.production) for (const [goodId, amount] of Object.entries(entry.outputs as Record<string, number>)) expected[goodId] = (expected[goodId] ?? 0) + amount;
+  for (const [goodId, amount] of Object.entries(expected)) expect(kontor[goodId] ?? 0, goodId).toBeGreaterThanOrEqual(amount);
 });

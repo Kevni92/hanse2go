@@ -1,4 +1,4 @@
-import type { Building, BuildingCatalogEntry, BuildingOffer, BuildingRequirement, CityBuildingsOverview, GameState, TransferDirection } from '@hanse2go/shared';
+import type { Building, BuildingCatalogEntry, BuildingOffer, BuildingRequirement, CityBuildingsOverview, GameState, TransferDirection, WorkforcePriority } from '@hanse2go/shared';
 import { CityAccessService, DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
 import type { BuildingCatalog } from './production.js';
@@ -54,7 +54,7 @@ export class BuildingService {
       }
       const instance: Building = {
         id: `${cityId}-${entry.buildingType}-${state.buildings.filter((building) => building.cityId === cityId && building.buildingType === entry.buildingType).length + 1}`,
-        playerId: state.player.id, cityId, buildingType: entry.buildingType, kind: entry.kind, buildingClass: entry.buildingClass,
+        playerId: state.player.id, cityId, buildingType: entry.buildingType, kind: entry.kind, buildingClass: entry.buildingClass, workforceClass: entry.workforceClass, workforcePriority: entry.workforceClass ? 'normal' : undefined,
         status: 'built', lastInputs: {}, lastOutputs: {},
       };
       state.buildings.push(instance);
@@ -90,6 +90,18 @@ export class BuildingService {
         if (store[input.goodId] === 0) delete store[input.goodId];
         state.fleet.cargo[input.goodId] = fleetStock + input.quantity;
       }
+      return this.overview(state, cityId);
+    });
+  }
+
+  setPriority(cityId: string, buildingId: string, priority: WorkforcePriority): CityBuildingsOverview {
+    this.cityAccess.requireReachable(cityId, 'CITY_NOT_REACHABLE');
+    return this.repository.runTransaction((state) => {
+      const building = state.buildings.find((candidate) => candidate.id === buildingId && candidate.cityId === cityId);
+      if (!building) throw new DomainError('BUILDING_NOT_FOUND', 'Das Gebäude existiert nicht.', 404);
+      if (building.playerId !== state.player.id) throw new DomainError('BUILDING_NOT_OWNED', 'Das Gebäude gehört nicht diesem Spieler.', 403);
+      if (!building.workforceClass) throw new DomainError('BUILDING_HAS_NO_WORKFORCE', 'Dieses Gebäude benötigt keine Arbeiter.', 409);
+      building.workforcePriority = priority;
       return this.overview(state, cityId);
     });
   }
