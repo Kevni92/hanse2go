@@ -132,3 +132,7 @@ Alpha 2 behält Preisformel, Spread und atomare Handelsprüfung unverändert bei
 Die konkrete Formel und der Schutz gegen Teilmengen- und Gegenbuchungen stehen in [`alpha-2/reputation-and-concessions.md`](alpha-2/reputation-and-concessions.md). Produktion und Bevölkerungsverbrauch bleiben im Alpha-1-Abschnitt ausdrücklich ausgeschlossen und beginnen erst mit Alpha 2.
 
 Im Alpha-2-Stundentick verringert der feste Bevölkerungsverbrauch ausschließlich die gemeinsamen Stadtmarktbestände. Der neue Bestand fließt ohne Sonderpreis direkt in die bestehende Preisformel ein. Der Verbrauch kann einen Bestand höchstens bis null reduzieren und verändert weder Gold, Wohlstand noch Bevölkerungszahl.
+
+## Alpha 3: Verbraucherpreis und Versorgung
+
+Alpha 3 verwendet für den Kaufkraftindex den bestehenden Spieler-Kaufpreis unmittelbar vor dem Bevölkerungsverbrauch. Der Preis enthält damit weiter den 105-Prozent-Spread und die ganzzahlige Rundung. Verbrauch entfernt Waren weiter ohne Goldfluss und darf den Bestand nie unter null senken; die genaue Festkomma-, Deckungs- und Wohlstandsregel steht in [`alpha-3/consumption-and-wealth.md`](alpha-3/consumption-and-wealth.md).

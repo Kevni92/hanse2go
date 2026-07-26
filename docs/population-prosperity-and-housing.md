@@ -15,9 +15,9 @@ Ab Alpha 3 führt die Stadt mindestens:
 
 Vereinfacht kann jeder Einwohner als potenzieller Arbeiter gelten. Das ist bewusst nicht realistisch, hält das System aber verständlich.
 
-## Gemeinsames Bevölkerungsvermögen
+## Alpha 3: Einkommen, Verbrauch und Wohlstand
 
-Das gemeinsame Vermögen bildet die Kaufkraft aller Einwohner ab.
+`wealth` ist der einzige soziale Stadtwert. Es gibt weder einen separaten Zufriedenheitswert noch individuelle Vermögen oder Ersparnisse.
 
 ### Einnahmen
 
@@ -31,7 +31,7 @@ Die Löhne bilden ab Alpha 3 das aggregierte Bevölkerungseinkommen des aktuelle
 - benötigte Waren vom Stadtmarkt,
 - später weitere Abgaben oder Dienstleistungen.
 
-Das Geld, das die Bevölkerung in der ersten Simulation am Stadtmarkt ausgibt, verschwindet zunächst aus dem Bevölkerungsvermögen. Der Stadtmarkt besitzt unbegrenzt Geld. Ein späteres Order-System kann Zahlungen direkt an verkaufende Spieler leiten.
+Der Verbrauch überträgt in Alpha 3 kein Gold an Markt oder Spieler. Löhne sind echter Goldabzug beim Gebäudeeigentümer; Warenpreise dienen ausschließlich als Kaufkraftindex.
 
 ## Arbeitslosigkeit
 
@@ -53,28 +53,13 @@ Technisch wird Wohlstand als Wert von 0 bis 100 geführt. Die Begriffe sind Anze
 - 30–59: **wohlhabend**
 - 60–100: **reich**
 
-Der kontinuierliche Wert ist entscheidend. Mit steigendem Wert verändern sich Verbrauchsmengen und werden zusätzliche Bedürfnisse freigeschaltet.
+Der kontinuierliche Wert ist entscheidend. Alpha 3 verbraucht sieben Waren mit festen, proportionalen Raten; Wohlstand verändert die Raten nicht.
 
 Wohlstand soll nach oben zunehmend schwerer zu steigern sein. Hohe Stufen, insbesondere Werte nahe 100, erfordern über lange Zeit sehr gute Versorgung, hohe Kaufkraft und ausreichenden Wohnraum.
 
 ## Bedürfnisse
 
-Die Definition jeder Ware enthält eine konfigurierbare Verbrauchskurve pro Einwohner und Wohlstandswert.
-
-Erste fachliche Staffelung:
-
-- arm: Brot,
-- einfach: zusätzlich Kleidung,
-- wohlhabend: zusätzlich Fleisch, Käse und Keramik,
-- reich: zusätzlich Möbel und Rum.
-
-Die Menge einer bereits benötigten Ware kann ebenfalls steigen. Als Beispiel wurde genannt:
-
-- niedriger Wohlstand: 0,10 Brot je Einwohner und Tag,
-- nächste Wohlstandsstufe: 0,15,
-- danach 0,20.
-
-Diese Zahlen sind keine finalen Balancingwerte. Die Kurven müssen datengetrieben konfigurierbar sein. Zusätzliche Bedürfnisse sollen wichtiger sein als unrealistisch stark steigender Brotverbrauch.
+Die sieben Verbrauchsraten, Gewichte, Kaufkraftformel und deterministische Wohlstandsanpassung stehen verbindlich in [`alpha-3/consumption-and-wealth.md`](alpha-3/consumption-and-wealth.md).
 
 ## Bedürfnisdeckung und Bezahlbarkeit
 
