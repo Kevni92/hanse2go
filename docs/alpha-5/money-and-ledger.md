@@ -4,7 +4,7 @@
 
 Die kleinste autoritative Einheit ist ein ganzzahliges `moneyUnit` von 0,01 Gold. Ein Gold entspricht 100 `moneyUnits`; bestehende ganzzahlige Alpha-Goldwerte werden bei der Migration exakt mit 100 multipliziert. Gleitkommazahlen werden weder autoritativ gespeichert noch gebucht. API und UI formatieren Geld im Format `de-DE` mit zwei Nachkommastellen.
 
-Jeder Spieler, jede Stadtkasse und jede Bevölkerungskasse besitzt ein Goldkonto. Für jedes Konto gilt jederzeit:
+Jeder Spieler, jede Stadtkasse und jede Bevölkerungskasse besitzt ein Goldkonto. Ab Alpha 6 besitzt zusätzlich jedes KI-Handelshaus ein gleichwertiges reales Goldkonto ohne Sonderrechte; die Regeln dieses Dokuments gelten für es unverändert. Für jedes Konto gilt jederzeit:
 
 `availableMoney + reservedMoney = totalAccountMoney`
 
@@ -39,6 +39,8 @@ Folgende Zahlungen gehen künftig an die Stadtkasse der jeweiligen Stadt: Baukon
 Jede Goldbewegung erzeugt unveränderliche Ledger-Einträge mit `ledgerEntryId`, Ticknummer oder Befehlszeitpunkt, `reason`, Quellkonto, Zielkonto, Betrag in `moneyUnits`, Referenztyp und -ID sowie Idempotenz-ID oder Tick-ID. Eine wirtschaftliche Aktion darf mehrere Einträge erzeugen; ihre Belastungen und Gutschriften sind insgesamt ausgeglichen.
 
 Verbindliche Gründe sind `market_trade`, `market_buyer_fee`, `market_seller_fee`, `wage_payment`, `population_purchase`, `concession_fee`, `land_purchase_fee`, `building_construction_fee`, `shipyard_fee`, `ship_purchase` und `ship_sale`.
+
+Ab Alpha 6 kommt ausschließlich der Grund `ai_endowment` hinzu. Er überträgt in der Weltinitialisierung beziehungsweise im deterministischen Testreset einmalig 150.000,00 Gold aus einer bestehenden Stadtkasse an das Konto ihres KI-Handelshauses. Er ist keine laufende Zahlung, kein Kredit und keine Geldquelle: Er verschiebt nur vorhandenes Gold zwischen zwei realen Konten und ist außerhalb der Initialisierung unzulässig. Alle übrigen KI-Goldbewegungen verwenden ausnahmslos die bereits bestehenden Gründe. Die vollständige bilanzierte Abfolge steht in [`../alpha-6/start-state.md`](../alpha-6/start-state.md).
 
 ## Bilanzinvariante und Fehler
 

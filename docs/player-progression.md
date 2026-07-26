@@ -72,6 +72,14 @@ Das Vermögen bestimmt Erfahrung beziehungsweise Rang. Der Rang schaltet langfri
 
 Die konkrete Rangliste und alle Schwellenwerte werden später gebalanced.
 
+## KI-Handelshäuser als gleichrangige Akteure (Alpha 6)
+
+Ab Alpha 6 teilen sich Spieler und autonome Handelshäuser dieselben Fachregeln. Ein Handelshaus baut Ruf ausschließlich über nützliche, real ausgeführte Verkäufe auf, kauft seine Baukonzession ab 80 Ruf regulär für 10.000 Gold, baut sein Kontor als erstes Gebäude einer Stadt und bezahlt Grundstück, Bau, Material, Löhne, Werftgebühren und Schiffe vollständig gedeckt. Es erhält keine Sonderpreise, keine bevorzugte Orderpriorität, keine Sonderressourcen und keinen Zugriff auf private Spielerdaten.
+
+Die einzige Abweichung ist der bilanzierte Startzustand: Die Heimatstadt überträgt einmalig 150.000 Gold aus ihrer Stadtkasse, und die Heimatkonzession wird gegen die reguläre Gebühr ohne die Rufschwelle vergeben – genau wie die im Alpha-Startzustand bereits enthaltene Spielerkonzession für Lambrecht. Für jede weitere Stadt gilt für Handelshäuser der unveränderte Spielerablauf.
+
+Anders als der Spieler kann ein Handelshaus dauerhaft insolvent werden. Es erhält kein Rettungsgeld und keinen Reset; sein Eigentum bleibt bestehen. Die vollständigen Regeln stehen in [`alpha-6/ai-actors.md`](alpha-6/ai-actors.md), [`alpha-6/start-state.md`](alpha-6/start-state.md) und [`alpha-6/insolvency.md`](alpha-6/insolvency.md).
+
 ## Bankrott und Reset
 
 Der Spieler kann wirtschaftlich handlungsunfähig werden. Sein persönlich gesteuertes Mindestschiff beziehungsweise seine grundlegende aktive Flotte soll jedoch nicht endgültig verschwinden. Kann der Spieler nicht mehr sinnvoll handeln, darf er seinen Spielstand zurücksetzen und erneut mit den Startbedingungen beginnen.
