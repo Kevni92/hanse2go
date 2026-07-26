@@ -47,6 +47,6 @@ export interface BuildBuildingRequest { buildingType: string; }
 export interface KontorTransferRequest { goodId: string; quantity: number; direction: 'store' | 'retrieve'; }
 export interface TickRequest { idempotencyKey: string; }
 export interface WorkforcePriorityRequest { priority: 'very_high' | 'high' | 'normal' | 'low' | 'very_low'; }
-export interface CreateOrderRequest { goodId: string; side: 'buy' | 'sell'; priceMoneyPerUnit: number; quantityUnits: number; idempotencyKey: string; }
+export interface CreateOrderRequest { goodId: string; side: 'buy' | 'sell'; limitPriceGoldPerTon: number; quantityUnits: number; idempotencyKey: string; }
 export interface CancelOrderRequest { orderVersion: number; idempotencyKey: string; }
-export interface ReplaceOrderRequest { orderVersion: number; priceMoneyPerUnit: number; quantityUnits: number; idempotencyKey: string; }
+export interface ReplaceOrderRequest { orderVersion: number; limitPriceGoldPerTon: number; quantityUnits: number; idempotencyKey: string; }

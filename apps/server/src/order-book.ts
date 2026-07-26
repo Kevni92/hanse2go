@@ -1,4 +1,4 @@
-import type { Alpha5Config } from '@hanse2go/config';
+import type { Alpha5Config, ConsumptionConfig } from '@hanse2go/config';
 import type { GameState, InventoryBalance, Order, OrderBookLevel, OrderBookSnapshot, OrderExecution, OrderOwnerType, OrderSide } from '@hanse2go/shared';
 import { account, CITY_ACCOUNT, moveAvailableMoney, moveReservedMoney, PLAYER_ACCOUNT, POPULATION_ACCOUNT, releaseMoney, reserveMoney } from './money.js';
 import { DomainError } from './city-access.js';
@@ -8,7 +8,7 @@ interface CreateOrderInput {
   cityId: string;
   goodId: string;
   side: OrderSide;
-  priceMoneyPerUnit: number;
+  limitPriceGoldPerTon: number;
   quantityUnits: number;
   ownerType?: OrderOwnerType;
   ownerId?: string;
@@ -16,7 +16,7 @@ interface CreateOrderInput {
 }
 
 interface CancelOrderInput { orderId: string; orderVersion: number; idempotencyKey: string }
-interface ReplaceOrderInput extends CancelOrderInput { priceMoneyPerUnit: number; quantityUnits: number }
+interface ReplaceOrderInput extends CancelOrderInput { limitPriceGoldPerTon: number; quantityUnits: number }
 
 /**
  * Alpha-5 orderbook domain. Matching only touches a transaction draft supplied by
@@ -69,7 +69,7 @@ export class OrderBookService {
         cityId: oldOrder.cityId,
         goodId: oldOrder.goodId,
         side: oldOrder.side,
-        priceMoneyPerUnit: input.priceMoneyPerUnit,
+        limitPriceGoldPerTon: input.limitPriceGoldPerTon,
         quantityUnits: input.quantityUnits,
         ownerType: oldOrder.ownerType,
         ownerId: oldOrder.ownerId,
@@ -85,6 +85,39 @@ export class OrderBookService {
     return this.snapshot(state, cityId, goodId);
   }
 
+  getTrades(cityId: string, goodId: string): OrderExecution[] {
+    return this.repository.getState().executions.filter((entry) => entry.cityId === cityId && entry.goodId === goodId);
+  }
+
+  getPlayerOrders(filters: { cityId?: string; goodId?: string; status?: string } = {}): Order[] {
+    const state = this.repository.getState();
+    return state.orders.filter((order) => order.ownerType === 'player' && order.ownerId === state.player.id
+      && (!filters.cityId || order.cityId === filters.cityId) && (!filters.goodId || order.goodId === filters.goodId) && (!filters.status || order.status === filters.status));
+  }
+
+  getPlayerOrder(orderId: string): Order {
+    const state = this.repository.getState();
+    const order = this.requireOrder(state, orderId);
+    if (order.ownerType !== 'player' || order.ownerId !== state.player.id) throw new DomainError('ORDER_NOT_OWNED', 'Die Order gehört nicht dem aktiven Spieler.', 403, { orderId });
+    return order;
+  }
+
+  getPlayerLedger(): ReturnType<typeof this.repository.getState>['ledger'] {
+    const state = this.repository.getState();
+    const playerAccountId = PLAYER_ACCOUNT(state.player.id);
+    return state.ledger.filter((entry) => entry.sourceAccountId === playerAccountId || entry.targetAccountId === playerAccountId);
+  }
+
+  getTreasury(cityId: string) {
+    const state = this.repository.getState();
+    const cityAccountId = CITY_ACCOUNT(cityId);
+    const populationAccountId = POPULATION_ACCOUNT(cityId);
+    const cityAccount = account(state, cityAccountId);
+    const populationAccount = account(state, populationAccountId);
+    const flows = state.ledger.filter((entry) => entry.sourceAccountId === cityAccountId || entry.targetAccountId === cityAccountId || entry.sourceAccountId === populationAccountId || entry.targetAccountId === populationAccountId);
+    return { cityId, cityAccount, populationAccount, flows };
+  }
+
   /** Used by the tick implementation to match standing orders without a new request. */
   matchAll(state: GameState): void {
     const keys = new Set(state.orders.filter((order) => this.isActive(order)).map((order) => orderKey(order.cityId, order.goodId)));
@@ -94,18 +127,53 @@ export class OrderBookService {
     }
   }
 
+  /** Rebuilds the deterministic system side at a tick boundary. */
+  refreshSystemOrders(state: GameState, consumption?: ConsumptionConfig): void {
+    for (const order of state.orders.filter((entry) => this.isActive(entry) && (entry.ownerType === 'city' || entry.ownerType === 'population'))) {
+      this.releaseOrderReservations(state, order);
+      order.status = 'cancelled';
+      order.orderVersion += 1;
+      order.updatedAtTick = state.world.tickNumber;
+      this.bumpVersion(state, order.cityId, order.goodId);
+    }
+    for (const city of state.cities) {
+      for (const good of state.goods) {
+        const warehouse = state.cityWarehouses[city.id]![good.id]!;
+        const targetUnits = good.targetStock * 100;
+        const keyBase = `system-${city.id}-${good.id}-tick-${state.world.tickNumber + 1}`;
+        if (warehouse.totalUnits < targetUnits) {
+          const requested = targetUnits - warehouse.totalUnits;
+          const price = Math.max(1, Math.floor(good.basePrice * 0.9));
+          const affordable = affordableQuantity(state, CITY_ACCOUNT(city.id), requested, price, this.config.buyerFeePermille);
+          if (affordable > 0) this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'buy', limitPriceGoldPerTon: price, quantityUnits: affordable, idempotencyKey: `${keyBase}-city-buy` }, 'city', city.id);
+        } else if (warehouse.totalUnits > targetUnits) {
+          const quantity = warehouse.totalUnits - targetUnits;
+          const price = Math.max(1, Math.ceil(good.basePrice * 1.1));
+          this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'sell', limitPriceGoldPerTon: price, quantityUnits: quantity, idempotencyKey: `${keyBase}-city-sell` }, 'city', city.id);
+        }
+        const consumptionRate = consumption?.perPopulationUnit[good.id];
+        if (consumptionRate) {
+          const requested = Math.ceil(city.population / consumption!.populationUnit) * consumptionRate * 100;
+          const price = Math.max(1, Math.floor(good.basePrice * (0.5 + (state.cityEconomies[city.id]?.wealth ?? city.prosperity) / 100)));
+          const affordable = affordableQuantity(state, POPULATION_ACCOUNT(city.id), requested, price, this.config.buyerFeePermille);
+          if (affordable > 0) this.createInternal(state, { cityId: city.id, goodId: good.id, side: 'buy', limitPriceGoldPerTon: price, quantityUnits: affordable, idempotencyKey: `${keyBase}-population-buy` }, 'population', city.id);
+        }
+      }
+    }
+  }
+
   private createInternal(state: GameState, input: CreateOrderInput, ownerType: OrderOwnerType, ownerId: string, replacesOrderId?: string): Order {
     this.validate(state, input, ownerType, ownerId);
     const orderId = `order-${++state.orderIdSequence}`;
     const order: Order = {
       orderId, cityId: input.cityId, goodId: input.goodId, side: input.side, ownerType, ownerId,
-      priceMoneyPerUnit: input.priceMoneyPerUnit, originalQuantityUnits: input.quantityUnits,
+      limitPriceGoldPerTon: input.limitPriceGoldPerTon, originalQuantityUnits: input.quantityUnits,
       remainingQuantityUnits: input.quantityUnits, reservedMoney: 0, reservedGoodsUnits: 0,
       status: 'open', orderVersion: 1, createdAtTick: state.world.tickNumber, updatedAtTick: state.world.tickNumber,
       idempotencyKey: input.idempotencyKey, replacesOrderId,
     };
     if (order.side === 'buy') {
-      order.reservedMoney = requiredMoney(this.config, order.priceMoneyPerUnit, order.remainingQuantityUnits);
+      order.reservedMoney = requiredMoney(this.config, order.limitPriceGoldPerTon, order.remainingQuantityUnits);
       reserveMoney(account(state, ownerAccount(ownerType, ownerId)), order.reservedMoney);
     } else {
       reserveGoods(this.inventory(state, input.cityId, input.goodId, ownerType, ownerId), order.remainingQuantityUnits);
@@ -119,15 +187,15 @@ export class OrderBookService {
 
   private match(state: GameState, cityId: string, goodId: string): void {
     const buys = state.orders.filter((order) => order.cityId === cityId && order.goodId === goodId && order.side === 'buy' && this.isActive(order))
-      .sort((a, b) => b.priceMoneyPerUnit - a.priceMoneyPerUnit || a.createdAtTick - b.createdAtTick || a.orderId.localeCompare(b.orderId));
+      .sort((a, b) => b.limitPriceGoldPerTon - a.limitPriceGoldPerTon || a.createdAtTick - b.createdAtTick || a.orderId.localeCompare(b.orderId));
     const sells = state.orders.filter((order) => order.cityId === cityId && order.goodId === goodId && order.side === 'sell' && this.isActive(order))
-      .sort((a, b) => a.priceMoneyPerUnit - b.priceMoneyPerUnit || a.createdAtTick - b.createdAtTick || a.orderId.localeCompare(b.orderId));
+      .sort((a, b) => a.limitPriceGoldPerTon - b.limitPriceGoldPerTon || a.createdAtTick - b.createdAtTick || a.orderId.localeCompare(b.orderId));
     let buyIndex = 0;
     let sellIndex = 0;
     while (buyIndex < buys.length && sellIndex < sells.length) {
       const buy = buys[buyIndex]!;
       const sell = sells[sellIndex]!;
-      if (buy.priceMoneyPerUnit < sell.priceMoneyPerUnit) break;
+      if (buy.limitPriceGoldPerTon < sell.limitPriceGoldPerTon) break;
       if (buy.ownerType === sell.ownerType && buy.ownerId === sell.ownerId) {
         sellIndex += 1;
         continue;
@@ -140,7 +208,7 @@ export class OrderBookService {
   }
 
   private execute(state: GameState, buy: Order, sell: Order, quantityUnits: number): void {
-    const grossMoney = safeMoney(quantityUnits * sell.priceMoneyPerUnit);
+    const grossMoney = safeMoney(quantityUnits * sell.limitPriceGoldPerTon);
     const buyerFeeMoney = fee(grossMoney, this.config.buyerFeePermille);
     const sellerFeeMoney = fee(grossMoney, this.config.sellerFeePermille);
     const buyerAccountId = ownerAccount(buy.ownerType, buy.ownerId);
@@ -162,7 +230,7 @@ export class OrderBookService {
     this.finishOrder(state, sell);
     const execution: OrderExecution = {
       executionId: `execution-${++state.executionIdSequence}`, cityId: buy.cityId, goodId: buy.goodId,
-      buyOrderId: buy.orderId, sellOrderId: sell.orderId, quantityUnits, priceMoneyPerUnit: sell.priceMoneyPerUnit,
+      buyOrderId: buy.orderId, sellOrderId: sell.orderId, quantityUnits, limitPriceGoldPerTon: sell.limitPriceGoldPerTon,
       grossMoney, buyerFeeMoney, sellerFeeMoney, tickNumber: state.world.tickNumber,
     };
     state.executions.push(execution);
@@ -170,7 +238,7 @@ export class OrderBookService {
   }
 
   private releaseExcessBuyerReservation(state: GameState, order: Order): void {
-    const expected = order.remainingQuantityUnits > 0 ? requiredMoney(this.config, order.priceMoneyPerUnit, order.remainingQuantityUnits) : 0;
+    const expected = order.remainingQuantityUnits > 0 ? requiredMoney(this.config, order.limitPriceGoldPerTon, order.remainingQuantityUnits) : 0;
     const excess = Math.max(0, order.reservedMoney - expected);
     if (excess > 0) {
       releaseMoney(account(state, ownerAccount(order.ownerType, order.ownerId)), excess);
@@ -206,12 +274,12 @@ export class OrderBookService {
     const levels = (side: OrderSide): OrderBookLevel[] => {
       const byPrice = new Map<number, OrderBookLevel>();
       for (const order of active.filter((entry) => entry.side === side)) {
-        const level = byPrice.get(order.priceMoneyPerUnit) ?? { priceMoneyPerUnit: order.priceMoneyPerUnit, quantityUnits: 0, orderCount: 0 };
+        const level = byPrice.get(order.limitPriceGoldPerTon) ?? { limitPriceGoldPerTon: order.limitPriceGoldPerTon, quantityUnits: 0, orderCount: 0 };
         level.quantityUnits += order.remainingQuantityUnits;
         level.orderCount += 1;
-        byPrice.set(order.priceMoneyPerUnit, level);
+        byPrice.set(order.limitPriceGoldPerTon, level);
       }
-      return [...byPrice.values()].sort((a, b) => side === 'buy' ? b.priceMoneyPerUnit - a.priceMoneyPerUnit : a.priceMoneyPerUnit - b.priceMoneyPerUnit);
+      return [...byPrice.values()].sort((a, b) => side === 'buy' ? b.limitPriceGoldPerTon - a.limitPriceGoldPerTon : a.limitPriceGoldPerTon - b.limitPriceGoldPerTon);
     };
     return { cityId, goodId, version: state.orderBookVersions[orderKey(cityId, goodId)] ?? 0, bids: levels('buy'), asks: levels('sell'), recentExecutions: state.executions.filter((entry) => entry.cityId === cityId && entry.goodId === goodId).slice(-50) };
   }
@@ -220,7 +288,7 @@ export class OrderBookService {
     if (!state.cities.some((city) => city.id === input.cityId)) throw new DomainError('CITY_NOT_FOUND', 'Die Stadt wurde nicht gefunden.', 404, { cityId: input.cityId });
     if (!state.goods.some((good) => good.id === input.goodId)) throw new DomainError('GOOD_NOT_FOUND', 'Die Ware wurde nicht gefunden.', 404, { goodId: input.goodId });
     if (!input.idempotencyKey) throw new DomainError('IDEMPOTENCY_KEY_REQUIRED', 'Ein Idempotenzschlüssel ist erforderlich.', 400);
-    if (!Number.isSafeInteger(input.priceMoneyPerUnit) || input.priceMoneyPerUnit <= 0) throw new DomainError('INVALID_ORDER_PRICE', 'Der Orderpreis muss eine positive ganze moneyUnit-Zahl sein.', 400);
+    if (!Number.isSafeInteger(input.limitPriceGoldPerTon) || input.limitPriceGoldPerTon <= 0) throw new DomainError('INVALID_ORDER_PRICE', 'Der Limitpreis muss eine positive ganze Goldzahl je Tonne sein.', 400);
     if (!Number.isSafeInteger(input.quantityUnits) || input.quantityUnits <= 0) throw new DomainError('INVALID_ORDER_QUANTITY', 'Die Ordermenge muss eine positive ganze Zahl sein.', 400);
     account(state, ownerAccount(ownerType, ownerId));
     this.inventory(state, input.cityId, input.goodId, ownerType, ownerId);
@@ -287,6 +355,13 @@ function safeMoney(value: number): number {
 function fee(grossMoney: number, permille: number): number { return Math.ceil(grossMoney * permille / 1000); }
 function requiredMoney(config: Alpha5Config, price: number, quantity: number): number { return safeMoney(price * quantity + fee(price * quantity, config.buyerFeePermille)); }
 function fingerprintOf(value: unknown): string { return JSON.stringify(value); }
+function affordableQuantity(state: GameState, accountId: string, requested: number, price: number, buyerFeePermille: number): number {
+  const available = account(state, accountId).availableMoney;
+  const maximum = Math.min(requested, Math.floor(available / Math.max(1, price)));
+  let quantity = maximum;
+  while (quantity > 0 && price * quantity + fee(price * quantity, buyerFeePermille) > available) quantity -= 1;
+  return quantity;
+}
 
 function reserveGoods(value: InventoryBalance, amount: number): void {
   if (value.availableUnits < amount) throw new DomainError('INSUFFICIENT_AVAILABLE_GOODS', 'Es sind nicht genug verfügbare Waren vorhanden.', 409, { available: value.availableUnits, required: amount });
