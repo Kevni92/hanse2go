@@ -35,6 +35,10 @@ Jede Alpha-4-Stadt besitzt einen neutralen Hafen und Schiffsmakler. Dessen Angeb
 
 Jede Alpha-4-Stadt besitzt eine neutrale Werft mit einem aktiven Bauplatz und einer unbegrenzten FIFO-Warteschlange. Ein vollständig finanzierter Auftrag verbraucht Gold und Material im lokalen Kontor sofort, erzeugt aber erst beim Abschluss im manuellen Stundentick ein neues Schiff. Der Bau ist damit der einzige reguläre Entstehungsweg außerhalb der Weltinitialisierung. Kosten, Reihenfolge und Fehlerfälle stehen in [`alpha-4/shipbuilding.md`](alpha-4/shipbuilding.md).
 
+## Mehrere Flotten
+
+Ein Spieler steuert genau eine aktive Flotte; weitere eigene Flotten liegen in einem Hafen. Jede Flotte hat mindestens ein konkretes Schiff, einen gemeinsamen Warenbestand und aus ihren Schiffen abgeleitete Kapazität und Geschwindigkeit. Neue Flotten entstehen mit ihrem ersten unzugeordneten Schiff, und der Aktivwechsel ist nur mit einer lokalen inaktiven Flotte im selben Hafen möglich. Vollständige Regeln stehen in [`alpha-4/fleet-management.md`](alpha-4/fleet-management.md).
+
 ## Laderaum
 
 Jede Wareneinheit entspricht einer Tonne. Ist der Laderaum voll, können keine weiteren Waren aufgenommen werden; Verkaufen und Entladen bleiben möglich. Die konkrete Alpha-4-Kapazität ist nicht mehr fest 60 Tonnen, sondern wird aus den der aktiven Flotte zugeordneten Schifftypen abgeleitet.
