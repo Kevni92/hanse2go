@@ -43,7 +43,7 @@ Für den ersten Produktionsumfang gibt es nur einen allgemeinen Arbeitertyp ohne
 - Ein Gebäude mit 100 benötigten, aber nur 50 zugeteilten Arbeitern arbeitet mit 50 Prozent Arbeitereffizienz.
 - Ein Gebäude ohne Arbeiter steht still.
 
-Die stadtweite faire Verteilung und die Prioritäten innerhalb eines Spielers werden verbindlich durch das nachfolgende Alpha-3-Arbeiterverteilungskonzept festgelegt. Sie ergänzen die Beschäftigungsklassen.
+Die stadtweite faire Verteilung und die Prioritäten innerhalb eines Spielers stehen in [`alpha-3/workforce-allocation.md`](alpha-3/workforce-allocation.md). Sie ergänzen die Beschäftigungsklassen.
 
 ## Produktionseffizienz
 
