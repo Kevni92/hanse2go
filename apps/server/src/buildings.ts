@@ -120,7 +120,7 @@ export class BuildingService {
       kontorInventory: kontorBuilt ? { ...(state.kontors[cityId] ?? {}) } : {},
       kontor: this.offer(state, this.catalog.kontor, hasConcession, kontorBuilt),
       buildings: structuredClone(state.buildings.filter((building) => building.cityId === cityId && building.playerId === state.player.id)),
-      catalog: this.catalog.production.map((entry) => this.offer(state, entry, hasConcession, kontorBuilt)),
+      catalog: [...this.catalog.production, this.catalog.housing].map((entry) => this.offer(state, entry, hasConcession, kontorBuilt)),
       world: { ...state.world }, player: { ...state.player }, fleet: structuredClone(state.fleet),
     };
   }

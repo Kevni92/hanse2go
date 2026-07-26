@@ -186,8 +186,9 @@ test('prüft alle Katalogrezepte mit der Alpha-3-Arbeitsverteilung', async ({ pa
   expect((await page.request.post(`${serverUrl}/api/cities/lambrecht/buildings`, { data: { buildingType: 'kontor' } })).ok()).toBeTruthy();
 
   const overview = await (await page.request.get(`${serverUrl}/api/cities/lambrecht/buildings`)).json();
-  expect(overview.catalog).toHaveLength(21);
-  for (const entry of overview.catalog) {
+  const productionCatalog = overview.catalog.filter((entry: { workforceClass?: string }) => entry.workforceClass);
+  expect(productionCatalog).toHaveLength(21);
+  for (const entry of productionCatalog) {
     await seed(page, { gold: 1_000_000, cargo: entry.cost.materials });
     const built = await page.request.post(`${serverUrl}/api/cities/lambrecht/buildings`, { data: { buildingType: entry.buildingType } });
     expect(built.ok(), `${entry.buildingType} muss baubar sein`).toBeTruthy();
@@ -195,7 +196,7 @@ test('prüft alle Katalogrezepte mit der Alpha-3-Arbeitsverteilung', async ({ pa
 
   // Alle Eingänge bereitstellen; Alpha 3 verteilt die begrenzten 1.000 Stadtarbeiter anschließend nach Priorität.
   const inputs: Record<string, number> = {};
-  for (const entry of overview.catalog) for (const [goodId, amount] of Object.entries(entry.inputs as Record<string, number>)) inputs[goodId] = (inputs[goodId] ?? 0) + amount;
+  for (const entry of productionCatalog) for (const [goodId, amount] of Object.entries(entry.inputs as Record<string, number>)) inputs[goodId] = (inputs[goodId] ?? 0) + amount;
   for (const [goodId, amount] of Object.entries(inputs)) {
     await seed(page, { cargo: { [goodId]: amount } });
     expect((await page.request.post(`${serverUrl}/api/cities/lambrecht/kontor/transfer`, { data: { goodId, quantity: amount, direction: 'store' } })).ok()).toBeTruthy();
