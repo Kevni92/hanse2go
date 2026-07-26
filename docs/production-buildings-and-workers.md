@@ -82,6 +82,8 @@ Konkrete Verschleißraten und Reparaturformeln sind Balancing.
 - Spieler konkurrieren um begrenzte Bauplätze einer Stadt.
 - Wohngebäude sind ebenfalls spielereigene Gebäude.
 
+In Alpha 3 sind Wohngebäude ausdrücklich keine Produktionsgebäude: Sie haben keine Beschäftigungsklasse, keine Arbeiter, keine Löhne, keine Produktion und keine Priorität. Das erste Wohngebäude ist in [`alpha-3/housing.md`](alpha-3/housing.md) festgelegt.
+
 ## Gebäude des ersten Produktionsumfangs
 
 - Getreidehof

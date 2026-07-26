@@ -16,6 +16,8 @@ Beschäftigungsklasse und Bauklasse sind unabhängige technische Felder. Statisc
 - [`production-and-fractions.md`](production-and-fractions.md) – proportionale Produktion und Festkomma
 - [`production-recipes.md`](production-recipes.md) – vollständige Rezepttabelle und Alpha-3-Anpassungen
 - [`balancing.md`](balancing.md) – positive Referenzmargen bei Zielbeständen
+- [`housing.md`](housing.md) – städtischer Grundwohnraum und Wohnhäuser
+- [`building-catalog.md`](building-catalog.md) – nicht-produktive Alpha-3-Gebäude
 
 Weitere Alpha-3-Dokumente konkretisieren Verteilung, Teilproduktion, Wohnraum, Wohlstand, Wachstum, Tick, Oberfläche und Abnahme. Sie ersetzen Alpha-2-Regeln nur dort, wo sie dies ausdrücklich festlegen.
 

@@ -4,12 +4,11 @@
 
 Eine Stadt simuliert die Bevölkerung zunächst als gemeinsame, aggregierte Einheit. Einzelne Bürger werden nicht separat berechnet.
 
-Die Stadt führt mindestens:
+Ab Alpha 3 führt die Stadt mindestens:
 
 - Bevölkerungszahl,
 - verfügbares Arbeitskräftepotenzial,
 - beschäftigte und arbeitslose Bevölkerung,
-- gemeinsames Bevölkerungsvermögen,
 - Wohlstand beziehungsweise Lebensstandard von 0 bis 100,
 - Bedarf je Ware,
 - vorhandenen und freien Wohnraum.
@@ -25,12 +24,11 @@ Das gemeinsame Vermögen bildet die Kaufkraft aller Einwohner ab.
 - Löhne der Spieler- und später KI-Betriebe,
 - gegebenenfalls spätere weitere Einkommen.
 
-Die Löhne werden stündlich beziehungsweise pro Produktionszyklus in den Bevölkerungstopf gezahlt.
+Die Löhne bilden ab Alpha 3 das aggregierte Bevölkerungseinkommen des aktuellen Ticks. Es gibt keinen dauerhaften Bevölkerungstopf und kein Stadtbudget.
 
 ### Ausgaben
 
 - benötigte Waren vom Stadtmarkt,
-- Mieten für Wohnraum,
 - später weitere Abgaben oder Dienstleistungen.
 
 Das Geld, das die Bevölkerung in der ersten Simulation am Stadtmarkt ausgibt, verschwindet zunächst aus dem Bevölkerungsvermögen. Der Stadtmarkt besitzt unbegrenzt Geld. Ein späteres Order-System kann Zahlungen direkt an verkaufende Spieler leiten.
@@ -128,9 +126,9 @@ Wohngebäude werden von Spielern errichtet.
 - Viel freier Wohnraum beschleunigt das Wachstum.
 - Wenig freier Wohnraum bremst es.
 - Es gibt zunächst keine zusätzliche Obdachlosenbevölkerung oberhalb des Caps.
-- Eigentümer erhalten Mieteinnahmen aus dem Bevölkerungsvermögen.
+- Eigentümer erhalten in Alpha 3 keine Mieteinnahmen oder anderen direkten Wohnraumerlös.
 
-Konkrete Mietverteilung und Auslastung mehrerer Eigentümer werden später definiert.
+Die verbindlichen Alpha-3-Regeln für Grundwohnraum, gemeinsame Nutzung und `town_house` stehen in [`alpha-3/housing.md`](alpha-3/housing.md).
 
 ## Alpha 1
 
