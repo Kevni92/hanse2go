@@ -18,7 +18,9 @@ export function createAlphaConfig(): AlphaConfig {
   const result: AlphaConfig = {
     goods: goods.map((good) => ({ id: good.id, name: good.name, category: good.category, basePrice: good.basePrice, targetStock: good.targetStock })),
     cities: citySeeds.map(([id, name, longitude, latitude, population, prosperity, productionFocus], index) => ({ id, name, position: { longitude, latitude, recordedAt: initialPosition.recordedAt }, radiusMeters: 800, population, prosperity, popularity: 10, hasKontor: false, productionFocus: [...productionFocus], stock: goods.reduce<Record<string, number>>((stock, good) => { stock[good.id] = good.stock[index]!; return stock; }, {}) })),
-    player: { id: 'player-alpha', name: 'Testkapitän', gold: 30_000 }, fleet: { id: 'fleet-alpha', capacity: 60, position: { ...initialPosition } },
+    // Alpha 2 ersetzt die Alpha-1-Startwerte: 100.000 Gold und 150 Tonnen Laderaum, damit Konzession,
+    // Kontor und Produktionsgebäude aus Goldbeutel und Flottenladeraum bezahlt werden können.
+    player: { id: 'player-alpha', name: 'Testkapitän', gold: 100_000 }, fleet: { id: 'fleet-alpha', capacity: 150, position: { ...initialPosition } },
   };
   validateAlphaConfig(result);
   return result;

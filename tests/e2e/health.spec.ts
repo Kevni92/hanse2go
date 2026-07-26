@@ -43,7 +43,7 @@ async function moveByDebugClick(page: Page, target: { longitude: number; latitud
 
 async function openLambrecht(page: Page) {
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Spielerübersicht öffnen' })).toContainText('30.000 G');
+  await expect(page.getByRole('button', { name: 'Spielerübersicht öffnen' })).toContainText('100.000 G');
   await expect(page.getByRole('button', { name: 'Stadt betreten' })).toHaveCount(0);
   await moveByDebugClick(page, cities.lambrecht);
   await page.getByRole('button', { name: 'Stadt betreten' }).click({ force: true });
@@ -110,7 +110,7 @@ test('nimmt den Holz-Handelsweg Lambrecht nach Neustadt vollständig ab', async 
   await expect(page.getByText('10 t in dieser Serverlaufzeit gehandelt')).toBeVisible();
   currentState = await state(page);
   expect(currentState.fleet.cargo.wood).toBeUndefined();
-  expect(currentState.player.gold).toBeGreaterThan(30_000);
+  expect(currentState.player.gold).toBeGreaterThan(100_000);
   expect(currentState.player.gold).toBe(buyQuote.resultingGold + sellQuote.total);
   expect(currentState.cities.find((city: { id: string }) => city.id === 'neustadt').stock.wood).toBe(50);
   expect((await page.request.get(`${serverUrl}/api/cities/neustadt/market/wood/history`)).ok()).toBeTruthy();
@@ -132,12 +132,13 @@ test('zeigt eine serverseitige Reichweitenablehnung ohne lokalen Handel', async 
 test('lehnt Handelsgrenzen serverseitig ab', async ({ page }) => {
   await page.request.put(`${serverUrl}/api/fleet/position`, { data: cities.lambrecht });
   const quote = (goodId: string, direction: 'buy' | 'sell', quantity: number) => page.request.post(`${serverUrl}/api/cities/lambrecht/market/quote`, { data: { goodId, direction, quantity } });
-  expect((await quote('wood', 'buy', 61)).status()).toBe(409);
+  expect((await quote('wood', 'buy', 151)).status()).toBe(409);
   expect((await quote('wood', 'buy', 201)).status()).toBe(409);
   expect((await quote('wood', 'sell', 1)).status()).toBe(409);
   const clothing = await quote('clothing', 'buy', 15);
   const clothingOffer = await clothing.json();
   expect((await page.request.post(`${serverUrl}/api/cities/lambrecht/market/trade`, { data: { goodId: 'clothing', direction: 'buy', quantity: 15, marketVersion: clothingOffer.marketVersion, idempotencyKey: 'e2e-clothing' } })).ok()).toBeTruthy();
+  await page.request.post(`${serverUrl}/test/seed`, { data: { gold: 5_000 } });
   const insufficientGold = await quote('tools', 'buy', 30);
   expect(insufficientGold.status()).toBe(409);
   expect((await insufficientGold.json()).error.code).toBe('INSUFFICIENT_GOLD');

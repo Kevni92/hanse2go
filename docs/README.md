@@ -35,6 +35,15 @@
 
 - [`alpha-2/scope.md`](alpha-2/scope.md) – verbindlicher Umfang und Abgrenzung
 - [`alpha-2/reputation-and-concessions.md`](alpha-2/reputation-and-concessions.md) – örtlicher Ruf und Baukonzession
+- [`alpha-2/buildings-and-construction.md`](alpha-2/buildings-and-construction.md) – Kontor, Gebäudeklassen, Kosten und Bauablauf
+- [`alpha-2/building-catalog.md`](alpha-2/building-catalog.md) – alle baubaren Produktionsgebäude
+- [`alpha-2/production-recipes.md`](alpha-2/production-recipes.md) – Eingänge und Ausgänge je Stundentick
+- [`alpha-2/kontor-and-inventory.md`](alpha-2/kontor-and-inventory.md) – privates Kontorlager und manuelle Transfers
+- [`alpha-2/population-consumption.md`](alpha-2/population-consumption.md) – fester Bevölkerungsverbrauch
+- [`alpha-2/production-tick.md`](alpha-2/production-tick.md) – manueller Stundentick und Tickbericht
+- [`alpha-2/user-interface.md`](alpha-2/user-interface.md) – Stadt-Tab `Gebäude`
+- [`alpha-2/test-world.md`](alpha-2/test-world.md) – Startwerte und Testbetrieb
+- [`alpha-2/acceptance.md`](alpha-2/acceptance.md) – Abnahme mit realem Client und Server
 
 ## Umgang mit Lücken
 

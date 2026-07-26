@@ -16,10 +16,13 @@ describe('GET /health', () => {
     const response = await app.inject({ method: 'GET', url: '/api/state' });
     const state = response.json();
     expect(response.statusCode).toBe(200);
-    expect(state.player).toMatchObject({ id: 'player-alpha', gold: 30_000 });
-    expect(state.fleet).toMatchObject({ id: 'fleet-alpha', capacity: 60, cargo: {} });
+    expect(state.player).toMatchObject({ id: 'player-alpha', gold: 100_000 });
+    expect(state.fleet).toMatchObject({ id: 'fleet-alpha', capacity: 150, cargo: {} });
     expect(state.goods).toHaveLength(22);
     expect(state.cities).toHaveLength(3);
     expect(state.cities.find((city: { id: string }) => city.id === 'lambrecht').stock.wood).toBe(200);
+    expect(state.world).toEqual({ tickNumber: 0, simulatedHour: 0 });
+    expect(state.reputations).toEqual([{ cityId: 'lambrecht', value: 0, status: 'Fremder' }, { cityId: 'neustadt', value: 0, status: 'Fremder' }, { cityId: 'mannheim', value: 0, status: 'Fremder' }]);
+    expect(state).toMatchObject({ concessions: [], buildings: [], kontors: {} });
   });
 });

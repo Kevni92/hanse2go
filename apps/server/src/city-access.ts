@@ -29,7 +29,11 @@ export class CityAccessService {
     });
   }
 
-  requireReachable(cityId: string): { city: City; distanceMeters: number } {
+  /**
+   * Alpha 1 meldet eine außerhalb des Radius liegende Stadt als `CITY_OUT_OF_RANGE`.
+   * Die Alpha-2-Befehle verwenden den dort dokumentierten Code `CITY_NOT_REACHABLE`.
+   */
+  requireReachable(cityId: string, outOfRangeCode: 'CITY_OUT_OF_RANGE' | 'CITY_NOT_REACHABLE' = 'CITY_OUT_OF_RANGE'): { city: City; distanceMeters: number } {
     const city = this.repository.getCities().find((candidate) => candidate.id === cityId);
     if (!city) {
       throw new DomainError('CITY_NOT_FOUND', 'Die angeforderte Stadt existiert nicht.', 404, { cityId });
@@ -38,7 +42,7 @@ export class CityAccessService {
     const position = this.repository.getFleet().position;
     const distanceMeters = distanceInMeters(position, city.position);
     if (distanceMeters > city.radiusMeters + 0.001) {
-      throw new DomainError('CITY_OUT_OF_RANGE', 'Die Stadt ist nicht in Reichweite der Flotte.', 403, {
+      throw new DomainError(outOfRangeCode, 'Die Stadt ist nicht in Reichweite der Flotte.', 403, {
         cityId,
         distanceMeters: Math.round(distanceMeters),
         radiusMeters: city.radiusMeters,

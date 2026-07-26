@@ -30,7 +30,9 @@ Der Server prüft in dieser Reihenfolge: gültiger Gebäudetyp, Stadtreichweite,
 | `production_ready` | Produktionsinstanz hatte im letzten Tick alle Inputs und produzierte vollständig |
 | `stalled` | Produktionsinstanz hatte im letzten Tick fehlende Inputs; kein Teilverbrauch |
 
-`production_ready` und `stalled` werden erst durch einen Stundentick gesetzt. Es gibt keinen Arbeiter- oder Wartungszustand.
+`production_ready` und `stalled` werden erst durch einen Stundentick gesetzt. Es gibt keinen Arbeiter- oder Wartungszustand. `buildable` und `requirements_missing` beschreiben ein Katalogangebot, `built`, `production_ready` und `stalled` eine bestehende Instanz.
+
+Der Alpha-1-Stadtwert `Kontor` der Stadtübersicht zeigt ab Alpha 2 das eigene Kontor des Spielers in dieser Stadt.
 
 ## Fehlerfälle
 
