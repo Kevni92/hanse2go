@@ -17,6 +17,7 @@ Alpha 4 bleibt serverautoritativ, deterministisch und In-Memory-basiert. Der man
 - [`fleet-management.md`](fleet-management.md) – Flotten, Schiffszuweisung, Aktivwechsel und Auflösung
 - [`fleet-cargo-and-transfers.md`](fleet-cargo-and-transfers.md) – Flottenladung, Kapazität und lokale Transfers
 - [`user-interface.md`](user-interface.md) – mobile und Desktop-Hafenverwaltung
+- [`acceptance.md`](acceptance.md) – deterministische Alpha-4-Abnahme
 - [`migration.md`](migration.md) – Migration der abstrakten Alpha-3-Startflotte
 - [`balancing.md`](balancing.md) – Referenzkosten für Schiffsbau und Maklerpreise
 - [`tick.md`](tick.md) – Werftphase im atomaren Stundentick
