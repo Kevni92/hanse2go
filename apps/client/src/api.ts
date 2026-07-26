@@ -85,3 +85,7 @@ export function simulateNextHour(): Promise<TickReport> {
 export function fetchWorld(): Promise<WorldClock & { lastTickReport?: TickReport }> {
   return request('/api/world');
 }
+export interface HarborState { player: GameState['player']; activeFleetId: string; activeFleet?: { customName: string; shipIds: string[]; cargoByGood: Record<string, number> }; fleets: Array<{ fleetId: string; customName: string; shipIds: string[]; cargoByGood: Record<string, number> }>; ships: Array<{ shipId: string; customName: string; shipTypeId: string; ownerType: string; ownerId: string }>; marketVersion: number; shipTypes: Array<{ id: string; capacity: number; virtualSpeed: number; purchasePrice: number }>; }
+export function fetchHarbor(cityId: string): Promise<HarborState> { return request(`/api/cities/${cityId}/harbor`); }
+export function buyShip(cityId: string, shipId: string, shipMarketVersion: number): Promise<HarborState> { return request(`/api/cities/${cityId}/ships/${shipId}/buy`, asJson({ shipMarketVersion, idempotencyKey: createIdempotencyKey() })); }
+export function renameShip(shipId: string, customName: string): Promise<unknown> { return request(`/api/ships/${shipId}/name`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ customName }) }); }
