@@ -10,6 +10,8 @@ Jeder Spieler, jede Stadtkasse und jede Bevölkerungskasse besitzt ein Goldkonto
 
 Buy-Order-Reservierungen sind ein Unterbestand des Käuferkontos und werden in der Geldmenge nicht doppelt gezählt.
 
+Ihre maximale Höhe ergibt sich aus `maximumTradeValueMoneyUnits + ceil(maximumTradeValueMoneyUnits × 5 / 1000)`. Teilfüllung, Stornierung und Ersetzung passen ausschließlich die verbleibende Reservierung an oder geben sie frei; sie verändern nie die Gesamtgeldmenge. Die zugehörigen Waren- und Orderregeln stehen in [`orders.md`](orders.md).
+
 ## Alpha-5-Startkonten
 
 | Konto | Gold | moneyUnits |

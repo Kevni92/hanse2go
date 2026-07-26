@@ -2,6 +2,8 @@
 
 > Historische Alpha-1-bis-Alpha-4-Regeln: Ab Alpha 5 ersetzt das lokale, vollständig gedeckte Limit-Orderbuch diese direkte Stadtmarkt-Abrechnung. Die Preisformel und der Spread bleiben nur Referenzwerte; verbindliche Konten- und Ledgerregeln stehen in [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md).
 
+Die Pflichtfelder, Reservierungen, Status und Lebenszyklus der Alpha-5-Orders stehen in [`alpha-5/orders.md`](alpha-5/orders.md).
+
 ## Gemeinsamer Stadtmarkt
 
 Jede Stadt besitzt einen eigenen gemeinsamen Markt. Alle Spieler sehen und verändern denselben Bestand.
