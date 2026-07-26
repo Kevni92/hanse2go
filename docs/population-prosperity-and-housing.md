@@ -17,6 +17,8 @@ Vereinfacht kann jeder Einwohner als potenzieller Arbeiter gelten. Das ist bewus
 
 ## Alpha 3: Einkommen, Verbrauch und Wohlstand
 
+> Historische Regel: Ab Alpha 5 fließen Löhne in eine reale Bevölkerungskasse und Waren werden nur aus tatsächlich ausgeführten Bevölkerungskauforders konsumiert. Die Kontenregel steht in [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md).
+
 `wealth` ist der einzige soziale Stadtwert. Es gibt weder einen separaten Zufriedenheitswert noch individuelle Vermögen oder Ersparnisse.
 
 ### Einnahmen
@@ -24,7 +26,7 @@ Vereinfacht kann jeder Einwohner als potenzieller Arbeiter gelten. Das ist bewus
 - Löhne der Spieler- und später KI-Betriebe,
 - gegebenenfalls spätere weitere Einkommen.
 
-Die Löhne bilden ab Alpha 3 das aggregierte Bevölkerungseinkommen des aktuellen Ticks. Es gibt keinen dauerhaften Bevölkerungstopf und kein Stadtbudget.
+In Alpha 3 bilden Löhne das aggregierte Bevölkerungseinkommen des aktuellen Ticks. Ab Alpha 5 ersetzt eine dauerhafte, endliche Bevölkerungskasse diesen historischen Tickwert.
 
 ### Ausgaben
 

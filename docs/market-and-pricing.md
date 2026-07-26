@@ -1,5 +1,7 @@
 # Stadtmarkt, Nachfrage und Preisberechnung
 
+> Historische Alpha-1-bis-Alpha-4-Regeln: Ab Alpha 5 ersetzt das lokale, vollständig gedeckte Limit-Orderbuch diese direkte Stadtmarkt-Abrechnung. Die Preisformel und der Spread bleiben nur Referenzwerte; verbindliche Konten- und Ledgerregeln stehen in [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md).
+
 ## Gemeinsamer Stadtmarkt
 
 Jede Stadt besitzt einen eigenen gemeinsamen Markt. Alle Spieler sehen und verändern denselben Bestand.
@@ -111,9 +113,9 @@ Für Alpha 1 wird im Arbeitsspeicher protokolliert:
 
 Der Verlauf beginnt bei Serverstart neu. Die UI kann daraus Preislinie und Handelsvolumen der aktuellen Sitzung darstellen.
 
-## KI-Stabilisierung der späteren Welt
+## Historische KI-Stabilisierungsidee
 
-Außerhalb der Alpha können KI-Händler extreme Märkte stabilisieren:
+Die folgende frühere Idee ist keine zulässige Alpha-5-Regel. Spätere KI-Akteure müssen dieselben gedeckten Konten, Waren und Orders wie Spieler verwenden:
 
 - Waren aus stark überversorgten Städten abtransportieren,
 - dauerhaft knappe Städte beliefern,

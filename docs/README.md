@@ -75,6 +75,9 @@
 ## Alpha 5
 
 - [`alpha-5/scope.md`](alpha-5/scope.md) – Übergang zur virtuellen Karibik und Abgrenzung des Alpha-5-Orderbuch-Slices
+- [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md) – Geldfestkomma, reale Konten, Ledger und Goldbilanz
+- [`alpha-5/start-state.md`](alpha-5/start-state.md) – deterministische Konteninitialisierung ohne Geldschöpfung
+- [`alpha-5/acceptance.md`](alpha-5/acceptance.md) – Bilanzinvariante für Befehle und Ticks
 
 ## Umgang mit Lücken
 

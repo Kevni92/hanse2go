@@ -2,11 +2,13 @@
 
 ## Spielstart
 
+Für die deterministische Alpha-5-Welt gelten die konkreten Konten und das Startgold in [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md). Historische Richtwerte dieses Abschnitts begründen keine zusätzliche Geldquelle.
+
 Der spätere reguläre Spieler startet nach der Registrierung mit:
 
 - einer kleinen aktiven Flotte, zunächst bestehend aus einer Pinasse,
 - leerem Laderaum,
-- einem festen Startkapital; als bisheriger Richtwert wurden 30.000 Goldmünzen genannt,
+- einem festen, durch die Weltinitialisierung gedeckten Startkapital,
 - keinem Kontor und keinem Produktionsgebäude.
 
 Die konkrete Geschichte, warum der Spieler das Startschiff besitzt, ist nicht entschieden und für die Alpha nicht relevant.
