@@ -2,27 +2,34 @@ import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import Fastify from 'fastify';
+import { loadGameConfig, type GameConfig } from '@hanse2go/config';
 import type { ApiError, BuildBuildingRequest, DebugPositionRequest, HealthResponse, KontorTransferRequest, MarketQuoteRequest, TickRequest, TradeRequest } from '@hanse2go/shared';
 import { BuildingService } from './buildings.js';
 import { CityAccessService, DomainError } from './city-access.js';
+import { ConsumptionModel } from './consumption.js';
 import { InMemoryGameRepository, type GameRepository } from './game-state.js';
 import { MarketService } from './market.js';
-import { MAXIMUM_REPUTATION, ReputationService, reputationStatus } from './reputation.js';
+import { createBuildingCatalog } from './production.js';
+import { ReputationService } from './reputation.js';
 import { TickService } from './tick.js';
 
 export interface AppOptions {
   enableTestReset?: boolean;
   /** Der Stundentick steht laut Alpha-2-Konzept nur im Debug- und Testbetrieb bereit. */
   enableDebugTick?: boolean;
+  /** Alle statischen Spieleigenschaften kommen aus der zentralen Konfiguration. */
+  config?: GameConfig;
 }
 
 export function buildApp(repository: GameRepository = new InMemoryGameRepository(), options: AppOptions = {}) {
   const app = Fastify({ logger: true });
+  const config = options.config ?? loadGameConfig();
+  const catalog = createBuildingCatalog(config.buildings);
   const cityAccess = new CityAccessService(repository);
-  const reputation = new ReputationService();
-  const market = new MarketService(repository, cityAccess, reputation);
-  const buildings = new BuildingService(repository, cityAccess, reputation);
-  const tick = new TickService(repository, reputation, market);
+  const reputation = new ReputationService(config.reputation);
+  const market = new MarketService(repository, cityAccess, config.market, reputation);
+  const buildings = new BuildingService(repository, cityAccess, reputation, catalog);
+  const tick = new TickService(repository, reputation, market, catalog, new ConsumptionModel(config.consumption));
   const enableDebugTick = options.enableDebugTick ?? true;
 
   app.register(cors, { origin: true, methods: ['GET', 'HEAD', 'POST', 'PUT'] });
@@ -129,10 +136,10 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
       }
       for (const [cityId, value] of Object.entries(body.reputation ?? {})) {
         if (!state.cities.some((city) => city.id === cityId)) throw new DomainError('CITY_NOT_FOUND', 'Die angeforderte Stadt existiert nicht.', 404, { cityId });
-        if (!Number.isInteger(value) || value < 0 || value > MAXIMUM_REPUTATION) throw new DomainError('INVALID_QUANTITY', `Der Testruf muss zwischen 0 und ${MAXIMUM_REPUTATION} liegen.`, 400);
+        if (!Number.isInteger(value) || value < 0 || value > reputation.maximumValue) throw new DomainError('INVALID_QUANTITY', `Der Testruf muss zwischen 0 und ${reputation.maximumValue} liegen.`, 400);
         const entry = state.reputations.find((candidate) => candidate.cityId === cityId);
-        if (entry) { entry.value = value; entry.status = reputationStatus(value); }
-        else state.reputations.push({ cityId, value, status: reputationStatus(value) });
+        if (entry) { entry.value = value; entry.status = reputation.statusFor(value); }
+        else state.reputations.push({ cityId, value, status: reputation.statusFor(value) });
       }
       return repository.getState();
     }));

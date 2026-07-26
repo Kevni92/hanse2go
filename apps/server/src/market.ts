@@ -1,3 +1,4 @@
+import type { MarketConfig } from '@hanse2go/config';
 import type { GameState, MarketHistoryEntry, MarketQuote, TradeDirection } from '@hanse2go/shared';
 import { CityAccessService, DomainError } from './city-access.js';
 import type { GameRepository } from './game-state.js';
@@ -11,7 +12,12 @@ export class MarketService {
   private readonly history = new Map<string, MarketHistoryEntry[]>();
   private readonly completed = new Map<string, MarketQuote>();
 
-  constructor(private readonly repository: GameRepository, private readonly cityAccess: CityAccessService, private readonly reputation?: ReputationService) {}
+  constructor(
+    private readonly repository: GameRepository,
+    private readonly cityAccess: CityAccessService,
+    private readonly config: MarketConfig,
+    private readonly reputation?: ReputationService,
+  ) {}
 
   quote(input: QuoteInput): MarketQuote {
     this.cityAccess.requireReachable(input.cityId);
@@ -88,5 +94,10 @@ export class MarketService {
   }
 
   private version(cityId: string): number { return this.versions.get(cityId) ?? 0; }
-  private unitPrice(base: number, target: number, stock: number, direction: TradeDirection): number { const value = base * Math.min(4, Math.max(0.4, target / Math.max(stock, 1))); return direction === 'buy' ? Math.ceil(value * 1.05) : Math.floor(value * 0.95); }
+  /** Preisformel und Spread aus `docs/market-and-pricing.md`; die Grenzwerte stammen aus der Spielkonfiguration. */
+  private unitPrice(base: number, target: number, stock: number, direction: TradeDirection): number {
+    const { minimumPriceFactor, maximumPriceFactor, buySpread, sellSpread } = this.config;
+    const value = base * Math.min(maximumPriceFactor, Math.max(minimumPriceFactor, target / Math.max(stock, 1)));
+    return direction === 'buy' ? Math.ceil(value * buySpread) : Math.floor(value * sellSpread);
+  }
 }

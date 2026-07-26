@@ -1,0 +1,158 @@
+{
+  "world": {
+    "startTimestamp": "2026-01-01T00:00:00.000Z"
+  },
+  "player": {
+    "id": "player-alpha",
+    "name": "Testkapitän",
+    "startingGold": 100000
+  },
+  "fleet": {
+    "id": "fleet-alpha",
+    "capacity": 150,
+    "startPosition": { "longitude": 8.04, "latitude": 49.4 }
+  },
+  "market": {
+    "minimumPriceFactor": 0.4,
+    "maximumPriceFactor": 4,
+    "buySpread": 1.05,
+    "sellSpread": 0.95
+  },
+  "reputation": {
+    "minimumTradeQuantity": 10,
+    "tonsPerPoint": 10,
+    "maximumValue": 100,
+    "statusThresholds": [
+      { "minimumValue": 0, "status": "Fremder" },
+      { "minimumValue": 20, "status": "Bekannter Händler" },
+      { "minimumValue": 50, "status": "Angesehener Händler" },
+      { "minimumValue": 80, "status": "Vertrauenswürdiger Bürger" }
+    ]
+  },
+  "consumption": {
+    "populationUnit": 1000,
+    "perPopulationUnit": {
+      "bread": 4,
+      "clothing": 2,
+      "meat": 2,
+      "cheese": 2,
+      "ceramics": 2,
+      "furniture": 2,
+      "rum": 2
+    }
+  },
+  "goods": [
+    { "id": "grain", "name": "Getreide", "category": "Nahrung", "basePrice": 100, "targetStock": 100 },
+    { "id": "flour", "name": "Mehl", "category": "Nahrung", "basePrice": 140, "targetStock": 80 },
+    { "id": "bread", "name": "Brot", "category": "Nahrung", "basePrice": 190, "targetStock": 80 },
+    { "id": "livestock", "name": "Vieh", "category": "Nahrung", "basePrice": 180, "targetStock": 70 },
+    { "id": "milk", "name": "Milch", "category": "Nahrung", "basePrice": 120, "targetStock": 70 },
+    { "id": "meat", "name": "Fleisch", "category": "Nahrung", "basePrice": 280, "targetStock": 60 },
+    { "id": "cheese", "name": "Käse", "category": "Nahrung", "basePrice": 240, "targetStock": 60 },
+    { "id": "wood", "name": "Holz", "category": "Baustoffe", "basePrice": 80, "targetStock": 100 },
+    { "id": "planks", "name": "Bretter", "category": "Baustoffe", "basePrice": 130, "targetStock": 80 },
+    { "id": "clay", "name": "Lehm", "category": "Baustoffe", "basePrice": 70, "targetStock": 100 },
+    { "id": "bricks", "name": "Ziegel", "category": "Baustoffe", "basePrice": 120, "targetStock": 80 },
+    { "id": "charcoal", "name": "Kohle", "category": "Handwerk", "basePrice": 110, "targetStock": 80 },
+    { "id": "iron", "name": "Eisen", "category": "Handwerk", "basePrice": 180, "targetStock": 60 },
+    { "id": "tools", "name": "Werkzeug", "category": "Handwerk", "basePrice": 320, "targetStock": 50 },
+    { "id": "cotton", "name": "Baumwolle", "category": "Kleidung", "basePrice": 120, "targetStock": 100 },
+    { "id": "cloth", "name": "Stoff", "category": "Kleidung", "basePrice": 210, "targetStock": 70 },
+    { "id": "clothing", "name": "Kleidung", "category": "Kleidung", "basePrice": 360, "targetStock": 60 },
+    { "id": "ceramics", "name": "Keramik", "category": "Haushaltswaren", "basePrice": 180, "targetStock": 60 },
+    { "id": "furniture", "name": "Möbel", "category": "Haushaltswaren", "basePrice": 300, "targetStock": 50 },
+    { "id": "sugarcane", "name": "Zuckerrohr", "category": "Luxuswaren", "basePrice": 90, "targetStock": 100 },
+    { "id": "sugar", "name": "Zucker", "category": "Luxuswaren", "basePrice": 160, "targetStock": 70 },
+    { "id": "rum", "name": "Rum", "category": "Luxuswaren", "basePrice": 300, "targetStock": 50 }
+  ],
+  "cities": [
+    {
+      "id": "lambrecht",
+      "name": "Lambrecht",
+      "position": { "longitude": 8.07, "latitude": 49.37 },
+      "radiusMeters": 800,
+      "population": 1000,
+      "prosperity": 24,
+      "popularity": 10,
+      "productionFocus": ["Holz", "Bretter", "Kohle"],
+      "stock": {
+        "grain": 90, "flour": 70, "bread": 65, "livestock": 60, "milk": 60, "meat": 45, "cheese": 50,
+        "wood": 200, "planks": 130, "clay": 45, "bricks": 30,
+        "charcoal": 130, "iron": 45, "tools": 40,
+        "cotton": 55, "cloth": 45, "clothing": 25,
+        "ceramics": 45, "furniture": 35,
+        "sugarcane": 45, "sugar": 35, "rum": 10
+      }
+    },
+    {
+      "id": "neustadt",
+      "name": "Neustadt",
+      "position": { "longitude": 8.14, "latitude": 49.4 },
+      "radiusMeters": 800,
+      "population": 2500,
+      "prosperity": 38,
+      "popularity": 10,
+      "productionFocus": ["Getreide", "Lehm", "Ziegel"],
+      "stock": {
+        "grain": 200, "flour": 110, "bread": 95, "livestock": 100, "milk": 95, "meat": 65, "cheese": 70,
+        "wood": 40, "planks": 45, "clay": 180, "bricks": 130,
+        "charcoal": 55, "iron": 70, "tools": 55,
+        "cotton": 65, "cloth": 55, "clothing": 45,
+        "ceramics": 90, "furniture": 20,
+        "sugarcane": 65, "sugar": 50, "rum": 15
+      }
+    },
+    {
+      "id": "mannheim",
+      "name": "Mannheim",
+      "position": { "longitude": 8.23, "latitude": 49.44 },
+      "radiusMeters": 800,
+      "population": 5000,
+      "prosperity": 65,
+      "popularity": 10,
+      "productionFocus": ["Baumwolle", "Zucker", "Rum"],
+      "stock": {
+        "grain": 40, "flour": 45, "bread": 30, "livestock": 45, "milk": 50, "meat": 80, "cheese": 75,
+        "wood": 50, "planks": 65, "clay": 65, "bricks": 55,
+        "charcoal": 70, "iron": 55, "tools": 60,
+        "cotton": 180, "cloth": 110, "clothing": 85,
+        "ceramics": 55, "furniture": 70,
+        "sugarcane": 180, "sugar": 120, "rum": 100
+      }
+    }
+  ],
+  "buildings": {
+    "kontorType": "kontor",
+    "landPrice": 5000,
+    "concession": { "price": 10000, "requiredReputation": 80 },
+    "classes": {
+      "einfach": { "gold": 2500, "materials": { "wood": 20, "planks": 10, "bricks": 10, "tools": 5 } },
+      "mittel": { "gold": 5000, "materials": { "wood": 30, "planks": 20, "bricks": 20, "tools": 10 } },
+      "hochwertig": { "gold": 7500, "materials": { "wood": 40, "planks": 30, "bricks": 30, "tools": 20 } }
+    },
+    "kontor": { "name": "Kontor", "gold": 5000, "materials": { "wood": 50, "planks": 25, "bricks": 40, "tools": 10 } },
+    "production": [
+      { "buildingType": "grain_farm", "name": "Getreidehof", "kind": "raw", "buildingClass": "einfach", "inputs": {}, "outputs": { "grain": 20 } },
+      { "buildingType": "windmill", "name": "Windmühle", "kind": "processing", "buildingClass": "einfach", "inputs": { "grain": 10 }, "outputs": { "flour": 10 } },
+      { "buildingType": "bakery", "name": "Bäckerei", "kind": "processing", "buildingClass": "mittel", "inputs": { "flour": 10 }, "outputs": { "bread": 10 } },
+      { "buildingType": "cattle_farm", "name": "Rinderhof", "kind": "processing", "buildingClass": "mittel", "inputs": { "grain": 10 }, "outputs": { "livestock": 5, "milk": 10 } },
+      { "buildingType": "butchery", "name": "Metzgerei", "kind": "processing", "buildingClass": "mittel", "inputs": { "livestock": 5 }, "outputs": { "meat": 5 } },
+      { "buildingType": "dairy", "name": "Käserei", "kind": "processing", "buildingClass": "hochwertig", "inputs": { "milk": 10 }, "outputs": { "cheese": 5 } },
+      { "buildingType": "forestry", "name": "Forstbetrieb", "kind": "raw", "buildingClass": "einfach", "inputs": {}, "outputs": { "wood": 20 } },
+      { "buildingType": "sawmill", "name": "Sägewerk", "kind": "processing", "buildingClass": "einfach", "inputs": { "wood": 10 }, "outputs": { "planks": 10 } },
+      { "buildingType": "clay_pit", "name": "Lehmgrube", "kind": "raw", "buildingClass": "einfach", "inputs": {}, "outputs": { "clay": 20 } },
+      { "buildingType": "brickyard", "name": "Ziegelei", "kind": "processing", "buildingClass": "mittel", "inputs": { "clay": 10 }, "outputs": { "bricks": 10 } },
+      { "buildingType": "pottery", "name": "Töpferei", "kind": "processing", "buildingClass": "mittel", "inputs": { "clay": 10 }, "outputs": { "ceramics": 10 } },
+      { "buildingType": "charcoal_kiln", "name": "Köhlerei", "kind": "processing", "buildingClass": "mittel", "inputs": { "wood": 10 }, "outputs": { "charcoal": 10 } },
+      { "buildingType": "iron_mine", "name": "Eisenmine", "kind": "raw", "buildingClass": "hochwertig", "inputs": {}, "outputs": { "iron": 15 } },
+      { "buildingType": "smithy", "name": "Schmiede", "kind": "processing", "buildingClass": "hochwertig", "inputs": { "iron": 10, "charcoal": 10 }, "outputs": { "tools": 10 } },
+      { "buildingType": "cotton_plantation", "name": "Baumwollplantage", "kind": "raw", "buildingClass": "einfach", "inputs": {}, "outputs": { "cotton": 20 } },
+      { "buildingType": "weavery", "name": "Weberei", "kind": "processing", "buildingClass": "mittel", "inputs": { "cotton": 10 }, "outputs": { "cloth": 10 } },
+      { "buildingType": "tailor", "name": "Schneiderei", "kind": "processing", "buildingClass": "mittel", "inputs": { "cloth": 10 }, "outputs": { "clothing": 10 } },
+      { "buildingType": "carpentry", "name": "Tischlerei", "kind": "processing", "buildingClass": "hochwertig", "inputs": { "planks": 10 }, "outputs": { "furniture": 10 } },
+      { "buildingType": "sugarcane_plantation", "name": "Zuckerrohrplantage", "kind": "raw", "buildingClass": "mittel", "inputs": {}, "outputs": { "sugarcane": 20 } },
+      { "buildingType": "sugar_refinery", "name": "Zuckerraffinerie", "kind": "processing", "buildingClass": "mittel", "inputs": { "sugarcane": 10 }, "outputs": { "sugar": 10 } },
+      { "buildingType": "distillery", "name": "Brennerei", "kind": "processing", "buildingClass": "hochwertig", "inputs": { "sugar": 10 }, "outputs": { "rum": 10 } }
+    ]
+  }
+}

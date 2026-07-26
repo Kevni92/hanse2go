@@ -1,11 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { loadGameConfig } from '@hanse2go/config';
 import { buildApp } from '../src/app.js';
 import { DomainError } from '../src/city-access.js';
 import { InMemoryGameRepository, type GameRepository } from '../src/game-state.js';
 import { MarketService } from '../src/market.js';
 import { CityAccessService } from '../src/city-access.js';
+import { ConsumptionModel } from '../src/consumption.js';
+import { createBuildingCatalog } from '../src/production.js';
 import { ReputationService } from '../src/reputation.js';
 import { TickService } from '../src/tick.js';
+
+const config = loadGameConfig();
+const catalog = createBuildingCatalog(config.buildings);
+const consumption = new ConsumptionModel(config.consumption);
 
 const kontorMaterials = { wood: 50, planks: 25, bricks: 40, tools: 10 };
 const simpleMaterials = { wood: 20, planks: 10, bricks: 10, tools: 5 };
@@ -50,13 +57,13 @@ describe('hourly tick API', () => {
   it('rejects a re-entrant tick with TICK_IN_PROGRESS and no state change', async () => {
     const repository = new InMemoryGameRepository();
     const cityAccess = new CityAccessService(repository);
-    const reputation = new ReputationService();
+    const reputation = new ReputationService(config.reputation);
     let nested: unknown;
     // eslint-disable-next-line prefer-const -- der Testdoppelgänger referenziert den Dienst, den er erst danach erhält
     let service!: TickService;
     // Der Testdoppelgänger betritt den laufenden Tick ein zweites Mal, während die Weltsperre gehalten wird.
     const reentrant: GameRepository = { ...repository, runTransaction: (operation) => repository.runTransaction((state) => { nested ??= captureError(() => service.run('nested')); return operation(state); }) };
-    service = new TickService(reentrant, reputation, new MarketService(reentrant, cityAccess, reputation));
+    service = new TickService(reentrant, reputation, new MarketService(reentrant, cityAccess, config.market, reputation), catalog, consumption);
 
     service.run('outer');
     expect(nested).toBeInstanceOf(DomainError);
@@ -164,8 +171,8 @@ describe('hourly tick API', () => {
   it('rolls the whole tick back when a phase fails unexpectedly', async () => {
     const repository = new InMemoryGameRepository();
     const cityAccess = new CityAccessService(repository);
-    const reputation = new ReputationService();
-    const service = new TickService(repository, reputation, new MarketService(repository, cityAccess, reputation));
+    const reputation = new ReputationService(config.reputation);
+    const service = new TickService(repository, reputation, new MarketService(repository, cityAccess, config.market, reputation), catalog, consumption);
     const before = repository.getState();
     const failure = vi.spyOn(Math, 'ceil').mockImplementation(() => { throw new Error('unerwarteter Fehler'); });
 

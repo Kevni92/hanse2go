@@ -1,6 +1,14 @@
-/** Feste Verbrauchswerte je angefangene 1.000 Einwohner aus `docs/alpha-2/population-consumption.md`. */
-export const consumptionPerThousand: Record<string, number> = { bread: 4, clothing: 2, meat: 2, cheese: 2, ceramics: 2, furniture: 2, rum: 2 };
+import type { ConsumptionConfig } from '@hanse2go/config';
 
-export function requiredConsumption(population: number, goodId: string): number {
-  return Math.ceil(population / 1_000) * (consumptionPerThousand[goodId] ?? 0);
+/** Fester Bevölkerungsverbrauch aus `docs/alpha-2/population-consumption.md`; die Werte kommen aus der Spielkonfiguration. */
+export class ConsumptionModel {
+  constructor(private readonly config: ConsumptionConfig) {}
+
+  /** Alle Waren, die die Bevölkerung überhaupt verbraucht. */
+  get consumedGoodIds(): string[] { return Object.keys(this.config.perPopulationUnit); }
+
+  /** `Sollverbrauch = ceil(Bevölkerung / Bezugsgröße) × Verbrauchswert`. */
+  required(population: number, goodId: string): number {
+    return Math.ceil(population / this.config.populationUnit) * (this.config.perPopulationUnit[goodId] ?? 0);
+  }
 }

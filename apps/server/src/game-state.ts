@@ -1,5 +1,6 @@
+import { loadGameConfig, type GameConfig } from '@hanse2go/config';
 import type { City, Fleet, GameState, Good, Player, Position, Reputation } from '@hanse2go/shared';
-import { createAlphaConfig, type AlphaConfig } from './config.js';
+import { reputationStatus } from './reputation.js';
 
 export interface GameRepository {
   getState(): GameState;
@@ -12,15 +13,25 @@ export interface GameRepository {
   runTransaction<T>(operation: (state: GameState) => T): T;
 }
 const clone = <T>(value: T): T => structuredClone(value);
+
+/** Der deterministische Startzustand entsteht ausschließlich aus der zentralen Spielkonfiguration. */
 export class InMemoryGameRepository implements GameRepository {
   private state: GameState;
-  constructor(private readonly config: AlphaConfig = createAlphaConfig()) { this.state = this.createInitialState(); }
+  constructor(private readonly config: GameConfig = loadGameConfig()) { this.state = this.createInitialState(); }
   private createInitialState(): GameState {
-    const cities = clone(this.config.cities);
-    const reputations: Reputation[] = cities.map((city) => ({ cityId: city.id, value: 0, status: 'Fremder' }));
+    const { world, player, fleet } = this.config;
+    const goods: Good[] = this.config.goods.map(({ id, name, category, basePrice, targetStock }) => ({ id, name, category, basePrice, targetStock }));
+    const cities: City[] = this.config.cities.map((city) => ({
+      id: city.id, name: city.name, position: { ...city.position, recordedAt: world.startTimestamp }, radiusMeters: city.radiusMeters,
+      population: city.population, prosperity: city.prosperity, popularity: city.popularity, hasKontor: false,
+      productionFocus: [...city.productionFocus], stock: { ...city.stock },
+    }));
+    const startStatus = reputationStatus(this.config.reputation, 0);
+    const reputations: Reputation[] = cities.map((city) => ({ cityId: city.id, value: 0, status: startStatus }));
     return {
-      player: { ...clone(this.config.player), activeFleetId: this.config.fleet.id }, fleet: { ...clone(this.config.fleet), cargo: {} },
-      goods: clone(this.config.goods), cities,
+      player: { id: player.id, name: player.name, gold: player.startingGold, activeFleetId: fleet.id },
+      fleet: { id: fleet.id, capacity: fleet.capacity, cargo: {}, position: { ...fleet.startPosition, recordedAt: world.startTimestamp } },
+      goods, cities,
       world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [], buildings: [], kontors: {},
     };
   }

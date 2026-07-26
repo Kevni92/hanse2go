@@ -1,0 +1,63 @@
+import type { BuildingClass, BuildingKind, GoodCategory, ReputationStatus } from '@hanse2go/shared';
+
+/** Typen der zentralen Spielkonfiguration in `game-config.json`. */
+
+export interface GeoPoint { longitude: number; latitude: number }
+
+export interface WorldConfig {
+  /** Zeitstempel aller Startpositionen; hält den Startzustand deterministisch. */
+  startTimestamp: string;
+}
+export interface PlayerConfig { id: string; name: string; startingGold: number }
+export interface FleetConfig { id: string; capacity: number; startPosition: GeoPoint }
+
+export interface GoodConfig { id: string; name: string; category: GoodCategory; basePrice: number; targetStock: number }
+export interface CityConfig {
+  id: string; name: string; position: GeoPoint; radiusMeters: number;
+  population: number; prosperity: number; popularity: number;
+  productionFocus: string[];
+  stock: Record<string, number>;
+}
+
+/** Preisformel und Spread aus `docs/market-and-pricing.md`. */
+export interface MarketConfig { minimumPriceFactor: number; maximumPriceFactor: number; buySpread: number; sellSpread: number }
+
+export interface ReputationStatusThreshold { minimumValue: number; status: ReputationStatus }
+export interface ReputationConfig {
+  minimumTradeQuantity: number;
+  tonsPerPoint: number;
+  maximumValue: number;
+  /** Aufsteigend nach `minimumValue`; der erste Eintrag ist der Startstatus. */
+  statusThresholds: ReputationStatusThreshold[];
+}
+
+export interface ConsumptionConfig { populationUnit: number; perPopulationUnit: Record<string, number> }
+
+export interface BuildingClassCost { gold: number; materials: Record<string, number> }
+export interface ConcessionConfig { price: number; requiredReputation: number }
+export interface KontorConfig extends BuildingClassCost { name: string }
+export interface ProductionBuildingConfig {
+  buildingType: string; name: string; kind: BuildingKind; buildingClass: BuildingClass;
+  inputs: Record<string, number>; outputs: Record<string, number>;
+}
+export interface BuildingsConfig {
+  kontorType: string;
+  /** Der Grundstückspreis gilt für jedes Gebäude zusätzlich zu den Klassenkosten. */
+  landPrice: number;
+  concession: ConcessionConfig;
+  classes: Record<BuildingClass, BuildingClassCost>;
+  kontor: KontorConfig;
+  production: ProductionBuildingConfig[];
+}
+
+export interface GameConfig {
+  world: WorldConfig;
+  player: PlayerConfig;
+  fleet: FleetConfig;
+  market: MarketConfig;
+  reputation: ReputationConfig;
+  consumption: ConsumptionConfig;
+  goods: GoodConfig[];
+  cities: CityConfig[];
+  buildings: BuildingsConfig;
+}

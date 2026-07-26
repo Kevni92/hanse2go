@@ -13,6 +13,7 @@ apps/
   client/       Vue-Anwendung
   server/       REST-Server und Spiellogik
 packages/
+  config/       zentrale Spielkonfiguration und Spieleigenschaften
   shared/       gemeinsame API-Verträge und DTOs
 docs/           verbindliche Dokumentation
 tests/
@@ -81,9 +82,19 @@ Längen- und Breitengrad. Der Server validiert die WGS84-Grenzen und setzt den
 Zeitstempel selbst. `GET /api/cities/reachable` liefert die serverseitig
 berechneten Distanzen; der Abruf einer einzelnen Stadt prüft den Radius erneut.
 
+## Zentrale Spielkonfiguration
+
+Alle statischen Spieleigenschaften stehen ausschließlich in `packages/config/game-config.json`. Dazu gehören Startwerte für Spieler, Flotte und Welt, der Warenkatalog, die Städte mit Startbeständen, die Preisformelgrenzen und der Spread, die Rufregeln mit ihren Statusschwellen, der feste Bevölkerungsverbrauch sowie Grundstückspreis, Baukonzession, Gebäudeklassen, Kontorkosten und alle Produktionsrezepte.
+
+Rechnende Module kennen keinen dieser Werte. Sie erhalten die für sie zuständige Teilkonfiguration von außen über Konstruktor oder Parameter; `buildApp()` lädt die Konfiguration einmal und verdrahtet die Dienste. Eine Änderung einer Spieleigenschaft ist damit eine Änderung an genau einer Datei.
+
+`loadGameConfig()` liefert je Aufruf eine eigene Kopie und validiert sie strukturell: eindeutige Waren-, Stadt- und Gebäudetyp-IDs, positive Basispreise und Zielbestände, ein Startbestand je Stadt und Ware, aufsteigende Rufstatus sowie ausschließlich bekannte Warenreferenzen in Verbrauch, Baumaterialien und Rezepten. Eine ungültige Konfiguration verhindert den Serverstart.
+
+Rein technische Konstanten bleiben im Code, weil sie keine Spieleigenschaften sind: der Erdradius der Entfernungsberechnung und das Rundungs-Epsilon der Radiusprüfung.
+
 ## Zustandsmodell Alpha 1
 
-Alpha 1 verwendet einen vollständig deterministischen In-Memory-Zustand. Ein Serverneustart erzeugt wieder die Werte aus [`alpha-1/test-world.md`](alpha-1/test-world.md).
+Alpha 1 verwendet einen vollständig deterministischen In-Memory-Zustand. Der Startzustand entsteht ausschließlich aus der zentralen Spielkonfiguration; ein Serverneustart erzeugt wieder die Werte aus [`alpha-1/test-world.md`](alpha-1/test-world.md).
 
 Repository-Schnittstellen kapseln die Speicherung, damit PostgreSQL später ohne Neuschreiben der fachlichen Anwendungsdienste ergänzt werden kann.
 

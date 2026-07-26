@@ -5,6 +5,7 @@
 - `docs/`: verbindliche fachliche und technische Dokumentation
 - `apps/client/`: Vue-Client
 - `apps/server/`: TypeScript-Server und REST API
+- `packages/config/`: zentrale Spielkonfiguration; alle statischen Spieleigenschaften stehen in `game-config.json`
 - `packages/shared/`: gemeinsam genutzte Typen und Verträge
 - `tests/e2e/`: Playwright-End-to-End-Tests
 
