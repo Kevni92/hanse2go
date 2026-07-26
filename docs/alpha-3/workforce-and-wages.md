@@ -23,6 +23,8 @@ Ein Spieler kann keine Schulden erzeugen. Vor der stadtweiten Verteilung wird de
 5. Seine Nachfrage wird auf `min(requiredWorkers, affordableWorkers)` begrenzt.
 6. Das benötigte Budget wird nur reserviert. Erst die endgültige Zuteilung bestimmt die tatsächliche Lohnsumme.
 
+Die auf diese Weise begrenzte Nachfrage wird anschließend mit der verbindlichen Max-Min-Verteilung aus [`workforce-allocation.md`](workforce-allocation.md) auf die Stadt und die priorisierten Gebäude verteilt.
+
 ## Tatsächlicher Geldfluss und Atomarität
 
 Nach der finalen Arbeiterzuteilung wird die Summe aller `wageCost` eines Spielers erneut gegen seinen Goldbestand geprüft und dann einmalig atomar abgezogen. Reicht sie wegen einer parallelen Zustandsänderung nicht aus, wird der gesamte Tick ohne Zustandsänderung abgelehnt oder auf einem frischen Zustandsstand wiederholt. Teilweise Lohnbuchungen sind ausgeschlossen.

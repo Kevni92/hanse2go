@@ -50,6 +50,7 @@
 - [`alpha-3/scope.md`](alpha-3/scope.md) – verbindlicher Umfang für Arbeitskräfte, Löhne, Wohnraum, Wohlstand und Wachstum
 - [`alpha-3/building-workforce-classes.md`](alpha-3/building-workforce-classes.md) – Beschäftigungsklassen aller Produktionsgebäude
 - [`alpha-3/workforce-and-wages.md`](alpha-3/workforce-and-wages.md) – Arbeitsnachfrage, Lohnbudget und atomare Lohnzahlung
+- [`alpha-3/workforce-allocation.md`](alpha-3/workforce-allocation.md) – faire Verteilung, Prioritäten und Arbeitslosigkeit
 
 ## Umgang mit Lücken
 
