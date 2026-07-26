@@ -139,4 +139,3 @@ Mobil ist das Orderformular ein Bottom Sheet oder Vollbilddialog; jedes Touch-Zi
 Auf Desktop dürfen Orderbuch und Formular nebeneinander stehen. Tiefe wird in Tabellen dargestellt, Orders und Trades sind filterbar, und die Stadtwirtschaft nutzt ein Kennzahlenraster. Beim Verkleinern bleibt jede Funktion erhalten.
 
 Buy und Sell werden nicht ausschließlich über Farbe unterschieden. Alle Eingaben besitzen sichtbare Labels, Fehlertexte und eine Zusammenfassung. Dialoge halten den Fokus und geben ihn nach dem Schließen zurück; Erstellung, Stornierung und Ersetzung sind vollständig per Tastatur bedienbar. Tabellen besitzen verständliche Überschriften.
-
