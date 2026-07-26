@@ -1,5 +1,7 @@
 # Flotten und Schiffe
 
+> Aktueller Stand: Ab Alpha 6 besitzen Spieler **und** autonome Handelshäuser konkrete Schiffe und Flotten und reisen mit denselben Regeln virtuell zwischen den Teststädten. Der verbindliche Umfang steht in [`alpha-6/scope.md`](alpha-6/scope.md).
+
 ## Alpha 4: konkrete Schiffe und aktive Flotte
 
 Ab Alpha 4 steuert der Spieler genau eine aktive Flotte aus konkreten, dauerhaft identifizierten Schiffen. Die aus Alpha 3 migrierte Startflotte enthält eine konkrete Pinasse. Kauf, Verkauf, Umbenennung und Flottenwechsel erhalten dieselbe Schiffsentität; nur Weltinitialisierung und erfolgreicher Schiffsbau erzeugen ein Schiff.

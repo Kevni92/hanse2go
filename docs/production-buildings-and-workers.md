@@ -1,5 +1,7 @@
 # Produktion, Gebäude und Arbeiter
 
+> Aktueller Stand: Ab Alpha 6 besitzen auch autonome Handelshäuser Kontore, Produktionsgebäude und Wohnhäuser und konkurrieren gleichrangig um dieselben Arbeitskräfte. Der verbindliche Umfang steht in [`alpha-6/scope.md`](alpha-6/scope.md).
+
 ## Produktionszyklen
 
 Produktionsgebäude arbeiten nicht kontinuierlich, sondern in festen, konfigurierbaren Zyklen. Die Dauer wird in Minuten angegeben.

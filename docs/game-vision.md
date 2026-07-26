@@ -13,6 +13,7 @@ Die bisherige Debug-Position mit Lambrecht, Neustadt und Mannheim bleibt ausschl
 - Verkauft ein Spieler drei Tonnen Getreide an eine Stadt, kann ein anderer Spieler diese drei Tonnen anschließend dort kaufen.
 - Städte sind grundsätzlich neutral und gehören keinem Spieler.
 - Spieler besitzen eigene Schiffe, Kontore und Gebäude innerhalb der Städte.
+- Ab Alpha 6 wirtschaften zusätzlich autonome Handelshäuser in derselben Welt, nach denselben Regeln und ohne Sonderrechte.
 - Bauplätze sind grundsätzlich begrenzt; die konkrete Skalierung für dicht besiedelte Gebiete wird später gebalanced.
 
 ## Kern-Spielablauf
@@ -32,6 +33,14 @@ Alpha 6 führt die virtuelle Flottenreise ein. Der Server berechnet die Dauer au
 
 Der Alpha-6-Streckengraph umfasst bewusst nur die drei Teststädte. Er ist eine Zwischenstufe, keine Weltkarte: Die spätere Karibikkarte ersetzt ausschließlich die Kantenliste, während Reiseentität, Flottenstatus und Fahrzeitformel bestehen bleiben. Wind, Wetter, Gefahren, freie Navigation und automatisch wiederholte Handelsrouten folgen in späteren Slices.
 
+## Autonome Handelshäuser
+
+Ab Alpha 6 wird die Welt nicht mehr ausschließlich von Spielern belebt. Drei autonome Handelshäuser beobachten die öffentliche Wirtschaft, erkennen Versorgungslücken und handeln, produzieren, transportieren und investieren nach genau denselben Regeln wie ein Spieler.
+
+Sie sind ausdrücklich kein Weltmechanismus und kein Balancingwerkzeug: Sie besitzen eigene endliche Konten, kaufen und verkaufen über dasselbe Orderbuch, bezahlen dieselben Gebühren, brauchen Ruf und Konzession für jede neue Stadt, können Verluste machen und können insolvent werden. Sie erhalten weder Sonderressourcen noch Sonderpreise noch Einblick in private Spielerdaten. Kein KI-Befehl erzeugt Gold oder Waren aus dem Nichts.
+
+Sobald Spieler einen Markt ausreichend versorgen, ziehen sich die Handelshäuser messbar zurück, statt Spieler zu verdrängen. Sie sind regelbasiert und deterministisch; generative oder lernende Verfahren sind ausgeschlossen. Der vollständige Umfang steht in [`alpha-6/scope.md`](alpha-6/scope.md).
+
 ## Langfristige Systeme
 
 Spätere Entwicklungsstufen umfassen unter anderem:
@@ -40,9 +49,13 @@ Spätere Entwicklungsstufen umfassen unter anderem:
 - Produktionsgebäude und Wohnhäuser
 - Bevölkerung, Arbeiter, Bedürfnisse und Wohlstand
 - Stadtwachstum und prozedural sichtbare Bebauung
-- automatisierte Handelsrouten
+- die vollständige Karibikkarte mit grafischen Reisewegen
+- Wind, Wetter, Gefahren und dynamische Routen
+- automatisch wiederholte Handelsrouten
+- persistente Welt, Benutzerkonten und automatischer Echtzeittick
 - Spieler- oder gemeinschaftsfinanzierte Stadtgründungen
-- Piraterie, Kapern und Seeschlachten gegen Spieler- und NPC-Flotten
+- Reparaturen, Module, Besatzungen, Piraterie, Kapern und Seeschlachten
+- Goldware, Goldabbau und materiell gedeckte Münzprägung
 - weitere Warenketten, Schiffe und Bedürfnisse
 
 ## Designprinzipien
