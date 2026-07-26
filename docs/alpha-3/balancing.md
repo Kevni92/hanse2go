@@ -28,4 +28,4 @@ Die Referenzmarge bewertet einen Volltick bei Marktbeständen exakt am Zielbesta
 | `sugar_refinery` | 527 Gold |
 | `distillery` | 970 Gold |
 
-Alle Margen sind verbindliche Test- und Plausibilitätswerte, aber keine Gewinnzusage: reale Marktpreise ändern sich mit Bestand und Handel.
+Alle Margen sind verbindliche Test- und Plausibilitätswerte, aber keine Gewinnzusage: reale Marktpreise ändern sich mit Bestand und Handel. Datentests prüfen zusätzlich für alle 21 Gebäude die Beschäftigungsklasse, Bedarf, Lohnsatz, Alpha-3-Rezept und die Vollauslastungslohnsumme von 200 Gold. Kontor und Wohnhaus sind ausdrücklich aus dieser Prüfung ausgenommen.

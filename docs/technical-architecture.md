@@ -169,7 +169,7 @@ Alle Alpha-2-Endpunkte prüfen den Stadtradius serverseitig und melden eine uner
 
 Der bestehende Debug-Stundentick wird erweitert, nicht dupliziert. Er arbeitet auf einem vollständigen Weltsnapshot und schreibt alle Phasen nur gemeinsam zurück. Bauen, Handeln, Umlagern und Prioritätsänderungen können einen laufenden Tick nicht teilweise verändern. Die verbindliche Phasenfolge und die Alpha-3-Fachverträge stehen in [`alpha-3/tick.md`](alpha-3/tick.md) und [`alpha-3/api-contracts.md`](alpha-3/api-contracts.md).
 
-Zusätzlich zu `POST /test/reset` bereitet `POST /test/seed` im Testbetrieb Gold, Flottenladung und Ruf gemäß [`alpha-2/test-world.md`](alpha-2/test-world.md) vor.
+Zusätzlich zu `POST /test/reset` bereitet `POST /test/seed` im Testbetrieb Gold, Flottenladung und Ruf gemäß [`alpha-2/test-world.md`](alpha-2/test-world.md) vor. Alpha-3-Presets sind ebenfalls ausschließlich im Testbetrieb verfügbar. Die CI bewahrt bei End-to-End-Fehlern Trace, Screenshot, Browserkonsole, Serverlog, Preset/Seed und den letzten erfolgreichen sowie fehlgeschlagenen Tickbericht auf; der Testvertrag steht in [`alpha-3/acceptance.md`](alpha-3/acceptance.md).
 
 ## Arbeitsablauf
 
