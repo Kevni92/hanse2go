@@ -93,6 +93,11 @@
 - [`alpha-6/ai-actors.md`](alpha-6/ai-actors.md) – KI-Handelshäuser als reguläre Wirtschaftsakteure, Eigentum und Informationsgrenzen
 - [`alpha-6/start-state.md`](alpha-6/start-state.md) – bilanzierte Initialisierung von Gold, Konzession, Kontor, Schiff und Flotte
 - [`alpha-6/insolvency.md`](alpha-6/insolvency.md) – Liquiditätszustände, Sparmaßnahmen und Insolvenz ohne Rettungsgeld
+- [`alpha-6/economic-observation.md`](alpha-6/economic-observation.md) – öffentliche Beobachtungsfenster, Versorgungs- und Handelsanteilsmetriken
+- [`alpha-6/shortage-and-intervention.md`](alpha-6/shortage-and-intervention.md) – Unterversorgungsstatus, `supportScore`, Marktanteilsziel und Rückzug
+- [`alpha-6/ai-transparency.md`](alpha-6/ai-transparency.md) – Entscheidungsprotokoll, Ablehnungsgründe und Erklärtexte
+- [`alpha-6/cost-basis-and-profit.md`](alpha-6/cost-basis-and-profit.md) – verlustfreie Warenkostenbasis, Zielmargen und Preisgrenzen
+- [`alpha-6/ai-order-strategy.md`](alpha-6/ai-order-strategy.md) – gedeckte KI-Orders, Mengenbegrenzungen und Orderpflege
 - [`alpha-6/virtual-voyages.md`](alpha-6/virtual-voyages.md) – Flottenstatus, Reiseentität, Abfahrt, Fortschritt und Ankunft
 - [`alpha-6/test-world-routes.md`](alpha-6/test-world-routes.md) – statischer Städtegraph und verbindliche Referenzfahrzeiten
 - [`alpha-6/api-contracts.md`](alpha-6/api-contracts.md) – Reise- und Routenverträge, Versionen und Tickvertrag

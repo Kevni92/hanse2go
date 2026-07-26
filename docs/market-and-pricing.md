@@ -131,15 +131,25 @@ Für Alpha 1 wird im Arbeitsspeicher protokolliert:
 
 Der Verlauf beginnt bei Serverstart neu. Die UI kann daraus Preislinie und Handelsvolumen der aktuellen Sitzung darstellen.
 
+## Alpha 6: KI-Handelshäuser im Orderbuch
+
+Ab Alpha 6 handeln autonome Handelshäuser im selben Orderbuch wie Spieler, Stadt und Bevölkerung. Sie verwenden ausschließlich vollständig gedeckte Limit Orders, dieselbe Preis-Zeit-Priorität, dieselben Gebühren und dieselbe Eigenhandelssperre. Sie erhalten keine Sonderpreise, keine Market Orders und keine bevorzugte Matching-Priorität.
+
+Ihre Preisbildung ist an reale Kosten gebunden: Ein Handelshaus verkauft niemals planmäßig unter seinen vollständigen variablen Kosten und kauft nie über dem Preis, bei dem der erwartete Erlös nach Gebühren, Transport und Zielmarge noch aufgeht. Die Zielmarge beträgt regulär 10 %, bei akuter Knappheit 5 % und bei kritischer Knappheit 0 %; sie wird nie negativ.
+
+Die verbindlichen Regeln stehen in [`alpha-6/ai-order-strategy.md`](alpha-6/ai-order-strategy.md) und [`alpha-6/cost-basis-and-profit.md`](alpha-6/cost-basis-and-profit.md).
+
 ## Historische KI-Stabilisierungsidee
 
-Die folgende frühere Idee ist keine zulässige Alpha-5-Regel. Spätere KI-Akteure müssen dieselben gedeckten Konten, Waren und Orders wie Spieler verwenden:
+Die folgende frühere Idee ist keine zulässige Regel und wird durch das Alpha-6-Konzept ersetzt:
 
 - Waren aus stark überversorgten Städten abtransportieren,
 - dauerhaft knappe Städte beliefern,
 - bei Bedarf Waren erzeugen oder entfernen, wenn dies für Spielbarkeit nötig ist.
 
-KI-Produktion und KI-Handel werden zurückgefahren, wenn genügend Spieleraktivität vorhanden ist.
+Der dritte Punkt ist ausdrücklich verboten: Kein KI-System darf Waren oder Gold erzeugen oder vernichten. Die ersten beiden Punkte bleiben als Zielbild gültig, werden ab Alpha 6 aber ausschließlich über reale gedeckte Käufe, reale Transporte und reale gedeckte Verkäufe umgesetzt.
+
+Das Zurückfahren von KI-Produktion und KI-Handel bei ausreichender Spieleraktivität ist ab Alpha 6 keine unverbindliche Absicht mehr, sondern der messbare Status `player_supplied` in [`alpha-6/shortage-and-intervention.md`](alpha-6/shortage-and-intervention.md).
 
 ## Alpha 1
 
