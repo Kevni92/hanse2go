@@ -27,6 +27,10 @@ Jede geprüfte Option erzeugt einen unveränderlichen Eintrag mit mindestens:
 
 Weitere Pflichtfelder für Orders, Logistik, Investitionen und Schiffe ergänzen die jeweiligen Alpha-6-Fachdokumente. Ein Protokolleintrag wird nie nachträglich verändert; eine überholte Entscheidung erhält `superseded` und einen Verweis auf ihren Nachfolger.
 
+### Zusatzfelder für Orderentscheidungen
+
+Jede erstellte, ersetzte oder verworfene Order speichert zusätzlich Kostenbasis, erwarteten Verkaufspreis samt Quelle, erwartete Käufer- und Verkäufergebühr, zugerechnete kalkulatorische Transportkosten, angewandte Zielmarge, berechnete Preisgrenze, gewählten Limitpreis, gewählte Menge, die konkret bindende Mengengrenze sowie `expectedProfitMoneyUnits` und `expectedProfitScore`. Die vollständige Feldliste steht in [`ai-order-strategy.md`](ai-order-strategy.md).
+
 ## Ablehnungsgründe
 
 Eine Ablehnung ist eine reguläre fachliche Nichtausführung und niemals ein technischer Fehler. Jede Ablehnung trägt genau einen stabilen `reasonCode`. Verbindlich sind mindestens:

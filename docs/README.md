@@ -96,6 +96,8 @@
 - [`alpha-6/economic-observation.md`](alpha-6/economic-observation.md) – öffentliche Beobachtungsfenster, Versorgungs- und Handelsanteilsmetriken
 - [`alpha-6/shortage-and-intervention.md`](alpha-6/shortage-and-intervention.md) – Unterversorgungsstatus, `supportScore`, Marktanteilsziel und Rückzug
 - [`alpha-6/ai-transparency.md`](alpha-6/ai-transparency.md) – Entscheidungsprotokoll, Ablehnungsgründe und Erklärtexte
+- [`alpha-6/cost-basis-and-profit.md`](alpha-6/cost-basis-and-profit.md) – verlustfreie Warenkostenbasis, Zielmargen und Preisgrenzen
+- [`alpha-6/ai-order-strategy.md`](alpha-6/ai-order-strategy.md) – gedeckte KI-Orders, Mengenbegrenzungen und Orderpflege
 
 ## Umgang mit Lücken
 

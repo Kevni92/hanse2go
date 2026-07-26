@@ -2,7 +2,7 @@
 
 ## Modell und Genauigkeit
 
-Alpha 5 kennt ausschließlich lokale Limit Orders: `buy` bietet einen Höchstpreis, `sell` einen Mindestpreis. Market, Stop und stadtübergreifende Orders, Leerverkäufe und Kredit sind ausgeschlossen. Eine Warenmengeneinheit entspricht 0,01 Tonnen; `quantityUnits` ist positiv und die Mindestmenge beträgt eine Einheit. `limitPriceGoldPerTon` ist eine positive ganze Goldzahl. Für Menge `quantityUnits` und Limitpreis gilt exakt:
+Alpha 5 kennt ausschließlich lokale Limit Orders: `buy` bietet einen Höchstpreis, `sell` einen Mindestpreis. Market, Stop und stadtübergreifende Orders, Leerverkäufe und Kredit sind ausgeschlossen. Diese Beschränkung gilt ab Alpha 6 unverändert auch für KI-Handelshäuser. Eine Warenmengeneinheit entspricht 0,01 Tonnen; `quantityUnits` ist positiv und die Mindestmenge beträgt eine Einheit. `limitPriceGoldPerTon` ist eine positive ganze Goldzahl. Für Menge `quantityUnits` und Limitpreis gilt exakt:
 
 `maximumTradeValueMoneyUnits = quantityUnits × limitPriceGoldPerTon`
 
@@ -10,7 +10,7 @@ Beispiel: 1,25 Tonnen sind 125 Einheiten. Bei 80 Gold pro Tonne beträgt der Max
 
 ## Pflichtfelder
 
-Jede Order enthält mindestens `orderId`, `cityId`, `goodId`, `side`, `ownerType` (`player`, `population` oder `city`), `ownerId`, `sourceInventoryRef` oder `destinationInventoryRef`, `originalQuantityUnits`, `remainingQuantityUnits`, `limitPriceGoldPerTon`, `status`, weltweit monotonen `createdSequence`, `createdAtTick`, `updatedAtTick`, bei Buy Orders `reservedMoneyUnits`, bei Sell Orders `reservedGoodsUnits`, Ersetzungsreferenzen und `orderVersion`.
+Jede Order enthält mindestens `orderId`, `cityId`, `goodId`, `side`, `ownerType` (`player`, `population`, `city` oder ab Alpha 6 `ai`), `ownerId`, `sourceInventoryRef` oder `destinationInventoryRef`, `originalQuantityUnits`, `remainingQuantityUnits`, `limitPriceGoldPerTon`, `status`, weltweit monotonen `createdSequence`, `createdAtTick`, `updatedAtTick`, bei Buy Orders `reservedMoneyUnits`, bei Sell Orders `reservedGoodsUnits`, Ersetzungsreferenzen und `orderVersion`.
 
 Status sind `open`, `partially_filled`, `filled`, `cancelled`, `expired` und `replaced`. `filled`, `cancelled`, `expired` und `replaced` sind abgeschlossen und unveränderlich.
 
@@ -27,6 +27,8 @@ Eine Buy Order reserviert ausschließlich verfügbares Spielergold. Die maximale
 Bei Ausführung wird gekaufte Ware im lokalen Kontor gutgeschrieben. Beide Orderseiten gehen nach erfolgreicher Reservierung sofort in das Matching.
 
 Stadt-Sell-Orders reservieren städtische Lagerware, Stadt-Buy-Orders Stadtkassengeld. Die Bevölkerung besitzt nur Buy Orders und reserviert ihre Bevölkerungskasse. Diese Systemorders dürfen ausschließlich durch Ticklogik erstellt, ersetzt, storniert oder ablaufen gelassen werden; Spieler können sie nicht ändern.
+
+Orders eines KI-Handelshauses sind ab Alpha 6 **keine** Systemorders. Sie verlangen dieselbe Deckung, dasselbe eigene Kontor in der Stadt, dieselben Reservierungen, dieselbe Preis-Zeit-Priorität und dieselben Gebühren wie Spielerorders und erhalten keine bevorzugte Behandlung. Sie werden ausschließlich durch die KI-Entscheidungslogik erstellt, ersetzt und storniert; Spieler können sie nicht ändern. Die Eigenhandelssperre gilt je Kombination aus `ownerType` und `ownerId`, sodass zwei verschiedene Handelshäuser regulär miteinander handeln dürfen. Preisgrenzen und Mengenbegrenzungen der KI stehen in [`../alpha-6/ai-order-strategy.md`](../alpha-6/ai-order-strategy.md).
 
 ## Stornierung und Ersetzung
 
