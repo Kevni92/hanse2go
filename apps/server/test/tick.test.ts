@@ -11,7 +11,7 @@ import { ReputationService } from '../src/reputation.js';
 import { TickService } from '../src/tick.js';
 
 const config = loadGameConfig();
-const catalog = createBuildingCatalog(config.buildings);
+const catalog = createBuildingCatalog(config.buildings, config.alpha3);
 const consumption = new ConsumptionModel(config.consumption);
 
 const kontorMaterials = { wood: 50, planks: 25, bricks: 40, tools: 10 };
@@ -62,7 +62,7 @@ describe('hourly tick API', () => {
     let service!: TickService;
     // Der Testdoppelgänger betritt den laufenden Tick ein zweites Mal, während die Weltsperre gehalten wird.
     const reentrant: GameRepository = { ...repository, runTransaction: (operation) => repository.runTransaction((state) => { nested ??= captureError(() => service.run('nested')); return operation(state); }) };
-    service = new TickService(reentrant, reputation, new MarketService(reentrant, cityAccess, config.market, reputation), catalog, consumption);
+    service = new TickService(reentrant, reputation, new MarketService(reentrant, cityAccess, config.market, reputation), catalog, consumption, config.alpha3);
 
     service.run('outer');
     expect(nested).toBeInstanceOf(DomainError);
@@ -126,11 +126,11 @@ describe('hourly tick API', () => {
     const before = await Promise.all(['lambrecht', 'neustadt', 'mannheim'].map((cityId) => cityStock(cityId, 'bread')));
     const report = (await tick('hour-1')).json();
     expect(report.consumption).toContainEqual({ cityId: 'lambrecht', goodId: 'bread', requested: 4, consumed: 4, remainingStock: before[0]! - 4 });
-    expect(report.consumption).toContainEqual({ cityId: 'neustadt', goodId: 'bread', requested: 12, consumed: 12, remainingStock: before[1]! - 12 });
+    expect(report.consumption).toContainEqual({ cityId: 'neustadt', goodId: 'bread', requested: 10, consumed: 10, remainingStock: before[1]! - 10 });
     expect(report.consumption).toContainEqual({ cityId: 'mannheim', goodId: 'bread', requested: 20, consumed: 20, remainingStock: before[2]! - 20 });
     for (const goodId of ['clothing', 'meat', 'cheese', 'ceramics', 'furniture', 'rum']) {
       expect(report.consumption).toContainEqual(expect.objectContaining({ cityId: 'lambrecht', goodId, requested: 2 }));
-      expect(report.consumption).toContainEqual(expect.objectContaining({ cityId: 'neustadt', goodId, requested: 6 }));
+      expect(report.consumption).toContainEqual(expect.objectContaining({ cityId: 'neustadt', goodId, requested: 5 }));
       expect(report.consumption).toContainEqual(expect.objectContaining({ cityId: 'mannheim', goodId, requested: 10 }));
     }
     // Nicht konsumierte Waren bleiben unverändert.
@@ -171,9 +171,9 @@ describe('hourly tick API', () => {
     const repository = new InMemoryGameRepository();
     const cityAccess = new CityAccessService(repository);
     const reputation = new ReputationService(config.reputation);
-    const service = new TickService(repository, reputation, new MarketService(repository, cityAccess, config.market, reputation), catalog, consumption);
+    const service = new TickService(repository, reputation, new MarketService(repository, cityAccess, config.market, reputation), catalog, consumption, config.alpha3);
     const before = repository.getState();
-    const failure = vi.spyOn(Math, 'ceil').mockImplementation(() => { throw new Error('unerwarteter Fehler'); });
+    const failure = vi.spyOn(Math, 'floor').mockImplementation(() => { throw new Error('unerwarteter Fehler'); });
 
     expect(() => service.run('broken')).toThrow('unerwarteter Fehler');
     failure.mockRestore();

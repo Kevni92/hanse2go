@@ -29,7 +29,8 @@ describe('building API', () => {
   it('publishes the full catalog with land price, class costs and recipes', async () => {
     await prepare();
     const current = await overview();
-    expect(current.catalog).toHaveLength(21);
+    expect(current.catalog).toHaveLength(22);
+    expect(current.catalog.find((entry: { buildingType: string }) => entry.buildingType === 'town_house')).toMatchObject({ cost: { totalGold: 10_000 }, inputs: {}, outputs: {} });
     expect(current.kontor).toMatchObject({ buildingType: 'kontor', cost: { landGold: 5_000, buildGold: 5_000, totalGold: 10_000, materials: kontorMaterials } });
     expect(current.catalog.find((entry: { buildingType: string }) => entry.buildingType === 'sawmill')).toMatchObject({
       kind: 'processing', buildingClass: 'simple',
