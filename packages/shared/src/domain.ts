@@ -42,6 +42,57 @@ export interface LedgerEntry {
   idempotencyKey: string;
 }
 
+export type OrderSide = 'buy' | 'sell';
+export type OrderOwnerType = 'player' | 'city' | 'population';
+export type OrderStatus = 'open' | 'partially_filled' | 'filled' | 'cancelled' | 'replaced';
+export interface Order {
+  orderId: string;
+  cityId: string;
+  goodId: string;
+  side: OrderSide;
+  ownerType: OrderOwnerType;
+  ownerId: string;
+  priceMoneyPerUnit: number;
+  originalQuantityUnits: number;
+  remainingQuantityUnits: number;
+  reservedMoney: number;
+  reservedGoodsUnits: number;
+  status: OrderStatus;
+  orderVersion: number;
+  createdAtTick: number;
+  updatedAtTick: number;
+  idempotencyKey: string;
+  replacesOrderId?: string;
+}
+export interface OrderExecution {
+  executionId: string;
+  cityId: string;
+  goodId: string;
+  buyOrderId: string;
+  sellOrderId: string;
+  quantityUnits: number;
+  priceMoneyPerUnit: number;
+  grossMoney: number;
+  buyerFeeMoney: number;
+  sellerFeeMoney: number;
+  tickNumber: number;
+}
+export interface OrderBookLevel { priceMoneyPerUnit: number; quantityUnits: number; orderCount: number }
+export interface OrderBookSnapshot {
+  cityId: string;
+  goodId: string;
+  version: number;
+  bids: OrderBookLevel[];
+  asks: OrderBookLevel[];
+  recentExecutions: OrderExecution[];
+}
+export interface IdempotencyRecord {
+  requestFingerprint: string;
+  operation: 'create' | 'cancel' | 'replace';
+  orderId: string;
+  responseVersion: number;
+}
+
 /** Alpha 2 – Ruf, Konzession, Gebäude, Kontorlager und Stundentick. */
 export type ReputationStatus = 'stranger' | 'known_trader' | 'respected_trader' | 'trusted_citizen';
 export interface Reputation { cityId: string; value: number; status: ReputationStatus }
@@ -76,7 +127,14 @@ export interface GameState {
   goods: Good[]; cities: City[]; cityEconomies: Record<string, CityEconomy>; world: WorldClock; reputations: Reputation[]; concessions: string[]; buildings: Building[]; kontors: Record<string, Record<string, number>>;
   accounts: Record<string, MoneyAccount>;
   cityWarehouses: Record<string, Record<string, InventoryBalance>>;
+  kontorWarehouses: Record<string, Record<string, InventoryBalance>>;
   ledger: LedgerEntry[];
   moneySupply: number;
+  orders: Order[];
+  executions: OrderExecution[];
+  orderBookVersions: Record<string, number>;
+  orderIdSequence: number;
+  executionIdSequence: number;
+  idempotencyRecords: Record<string, IdempotencyRecord>;
   lastTickReport?: TickReport;
 }
