@@ -35,6 +35,16 @@ export class InMemoryGameRepository implements GameRepository {
     return {
       player: { id: player.id, name: player.name, gold: player.startingGold, activeFleetId: fleet.id },
       fleet: { id: fleet.id, capacity: fleet.capacity, cargo: {}, position: { ...fleet.startPosition, recordedAt: world.startTimestamp } },
+      fleets: [{ fleetId: fleet.id, ownerId: player.id, customName: 'Möwe-Flotte', status: 'active', shipIds: ['ship-player-alpha-01'], position: { ...fleet.startPosition, recordedAt: world.startTimestamp }, cargoByGood: {}, createdAtTick: 0, fleetVersion: 1 }],
+      ships: [
+        { shipId: 'ship-player-alpha-01', shipTypeId: 'pinnace', customName: 'Möwe', ownerType: 'player', ownerId: player.id, locationType: 'fleet', fleetId: fleet.id, createdAtTick: 0, originType: 'world_seed', originCityId: 'lambrecht', shipVersion: 1 },
+        { shipId: 'ship-market-lambrecht-01', shipTypeId: 'schnigge', customName: 'Waldwind', ownerType: 'system', ownerId: 'system-broker', locationType: 'port', portCityId: 'lambrecht', createdAtTick: 0, originType: 'world_seed', originCityId: 'lambrecht', shipVersion: 1 },
+        { shipId: 'ship-market-neustadt-01', shipTypeId: 'pinnace', customName: 'Rebenläufer', ownerType: 'system', ownerId: 'system-broker', locationType: 'port', portCityId: 'neustadt', createdAtTick: 0, originType: 'world_seed', originCityId: 'neustadt', shipVersion: 1 },
+        { shipId: 'ship-market-neustadt-02', shipTypeId: 'fluyt', customName: 'Haardtstern', ownerType: 'system', ownerId: 'system-broker', locationType: 'port', portCityId: 'neustadt', createdAtTick: 0, originType: 'world_seed', originCityId: 'neustadt', shipVersion: 1 },
+        { shipId: 'ship-market-mannheim-01', shipTypeId: 'fluyt', customName: 'Rheingold', ownerType: 'system', ownerId: 'system-broker', locationType: 'port', portCityId: 'mannheim', createdAtTick: 0, originType: 'world_seed', originCityId: 'mannheim', shipVersion: 1 },
+        { shipId: 'ship-market-mannheim-02', shipTypeId: 'caravel', customName: 'Kurpfalz', ownerType: 'system', ownerId: 'system-broker', locationType: 'port', portCityId: 'mannheim', createdAtTick: 0, originType: 'world_seed', originCityId: 'mannheim', shipVersion: 1 },
+      ],
+      shipyards: cities.map((city) => ({ cityId: city.id, shipyardVersion: 1, queuedBuildOrderIds: [] })), shipBuildOrders: [], shipMarketVersions: Object.fromEntries(cities.map((city) => [city.id, 1])),
       goods, cities,
       cityEconomies, world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [...player.startingConcessions], buildings: [], kontors: {},
     };

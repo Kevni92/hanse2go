@@ -48,6 +48,15 @@ export interface Alpha3Config {
   housing: { buildingType: string; capacity: number; buildGold: number; materials: Record<string, number> };
   cities: Record<string, { baseHousing: number; wealth: number }>;
 }
+export interface Alpha4ShipTypeConfig {
+  id: 'pinnace' | 'schnigge' | 'fluyt' | 'caravel';
+  capacity: number; virtualSpeed: number; buildTicks: number; purchasePrice: number; salePrice: number;
+  shipyardFee: number; materials: Record<string, number>;
+}
+export interface Alpha4Config {
+  shipyardSlots: number;
+  shipTypes: Alpha4ShipTypeConfig[];
+}
 export interface BuildingsConfig {
   kontorType: string;
   /** Der Grundstückspreis gilt für jedes Gebäude zusätzlich zu den Klassenkosten. */
@@ -69,4 +78,5 @@ export interface GameConfig {
   cities: CityConfig[];
   buildings: BuildingsConfig;
   alpha3: Alpha3Config;
+  alpha4: Alpha4Config;
 }
