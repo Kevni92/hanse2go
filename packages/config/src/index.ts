@@ -92,6 +92,34 @@ export function validateGameConfig(config: GameConfig): void {
     for (const goodId of city.productionFocus) requireGood(goodId, `Der Produktionsschwerpunkt von "${city.id}"`);
   }
 
+  const alpha5 = config.alpha5;
+  if (alpha5.moneyUnitsPerGold !== 100 || !Number.isInteger(alpha5.moneyUnitsPerGold)) {
+    throw new ConfigError('Alpha 5 muss 100 moneyUnits je Gold verwenden.');
+  }
+  if (!Number.isInteger(alpha5.buyerFeePermille) || alpha5.buyerFeePermille < 0
+    || !Number.isInteger(alpha5.sellerFeePermille) || alpha5.sellerFeePermille < 0) {
+    throw new ConfigError('Alpha-5-Gebühren müssen nichtnegative ganze Promillewerte sein.');
+  }
+  if (alpha5.startAccounts.players[config.player.id] !== config.player.startingGold * alpha5.moneyUnitsPerGold) {
+    throw new ConfigError('Das Alpha-5-Spielerkonto muss dem konfigurierten Startgold entsprechen.');
+  }
+  for (const cityId of cityIds) {
+    const cityMoney = alpha5.startAccounts.cities[cityId];
+    const populationMoney = alpha5.startAccounts.populations[cityId];
+    if (cityMoney === undefined || !Number.isInteger(cityMoney) || cityMoney < 0 || populationMoney === undefined || !Number.isInteger(populationMoney) || populationMoney < 0) {
+      throw new ConfigError(`Alpha-5-Startkonten für "${cityId}" fehlen oder sind ungültig.`);
+    }
+  }
+  const configuredAccountIds = [
+    ...Object.keys(alpha5.startAccounts.players).map((id) => `player:${id}`),
+    ...Object.keys(alpha5.startAccounts.cities).map((id) => `city:${id}`),
+    ...Object.keys(alpha5.startAccounts.populations).map((id) => `population:${id}`),
+  ];
+  if (configuredAccountIds.length !== new Set(configuredAccountIds).size) throw new ConfigError('Alpha-5-Startkonten besitzen doppelte Eigentümer-IDs.');
+  for (const amount of [...Object.values(alpha5.startAccounts.players), ...Object.values(alpha5.startAccounts.cities), ...Object.values(alpha5.startAccounts.populations)]) {
+    if (!Number.isInteger(amount) || amount < 0) throw new ConfigError('Alpha-5-Startkonten müssen nichtnegative ganze moneyUnits sein.');
+  }
+
   const alpha4 = config.alpha4;
   if (!Number.isInteger(alpha4.shipyardSlots) || alpha4.shipyardSlots <= 0) throw new ConfigError('Die Werftplätze müssen positiv sein.');
   uniqueIds(alpha4.shipTypes.map((ship) => ship.id), 'Schiffstyp');

@@ -18,6 +18,30 @@ export type TradeDirection = 'buy' | 'sell';
 export interface MarketQuote { cityId: string; goodId: string; direction: TradeDirection; quantity: number; marketVersion: number; total: number; averageUnitPrice: number; minimumUnitPrice: number; maximumUnitPrice: number; resultingCityStock: number; resultingFleetStock: number; resultingGold: number; remainingCapacity: number }
 export interface MarketHistoryEntry { timestamp: string; goodId: string; direction: TradeDirection; quantity: number; total: number; priceBefore: number; priceAfter: number }
 
+export type MoneyOwnerType = 'player' | 'city' | 'population';
+export interface MoneyAccount {
+  accountId: string;
+  ownerType: MoneyOwnerType;
+  ownerId: string;
+  availableMoney: number;
+  reservedMoney: number;
+  totalMoney: number;
+  accountVersion: number;
+}
+export interface InventoryBalance { availableUnits: number; reservedUnits: number; totalUnits: number; inventoryVersion: number }
+export type LedgerReason = 'market_trade' | 'market_buyer_fee' | 'market_seller_fee' | 'wage_payment' | 'population_purchase' | 'concession_fee' | 'land_purchase_fee' | 'building_construction_fee' | 'shipyard_fee' | 'ship_purchase' | 'ship_sale';
+export interface LedgerEntry {
+  ledgerEntryId: string;
+  tickNumber: number;
+  reason: LedgerReason;
+  sourceAccountId: string;
+  targetAccountId: string;
+  amountMoney: number;
+  referenceType: string;
+  referenceId: string;
+  idempotencyKey: string;
+}
+
 /** Alpha 2 – Ruf, Konzession, Gebäude, Kontorlager und Stundentick. */
 export type ReputationStatus = 'stranger' | 'known_trader' | 'respected_trader' | 'trusted_citizen';
 export interface Reputation { cityId: string; value: number; status: ReputationStatus }
@@ -47,4 +71,12 @@ export type TransferDirection = 'store' | 'retrieve';
 export interface CityBuildingsOverview { cityId: string; reputation: Reputation; hasConcession: boolean; concessionPrice: number; hasKontor: boolean; kontorInventory: Record<string, number>; kontor: BuildingOffer; buildings: Building[]; catalog: BuildingOffer[]; world: WorldClock; player: Player; fleet: Fleet }
 
 export interface CityEconomy { baseHousing: number; wealth: number; consumptionRemainders: Record<string, number>; productionRemainders: Record<string, Record<string, number>>; wealthRemainder: number; growthRemainder: number }
-export interface GameState { player: Player; fleet: Fleet; fleets: ManagedFleet[]; ships: Ship[]; shipyards: Shipyard[]; shipBuildOrders: ShipBuildOrder[]; shipMarketVersions: Record<string, number>; goods: Good[]; cities: City[]; cityEconomies: Record<string, CityEconomy>; world: WorldClock; reputations: Reputation[]; concessions: string[]; buildings: Building[]; kontors: Record<string, Record<string, number>>; lastTickReport?: TickReport }
+export interface GameState {
+  player: Player; fleet: Fleet; fleets: ManagedFleet[]; ships: Ship[]; shipyards: Shipyard[]; shipBuildOrders: ShipBuildOrder[]; shipMarketVersions: Record<string, number>;
+  goods: Good[]; cities: City[]; cityEconomies: Record<string, CityEconomy>; world: WorldClock; reputations: Reputation[]; concessions: string[]; buildings: Building[]; kontors: Record<string, Record<string, number>>;
+  accounts: Record<string, MoneyAccount>;
+  cityWarehouses: Record<string, Record<string, InventoryBalance>>;
+  ledger: LedgerEntry[];
+  moneySupply: number;
+  lastTickReport?: TickReport;
+}

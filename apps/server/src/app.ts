@@ -154,7 +154,7 @@ export function buildApp(repository: GameRepository = new InMemoryGameRepository
         if (entry) { entry.value = value; entry.status = reputation.statusFor(value); }
         else state.reputations.push({ cityId, value, status: reputation.statusFor(value) });
       }
-      return repository.getState();
+      return state;
     }));
   }
 

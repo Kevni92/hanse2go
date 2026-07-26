@@ -1,6 +1,7 @@
 import { loadGameConfig, type GameConfig } from '@hanse2go/config';
-import type { City, Fleet, GameState, Good, Player, Position, Reputation } from '@hanse2go/shared';
+import type { City, Fleet, GameState, Good, InventoryBalance, Player, Position, Reputation } from '@hanse2go/shared';
 import { reputationStatus } from './reputation.js';
+import { assertMoneySupply, createMoneyAccounts } from './money.js';
 
 export interface GameRepository {
   getState(): GameState;
@@ -28,6 +29,12 @@ export class InMemoryGameRepository implements GameRepository {
     }));
     const startStatus = reputationStatus(this.config.reputation, 0);
     const reputations: Reputation[] = cities.map((city) => ({ cityId: city.id, value: 0, status: startStatus }));
+    const accounts = createMoneyAccounts(this.config.alpha5);
+    const cityWarehouses: Record<string, Record<string, InventoryBalance>> = Object.fromEntries(cities.map((city) => [city.id, Object.fromEntries(goods.map((good) => {
+      const units = city.stock[good.id]! * 100;
+      return [good.id, { availableUnits: units, reservedUnits: 0, totalUnits: units, inventoryVersion: 1 }];
+    }))]));
+    const moneySupply = Object.values(accounts).reduce((sum, value) => sum + value.totalMoney, 0);
     const cityEconomies = Object.fromEntries(cities.map((city) => {
       const alpha3 = this.config.alpha3.cities[city.id]!;
       return [city.id, { baseHousing: alpha3.baseHousing, wealth: alpha3.wealth, consumptionRemainders: {}, productionRemainders: {}, wealthRemainder: 0, growthRemainder: 0 }];
@@ -47,6 +54,7 @@ export class InMemoryGameRepository implements GameRepository {
       shipyards: cities.map((city) => ({ cityId: city.id, shipyardVersion: 1, queuedBuildOrderIds: [] })), shipBuildOrders: [], shipMarketVersions: Object.fromEntries(cities.map((city) => [city.id, 1])),
       goods, cities,
       cityEconomies, world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [...player.startingConcessions], buildings: [], kontors: {},
+      accounts, cityWarehouses, ledger: [], moneySupply,
     };
   }
   getState = (): GameState => clone(this.state);
@@ -59,5 +67,11 @@ export class InMemoryGameRepository implements GameRepository {
     this.state.fleet.position = clone(position);
     return this.getFleet();
   };
-  runTransaction = <T>(operation: (state: GameState) => T): T => operation(this.state);
+  runTransaction = <T>(operation: (state: GameState) => T): T => {
+    const draft = clone(this.state);
+    const result = operation(draft);
+    assertMoneySupply(draft);
+    this.state = draft;
+    return result;
+  };
 }

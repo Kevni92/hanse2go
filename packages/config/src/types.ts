@@ -57,6 +57,16 @@ export interface Alpha4Config {
   shipyardSlots: number;
   shipTypes: Alpha4ShipTypeConfig[];
 }
+export interface Alpha5Config {
+  moneyUnitsPerGold: number;
+  buyerFeePermille: number;
+  sellerFeePermille: number;
+  startAccounts: {
+    players: Record<string, number>;
+    cities: Record<string, number>;
+    populations: Record<string, number>;
+  };
+}
 export interface BuildingsConfig {
   kontorType: string;
   /** Der Grundstückspreis gilt für jedes Gebäude zusätzlich zu den Klassenkosten. */
@@ -79,4 +89,5 @@ export interface GameConfig {
   buildings: BuildingsConfig;
   alpha3: Alpha3Config;
   alpha4: Alpha4Config;
+  alpha5: Alpha5Config;
 }

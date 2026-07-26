@@ -84,6 +84,16 @@
       { "id": "caravel", "capacity": 400, "virtualSpeed": 7, "buildTicks": 36, "purchasePrice": 95000, "salePrice": 57000, "shipyardFee": 25000, "materials": { "wood": 200, "planks": 120, "cloth": 40, "tools": 25, "iron": 20 } }
     ]
   },
+  "alpha5": {
+    "moneyUnitsPerGold": 100,
+    "buyerFeePermille": 5,
+    "sellerFeePermille": 5,
+    "startAccounts": {
+      "players": { "player-alpha": 10000000 },
+      "cities": { "lambrecht": 20490000, "neustadt": 26745000, "mannheim": 30250000 },
+      "populations": { "lambrecht": 9792000, "neustadt": 24480000, "mannheim": 48960000 }
+    }
+  },
   "goods": [
     {
       "id": "grain",
