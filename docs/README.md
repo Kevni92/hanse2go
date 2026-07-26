@@ -88,6 +88,12 @@
 - [`alpha-5/test-world.md`](alpha-5/test-world.md) – Baseline und reproduzierbare Alpha-5-Presets
 - [`alpha-5/acceptance.md`](alpha-5/acceptance.md) – vollständige Orderbuch-, Bilanz- und E2E-Abnahme
 
+## Alpha 6
+
+- [`alpha-6/ai-actors.md`](alpha-6/ai-actors.md) – KI-Handelshäuser als reguläre Wirtschaftsakteure, Eigentum und Informationsgrenzen
+- [`alpha-6/start-state.md`](alpha-6/start-state.md) – bilanzierte Initialisierung von Gold, Konzession, Kontor, Schiff und Flotte
+- [`alpha-6/insolvency.md`](alpha-6/insolvency.md) – Liquiditätszustände, Sparmaßnahmen und Insolvenz ohne Rettungsgeld
+
 ## Umgang mit Lücken
 
 Explizite Entscheidungen in `docs/` dürfen nicht verändert oder stillschweigend ersetzt werden. Für Alpha 1 gilt zusätzlich: Fehlt nur ein technisches Detail, das die fachliche Absicht nicht verändert, wählt der Agent die einfachste deterministische, serverautoritative und testbare Lösung. Die Entscheidung wird im Pull Request begründet und bei dauerhafter Bedeutung in `docs/` ergänzt. Nur echte fachliche Widersprüche oder Änderungen am Produktumfang erfordern eine Rückfrage.
