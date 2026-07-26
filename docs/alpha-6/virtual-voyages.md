@@ -137,7 +137,7 @@ Bis zur vollständigen Karibikkarte gilt:
 - besitzt der Spieler weitere lokale Flotten, darf er später eine andere lokale Flotte aktivieren;
 - die Debugposition bleibt ausschließlich Übergangs- und Testmechanik für nicht reisende Flotten.
 
-Die bestehende Regel, dass ein Spieler genau eine aktive Flotte besitzt, wird dadurch nicht verletzt: Eine reisende Flotte ist keine aktive Flotte. Solange die einzige Flotte des Spielers reist, besitzt er vorübergehend keine aktive Flotte und kann keine positionsgebundenen Aktionen ausführen.
+Die bestehende Regel, dass ein Spieler genau eine aktive Flotte besitzt, wird dadurch nicht verletzt: Eine reisende Flotte ist keine aktive Flotte. Solange die einzige Flotte des Spielers reist, besitzt er vorübergehend keine aktive Flotte und kann keine positionsgebundenen Aktionen ausführen. Die Oberfläche weist verständlich darauf hin; die Reisebedienung steht in [`user-interface.md`](user-interface.md).
 
 ## Parallelität und Idempotenz
 
