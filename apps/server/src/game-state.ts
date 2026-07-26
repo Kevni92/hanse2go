@@ -28,11 +28,15 @@ export class InMemoryGameRepository implements GameRepository {
     }));
     const startStatus = reputationStatus(this.config.reputation, 0);
     const reputations: Reputation[] = cities.map((city) => ({ cityId: city.id, value: 0, status: startStatus }));
+    const cityEconomies = Object.fromEntries(cities.map((city) => {
+      const alpha3 = this.config.alpha3.cities[city.id]!;
+      return [city.id, { baseHousing: alpha3.baseHousing, wealth: alpha3.wealth, consumptionRemainders: {}, productionRemainders: {}, wealthRemainder: 0, growthRemainder: 0 }];
+    }));
     return {
       player: { id: player.id, name: player.name, gold: player.startingGold, activeFleetId: fleet.id },
       fleet: { id: fleet.id, capacity: fleet.capacity, cargo: {}, position: { ...fleet.startPosition, recordedAt: world.startTimestamp } },
       goods, cities,
-      world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [...player.startingConcessions], buildings: [], kontors: {},
+      cityEconomies, world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [...player.startingConcessions], buildings: [], kontors: {},
     };
   }
   getState = (): GameState => clone(this.state);

@@ -25,6 +25,15 @@ describe('loadGameConfig', () => {
     const config = base();
     for (const entry of config.buildings.production) expect(config.buildings.classes[entry.buildingClass]).toBeDefined();
   });
+
+  it('ordnet jedes Produktionsgebäude einer getrennten Alpha-3-Beschäftigungsklasse zu', () => {
+    const config = base();
+    for (const entry of config.buildings.production) {
+      const workforce = config.alpha3.buildingWorkforce[entry.buildingType];
+      expect(workforce).toBeDefined();
+      expect(config.alpha3.workforce[workforce!].workers * config.alpha3.workforce[workforce!].wagePerWorker).toBe(200);
+    }
+  });
 });
 
 describe('validateGameConfig', () => {

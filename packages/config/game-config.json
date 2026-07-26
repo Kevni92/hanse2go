@@ -57,6 +57,24 @@
       "rum": 2
     }
   },
+  "alpha3": {
+    "workforce": {
+      "simple": { "workers": 200, "wagePerWorker": 1 },
+      "medium": { "workers": 100, "wagePerWorker": 2 },
+      "premium": { "workers": 50, "wagePerWorker": 4 }
+    },
+    "buildingWorkforce": {
+      "grain_farm": "simple", "cattle_farm": "simple", "forestry": "simple", "clay_pit": "simple", "iron_mine": "simple", "cotton_plantation": "simple", "sugarcane_plantation": "simple",
+      "windmill": "medium", "bakery": "medium", "butchery": "medium", "sawmill": "medium", "brickyard": "medium", "pottery": "medium", "charcoal_kiln": "medium", "weavery": "medium", "sugar_refinery": "medium",
+      "dairy": "premium", "smithy": "premium", "tailor": "premium", "carpentry": "premium", "distillery": "premium"
+    },
+    "housing": { "buildingType": "town_house", "capacity": 100, "buildGold": 5000, "materials": { "wood": 30, "planks": 20, "bricks": 20, "tools": 10 } },
+    "cities": {
+      "lambrecht": { "baseHousing": 1100, "wealth": 40 },
+      "neustadt": { "baseHousing": 2750, "wealth": 50 },
+      "mannheim": { "baseHousing": 5500, "wealth": 65 }
+    }
+  },
   "goods": [
     {
       "id": "grain",

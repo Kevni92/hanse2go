@@ -5,5 +5,5 @@ export type { BuildBuildingRequest, KontorTransferRequest, TickRequest } from '.
 export type { City, Fleet, GameState, Good, GoodCategory, Player, Position } from './domain.js';
 export type { MarketHistoryEntry, MarketQuote, TradeDirection } from './domain.js';
 export type { Reputation, ReputationStatus } from './domain.js';
-export type { Building, BuildingAvailability, BuildingCatalogEntry, BuildingClass, BuildingCost, BuildingKind, BuildingOffer, BuildingRequirement, BuildingStallReason, BuildingStatus } from './domain.js';
+export type { Building, BuildingAvailability, BuildingCatalogEntry, BuildingClass, BuildingCost, BuildingKind, BuildingOffer, BuildingRequirement, BuildingStallReason, BuildingStatus, WorkforceClass, WorkforcePriority, CityEconomy } from './domain.js';
 export type { BuildingProductionReport, CityBuildingsOverview, ConsumptionReport, TickReport, TransferDirection, WorldClock } from './domain.js';

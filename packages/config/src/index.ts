@@ -126,6 +126,21 @@ export function validateGameConfig(config: GameConfig): void {
       requireTons(amount, `Die Rezeptmenge "${goodId}" von "${entry.buildingType}"`);
     }
   }
+
+  const alpha3 = config.alpha3;
+  for (const [name, workforce] of Object.entries(alpha3.workforce)) {
+    if (!Number.isInteger(workforce.workers) || workforce.workers <= 0 || !Number.isInteger(workforce.wagePerWorker) || workforce.wagePerWorker <= 0) {
+      throw new ConfigError(`Die Beschäftigungsklasse "${name}" benötigt positive Arbeiter- und Lohnwerte.`);
+    }
+  }
+  for (const entry of buildings.production) {
+    if (!alpha3.buildingWorkforce[entry.buildingType]) throw new ConfigError(`Dem Gebäude "${entry.buildingType}" fehlt eine Beschäftigungsklasse.`);
+  }
+  if (alpha3.housing.capacity <= 0 || alpha3.housing.buildGold < 0) throw new ConfigError('Das Wohnhaus benötigt positive Kapazität und gültige Baukosten.');
+  for (const city of config.cities) {
+    const economy = alpha3.cities[city.id];
+    if (!economy || economy.baseHousing < city.population || economy.wealth < 0 || economy.wealth > 100) throw new ConfigError(`Die Alpha-3-Stadtwerte von "${city.id}" sind ungültig.`);
+  }
 }
 
 /** Stellt sicher, dass eine Sprachdatei jeden fachlichen Bezeichner der Konfiguration benennt. */
