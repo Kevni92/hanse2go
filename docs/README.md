@@ -62,6 +62,8 @@
 - [`alpha-3/tick.md`](alpha-3/tick.md) – atomare Tickphasen und Bericht
 - [`alpha-3/api-contracts.md`](alpha-3/api-contracts.md) – fachliche Alpha-3-Schnittstellen
 
+- [`alpha-3/user-interface.md`](alpha-3/user-interface.md) – Stadt-, Gebäude- und Tickoberfläche für Mobil und Desktop
+
 ## Umgang mit Lücken
 
 Explizite Entscheidungen in `docs/` dürfen nicht verändert oder stillschweigend ersetzt werden. Für Alpha 1 gilt zusätzlich: Fehlt nur ein technisches Detail, das die fachliche Absicht nicht verändert, wählt der Agent die einfachste deterministische, serverautoritative und testbare Lösung. Die Entscheidung wird im Pull Request begründet und bei dauerhafter Bedeutung in `docs/` ergänzt. Nur echte fachliche Widersprüche oder Änderungen am Produktumfang erfordern eine Rückfrage.

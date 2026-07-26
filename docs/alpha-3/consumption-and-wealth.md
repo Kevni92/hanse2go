@@ -33,3 +33,5 @@ Der Grundwarenkorb enthält je 1.000 Einwohner 4 Brot, 2 Fleisch, 2 Käse und 2 
 Der Wohlstand schließt je Spieltag 2 Prozent der Differenz. Pro Stunde gilt verbindlich `newWealth = oldWealth + (targetWealth - oldWealth) × 842 / 1.000.000`; Rechenreste werden je Stadt akkumuliert. Der autoritative Wert hat mindestens vier Nachkommastellen, wird auf 0 bis 100 begrenzt und in API/UI mit einer Nachkommastelle angezeigt.
 
 Der Tickbericht enthält `incomeTotal`, `incomePerCapita`, `basicBasketCostPerCapita`, `purchasingPower`, `coverageByGood[]`, `overallCoverage`, `wealthBefore`, `targetWealth`, `wealthAfter` sowie angeforderte, verbrauchte und fehlende Mengen je Ware.
+
+Die Wohlstandskarte und die fest sortierte Versorgungsliste zeigen diese serverbestätigten Werte mit Textalternativen zu Farbzuständen. Darstellung, Trends und zugängliche Bedienung stehen in [`user-interface.md`](user-interface.md).
