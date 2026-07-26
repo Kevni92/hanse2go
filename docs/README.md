@@ -93,6 +93,9 @@
 - [`alpha-6/ai-actors.md`](alpha-6/ai-actors.md) – KI-Handelshäuser als reguläre Wirtschaftsakteure, Eigentum und Informationsgrenzen
 - [`alpha-6/start-state.md`](alpha-6/start-state.md) – bilanzierte Initialisierung von Gold, Konzession, Kontor, Schiff und Flotte
 - [`alpha-6/insolvency.md`](alpha-6/insolvency.md) – Liquiditätszustände, Sparmaßnahmen und Insolvenz ohne Rettungsgeld
+- [`alpha-6/virtual-voyages.md`](alpha-6/virtual-voyages.md) – Flottenstatus, Reiseentität, Abfahrt, Fortschritt und Ankunft
+- [`alpha-6/test-world-routes.md`](alpha-6/test-world-routes.md) – statischer Städtegraph und verbindliche Referenzfahrzeiten
+- [`alpha-6/api-contracts.md`](alpha-6/api-contracts.md) – Reise- und Routenverträge, Versionen und Tickvertrag
 
 ## Umgang mit Lücken
 
