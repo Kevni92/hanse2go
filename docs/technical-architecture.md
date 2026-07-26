@@ -201,6 +201,18 @@ Die vollständige Testmatrix und die Bilanzabnahme stehen in
 [`alpha-5/test-world.md`](alpha-5/test-world.md) und
 [`alpha-5/acceptance.md`](alpha-5/acceptance.md).
 
+## Alpha 6: virtuelle Reisen und regelbasierte Wirtschafts-KI
+
+Alpha 6 erweitert denselben atomaren Welt-Tick um eine Reisephase und um die KI-Entscheidungsphasen. Es entsteht kein Scheduler, kein Hintergrundthread und keine nebenläufige Verarbeitung; die KI läuft ausschließlich innerhalb der bestehenden Welttransaktion. Ein technischer Fehler in der Reise- oder KI-Phase rollt sämtliche Phasen des Ticks gemeinsam zurück.
+
+Die Entscheidungsmaschine ist eine reine Funktion aus Weltsnapshot, `actorId`, Zyklustyp und Ticknummer. Sie besitzt keinen verborgenen Zustand, keine Zufallsquelle, keinen Zugriff auf die Systemzeit und keinen eigenen Schreibpfad in den Domänenzustand. Ihr Ergebnis ist eine geordnete Liste regulärer Fachbefehle mit deterministischen Idempotenzschlüsseln; die endgültige Prüfung von Deckung, Version, Kapazität und Eigentum bleibt allein im bestehenden Befehlspfad. Damit wird jede Regel an genau einer Stelle durchgesetzt.
+
+Verbindliche technische Determinismusregeln: keine Iteration über ungeordnete Maps oder Sets ohne explizite Sortierung, kein `Math.random`, kein `Date.now`, keine Abhängigkeit von Einfügereihenfolgen oder Speicheradressen und keine Gleitkommaarithmetik in autoritativen Größen. Alle Scores, Anteile und Beträge sind ganzzahlig; Anteile werden als Basispunkte 0–10.000 geführt.
+
+Der Streckengraph, die drei Handelshäuser und alle Alpha-6-Balancingwerte stehen wie alle statischen Spieleigenschaften ausschließlich in `packages/config/game-config.json` und werden beim Serverstart validiert.
+
+Die verbindliche Tickreihenfolge, die Akteursreihenfolge, die Entscheidungsbudgets und die Trennung von fachlicher Ablehnung und technischem Rollback stehen in [`alpha-6/tick.md`](alpha-6/tick.md) und [`alpha-6/decision-engine.md`](alpha-6/decision-engine.md); die Reise- und Routenverträge in [`alpha-6/api-contracts.md`](alpha-6/api-contracts.md).
+
 ## Arbeitsablauf
 
 Für jedes Issue wird ein neuer Branch vom aktuellen `main` erstellt. Es gibt genau einen Pull Request pro Issue gegen `main`. Alle GitHub-CI-Prüfungen müssen erfolgreich sein. Danach merged der Agent den PR und löscht den gemergten Branch. Details stehen in [`../AGENTS.md`](../AGENTS.md).

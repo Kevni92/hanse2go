@@ -77,6 +77,12 @@ Verbindliche Beispiele:
 
 Private Bestände, Konten und Pläne fremder Spieler werden weder öffentlich noch im Debugbetrieb offengelegt. Die vollständige Oberflächendefinition folgt im Alpha-6-Oberflächenkonzept.
 
+## Determinismus des Protokolls
+
+`decisionId` folgt dem Format `decision-<tick>-<actorId>-<sequence>` mit einem je Tick und Akteur bei 1 beginnenden, in Verarbeitungsreihenfolge monoton steigenden Zähler. Zwei Läufe derselben Ausgangswelt über dieselbe Tickzahl erzeugen damit identische Protokolle mit identischen IDs, identischer Reihenfolge und identischen Gründen.
+
+Das Protokoll ist deshalb selbst ein Abnahmekriterium: Weicht es zwischen zwei Läufen ab, liegt eine Determinismusverletzung `AI_DETERMINISM_VIOLATION` vor. Die vollständigen Determinismusregeln stehen in [`decision-engine.md`](decision-engine.md).
+
 ## Invarianten
 
 - Jede ausgeführte KI-Aktion besitzt genau einen Protokolleintrag mit `outcome = executed` und den daraus erzeugten Fachbefehlen.
