@@ -139,3 +139,11 @@ Mobil ist das Orderformular ein Bottom Sheet oder Vollbilddialog; jedes Touch-Zi
 Auf Desktop dürfen Orderbuch und Formular nebeneinander stehen. Tiefe wird in Tabellen dargestellt, Orders und Trades sind filterbar, und die Stadtwirtschaft nutzt ein Kennzahlenraster. Beim Verkleinern bleibt jede Funktion erhalten.
 
 Buy und Sell werden nicht ausschließlich über Farbe unterschieden. Alle Eingaben besitzen sichtbare Labels, Fehlertexte und eine Zusammenfassung. Dialoge halten den Fokus und geben ihn nach dem Schließen zurück; Erstellung, Stornierung und Ersetzung sind vollständig per Tastatur bedienbar. Tabellen besitzen verständliche Überschriften.
+
+## Alpha 6: Akteurstypen im Orderbuch
+
+Ab Alpha 6 kennzeichnet das Orderbuch zusätzlich Orders und Executions von KI-Handelshäusern als `Handelshaus` mit ihrem lokalisierten Namen. Preis-Zeit-Priorität und Sortierung ändern sich dadurch nicht; ein Handelshaus erhält keine hervorgehobene Position.
+
+`Stadt`, `Bevölkerung`, `Spieler`, `Handelshaus` und `Eigene Order` sind über Text und Icon unterscheidbar; Farbe ist niemals das einzige Merkmal. Ein Handelshaus wird namentlich genannt, weil es ein öffentlicher Wirtschaftsakteur ist; fremde Spieler bleiben wie bisher anonymisiert, und fremde private Bestände werden weiterhin nicht angezeigt.
+
+Die vollständige Alpha-6-Oberfläche für Handelshäuser, Versorgungsstatus, Marktanteile, Reisen und die Debug-Entscheidungsansicht steht in [`../alpha-6/user-interface.md`](../alpha-6/user-interface.md).

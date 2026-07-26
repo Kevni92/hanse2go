@@ -108,6 +108,7 @@
 - [`alpha-6/ai-investment.md`](alpha-6/ai-investment.md) – gemeinsame Investitionsgrenzen, Raten und Amortisationsform
 - [`alpha-6/tick.md`](alpha-6/tick.md) – dreizehnstufige Tickreihenfolge, Akteursreihenfolge, Budgets und Rollbackgrenzen
 - [`alpha-6/decision-engine.md`](alpha-6/decision-engine.md) – Zyklusablauf, Vorfilterung, Sortierung und Determinismusregeln
+- [`alpha-6/user-interface.md`](alpha-6/user-interface.md) – Handelshausübersicht, Versorgungsanzeige, Reisebedienung und KI-Debug-Ansicht
 
 ## Umgang mit Lücken
 

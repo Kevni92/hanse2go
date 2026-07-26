@@ -75,7 +75,9 @@ Verbindliche Beispiele:
 | vollständige Kandidatenlisten, Scores und Tie-Breaker | – | ja |
 | einzelne Ablehnungsgründe je Option | – | ja |
 
-Private Bestände, Konten und Pläne fremder Spieler werden weder öffentlich noch im Debugbetrieb offengelegt. Die vollständige Oberflächendefinition folgt im Alpha-6-Oberflächenkonzept.
+Private Bestände, Konten und Pläne fremder Spieler werden weder öffentlich noch im Debugbetrieb offengelegt. Die vollständige Oberflächendefinition steht in [`user-interface.md`](user-interface.md).
+
+Das öffentliche Gesamtvermögen eines Handelshauses wird als grobe Kategorie statt als exakter Betrag ausgewiesen. Bewertet werden Gold, Warenbestände zur Kostenbasis, Gebäude zu ihren Baukosten und Schiffe zum neutralen Ankaufspreis; die Kategoriegrenzen stehen in [`user-interface.md`](user-interface.md). Im Alpha-Debugbetrieb darf zusätzlich der exakte Kontostand sichtbar sein.
 
 ## Determinismus des Protokolls
 

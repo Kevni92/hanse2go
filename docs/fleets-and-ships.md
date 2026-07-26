@@ -14,6 +14,8 @@ Die Fahrzeit ist `ceil(Distanz / Geschwindigkeit des langsamsten Schiffes)` auf 
 
 Spieler und KI-Handelshäuser verwenden denselben Abfahrtsbefehl und dieselben Voraussetzungen. Ein Handelshaus besitzt dabei keine aktive Flotte und keine Debug-Position; seine Lokalität ergibt sich aus dem eigenen Kontor beziehungsweise dem Hafen, in dem die Flotte liegt.
 
+Der Spieler startet eine Reise über die Hafenansicht und sieht vorher Distanz, Flottengeschwindigkeit und berechnete Fahrzeit sowie die Warnung, dass Zusammensetzung und Ladung während der Reise gesperrt sind. Laufende Reisen aller sichtbaren Flotten – auch der Handelshäuser – erscheinen mit Start, Ziel, Restticks und erwarteter Ankunft. Die Oberflächendefinition steht in [`alpha-6/user-interface.md`](alpha-6/user-interface.md).
+
 Die vollständigen Regeln stehen in [`alpha-6/virtual-voyages.md`](alpha-6/virtual-voyages.md), der Streckengraph mit allen Referenzfahrzeiten in [`alpha-6/test-world-routes.md`](alpha-6/test-world-routes.md) und der technische Vertrag in [`alpha-6/api-contracts.md`](alpha-6/api-contracts.md).
 
 ## Alpha 6: Warentransport zwischen Städten
