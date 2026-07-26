@@ -10,3 +10,5 @@ Alle Schiffstypwerte stammen ausschließlich aus der zentralen Spielkonfiguratio
 | `caravel` | Kraweel | 400,00 t | 7 km/Spielstunde | 36 Ticks | 95.000 Gold | 57.000 Gold |
 
 Es gibt in Alpha 4 genau diese vier Typen und keine Qualitätsstufen oder zufälligen Abweichungen. Eine Flottenkapazität ist die Summe der Kapazitäten ihrer zugeordneten Schiffe. Ihre virtuelle Geschwindigkeit ist der niedrigste Geschwindigkeitswert dieser Schiffe. Sie dient in Alpha 4 nur der Anzeige und Vorbereitung späterer automatischer Fahrt; die aktive Flotte wird noch nicht durch sie bewegt.
+
+Die getrennt konfigurierten Werftgebühren, Baumaterialien und Fertigstellungsregeln stehen in [`shipbuilding.md`](shipbuilding.md).

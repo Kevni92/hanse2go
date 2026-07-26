@@ -13,6 +13,9 @@ Alpha 4 bleibt serverautoritativ, deterministisch und In-Memory-basiert. Der man
 - [`ship-entities.md`](ship-entities.md) – dauerhafte Identität, Eigentum, Standort und Namen
 - [`ship-catalog.md`](ship-catalog.md) – Schiffstypen, Preise, Geschwindigkeit und Kapazität
 - [`ports-and-ship-market.md`](ports-and-ship-market.md) – Hafenbindung, neutraler Makler und Eigentumsübertragung
+- [`shipbuilding.md`](shipbuilding.md) – Werften, Kosten, FIFO-Bauaufträge und Fertigstellung
+- [`balancing.md`](balancing.md) – Referenzkosten für Schiffsbau und Maklerpreise
+- [`tick.md`](tick.md) – Werftphase im atomaren Stundentick
 - [`api-contracts.md`](api-contracts.md) – fachliche Befehle und Fehlercodes
 - [`test-world.md`](test-world.md) – feste Alpha-4-Startschiffe und Hafenmarktstände
 
