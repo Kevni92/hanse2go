@@ -38,3 +38,7 @@ Die folgenden Konzepte ergänzen diesen Scope in der Reihenfolge des Tracking-Is
 ## Nicht Bestandteil
 
 Nicht Bestandteil sind KI-Akteure, automatische Handelsrouten und virtuelle Fahrten, PostgreSQL-Persistenz, Echtzeitticks, Spieler-zu-Spieler-Schiffshandel, Marktorders, Reparaturen, Zustand, Module, Besatzung, Bewaffnung, Kampf, Piraterie und Schiffsverlust.
+
+## Abschlussstand
+
+Die Alpha-4-Konzepte wurden in die zentral konfigurierte Startwelt, dauerhafte Schiff- und Flottendomänen, serverautorisierte Hafenbefehle, den Hafen-Client und die gemeinsame Desktop-/Mobile-Playwright-Abnahme überführt. Die Abnahme deckt die konkrete Schiffsentität `Waldwind` über Kauf und serverbestätigten Eigentümerwechsel ab. Alle lokalen und GitHub-CI-Prüfungen (`lint`, Typecheck, Unit-/API-Tests, Build sowie Desktop- und Mobile-Playwright) sind für den Abschlussstand erfolgreich.
