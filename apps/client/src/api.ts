@@ -1,4 +1,4 @@
-import type { City, CityBuildingsOverview, DebugPositionRequest, GameState, HealthResponse, MarketHistoryEntry, MarketQuote, ReachableCity, TickReport, TradeDirection, TransferDirection, WorldClock } from '@hanse2go/shared';
+import type { City, CityBuildingsOverview, DebugPositionRequest, GameState, HealthResponse, MarketHistoryEntry, MarketQuote, ReachableCity, TickReport, TradeDirection, TransferDirection, WorkforcePriority, WorldClock } from '@hanse2go/shared';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
@@ -75,6 +75,9 @@ export function buildBuilding(cityId: string, buildingType: string): Promise<Cit
 }
 export function transferKontorGoods(cityId: string, goodId: string, quantity: number, direction: TransferDirection): Promise<CityBuildingsOverview> {
   return request(`/api/cities/${cityId}/kontor/transfer`, asJson({ goodId, quantity, direction }));
+}
+export function setBuildingPriority(cityId: string, buildingId: string, priority: WorkforcePriority): Promise<CityBuildingsOverview> {
+  return request(`/api/cities/${cityId}/buildings/${buildingId}/priority`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ priority }) });
 }
 export function simulateNextHour(): Promise<TickReport> {
   return request('/api/debug/tick', asJson({ idempotencyKey: createIdempotencyKey() }));
