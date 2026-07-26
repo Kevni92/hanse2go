@@ -44,6 +44,12 @@ Für den Bestand gilt jederzeit exakt:
 
 Diese Investitionen sind keine laufenden Stückkosten. Sie werden ausschließlich über die Amortisationsprüfungen der Investitions- und Schiffsplanung bewertet. Andernfalls würde eine einmalige Investition den Verkaufspreis dauerhaft verzerren.
 
+Die Amortisationsrechnung selbst steht in [`ai-production-and-investment.md`](ai-production-and-investment.md):
+
+`paybackTicks = ceil(investmentCost × 24 / max(expectedContributionPer24Ticks, 1))`
+
+Beide Rechnungen greifen ineinander, bleiben aber getrennt: Die Kostenbasis bestimmt, zu welchem Preis eine vorhandene Ware verkauft werden darf; die Amortisation bestimmt, ob ein Gebäude oder Schiff überhaupt angeschafft werden darf. Eine Investition wird niemals über den Warenpreis refinanziert.
+
 ## Zugang von Ware
 
 Bei jedem Zugang mit `addedUnits` und `addedTotalCostMoneyUnits`:

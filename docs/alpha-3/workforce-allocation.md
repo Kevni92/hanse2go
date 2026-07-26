@@ -6,6 +6,8 @@ Für jede Stadt `c` gilt `availableWorkers(c) = floor(population(c))`. Bevölker
 
 Für einen Spieler `p` ist die Stadtnachfrage `playerDemand(p, c) = sum(financeableWorkerDemand(b))` über seine Produktionsgebäude in `c`. Spieler mit Nachfrage null nehmen nicht an der Verteilung teil.
 
+Ab Alpha 6 nimmt jedes KI-Handelshaus mit eigenen Produktionsgebäuden als gleichrangiger Eigentümer an derselben Verteilung teil. Es zählt wie ein Spieler als genau ein Teilnehmer, meldet ebenfalls nur seine durch das Lohnbudget begrenzte Nachfrage und erhält keine Vorab-, Sonder- oder Mindestzuteilung. Für die lexikografische Sortierung der Restverteilung wird die `actorId` wie eine Spieler-ID behandelt; die gemeinsame Sortierung über alle Eigentümer-IDs bleibt eindeutig und deterministisch. Ein Handelshaus mit Wohnhäusern erhält aus deren Wohnraum keine exklusiven Bewohner – zusätzlicher Wohnraum erhöht ausschließlich den gemeinsamen stadtweiten Pool.
+
 ## Max-Min-Verteilung zwischen Spielern
 
 Die Stadt verteilt ihre Arbeiter per iterativem Max-Min-Verfahren (Water-Filling):
