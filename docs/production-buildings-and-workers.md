@@ -120,3 +120,5 @@ Jedes Produktionsgebäude ist eine eigene Instanz; mehrere Instanzen desselben T
 Alle Alpha-2-Rezepte laufen einmal pro manuell simuliertem Stundentick. Rohstoffgebäude haben keine Eingangswaren. Verarbeitende Gebäude verbrauchen alle Eingänge und erzeugen alle Ausgänge vollständig oder bleiben ohne Teilverbrauch stehen. Die vollständige Tabelle steht in [`alpha-2/production-recipes.md`](alpha-2/production-recipes.md).
 
 Alpha 3 ersetzt diese Produktionsregel mit proportionaler Teilproduktion und Hundertstel-Tonnen. Die Lohnpflicht dieses Dokuments bleibt dabei unverändert.
+
+Bei Teilbesetzung werden Input und Output derselben Rezeptposition im Verhältnis `assignedWorkers / requiredWorkers` geplant. Fehlt auch nur eine geplante Inputmenge, bleibt die Instanz vollständig stehen; Löhne bleiben fällig. Die verbindliche Berechnung und sämtliche Alpha-3-Rezepte stehen in [`alpha-3/production-and-fractions.md`](alpha-3/production-and-fractions.md) und [`alpha-3/production-recipes.md`](alpha-3/production-recipes.md).

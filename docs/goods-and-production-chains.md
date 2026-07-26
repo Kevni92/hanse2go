@@ -122,3 +122,7 @@ Nicht Bestandteil der Alpha, aber als sinnvolle Erweiterungen vorgemerkt:
 ## Alpha 2: verbindliche Produktion
 
 Alpha 2 macht jede der 22 Tabellenwaren durch ein Spielergebäude erzeugbar. Die bisher beschriebenen Ketten bleiben dabei erhalten; die verbindlichen technischen IDs, Klassen und Rezeptmengen pro Stundentick stehen in [`alpha-2/building-catalog.md`](alpha-2/building-catalog.md) und [`alpha-2/production-recipes.md`](alpha-2/production-recipes.md). Es gibt keine Nebenprodukte außer den ausdrücklich zwei Ausgängen des Rinderhofs und keine alternativen Rezepte.
+
+## Alpha 3: proportionale Produktion
+
+Alpha 3 behält dieselben Ketten und Waren bei, ersetzt aber die Alpha-2-Rezeptmengen durch die verbindliche Tabelle in [`alpha-3/production-recipes.md`](alpha-3/production-recipes.md). Teilbesetzung verringert sämtliche Inputs und Outputs proportional. Mengen werden intern als Hundertstel-Tonnen mit Restakkumulatoren geführt; die atomare Inputprüfung steht in [`alpha-3/production-and-fractions.md`](alpha-3/production-and-fractions.md).
