@@ -78,6 +78,7 @@
 - [`alpha-5/money-and-ledger.md`](alpha-5/money-and-ledger.md) – Geldfestkomma, reale Konten, Ledger und Goldbilanz
 - [`alpha-5/start-state.md`](alpha-5/start-state.md) – deterministische Konteninitialisierung ohne Geldschöpfung
 - [`alpha-5/orders.md`](alpha-5/orders.md) – gedeckte Buy-/Sell-Orders, Reservierungen und Lebenszyklus
+- [`alpha-5/order-matching.md`](alpha-5/order-matching.md) – Preis-Zeit-Matching, Gebühren und atomare Ausführung
 - [`alpha-5/api-contracts.md`](alpha-5/api-contracts.md) – gemeinsame Vertragsgrundsätze für Orderbefehle
 - [`alpha-5/acceptance.md`](alpha-5/acceptance.md) – Bilanzinvariante für Befehle und Ticks
 
