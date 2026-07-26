@@ -75,6 +75,15 @@
       "mannheim": { "baseHousing": 5500, "wealth": 65 }
     }
   },
+  "alpha4": {
+    "shipyardSlots": 1,
+    "shipTypes": [
+      { "id": "pinnace", "capacity": 60, "virtualSpeed": 12, "buildTicks": 6, "purchasePrice": 20000, "salePrice": 12000, "shipyardFee": 5000, "materials": { "wood": 40, "planks": 20, "cloth": 10, "tools": 5 } },
+      { "id": "schnigge", "capacity": 100, "virtualSpeed": 10, "buildTicks": 12, "purchasePrice": 32000, "salePrice": 19200, "shipyardFee": 8000, "materials": { "wood": 70, "planks": 40, "cloth": 15, "tools": 8 } },
+      { "id": "fluyt", "capacity": 250, "virtualSpeed": 8, "buildTicks": 24, "purchasePrice": 60000, "salePrice": 36000, "shipyardFee": 15000, "materials": { "wood": 130, "planks": 80, "cloth": 30, "tools": 15 } },
+      { "id": "caravel", "capacity": 400, "virtualSpeed": 7, "buildTicks": 36, "purchasePrice": 95000, "salePrice": 57000, "shipyardFee": 25000, "materials": { "wood": 200, "planks": 120, "cloth": 40, "tools": 25, "iron": 20 } }
+    ]
+  },
   "goods": [
     {
       "id": "grain",

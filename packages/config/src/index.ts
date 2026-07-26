@@ -92,6 +92,18 @@ export function validateGameConfig(config: GameConfig): void {
     for (const goodId of city.productionFocus) requireGood(goodId, `Der Produktionsschwerpunkt von "${city.id}"`);
   }
 
+  const alpha4 = config.alpha4;
+  if (!Number.isInteger(alpha4.shipyardSlots) || alpha4.shipyardSlots <= 0) throw new ConfigError('Die Werftplätze müssen positiv sein.');
+  uniqueIds(alpha4.shipTypes.map((ship) => ship.id), 'Schiffstyp');
+  for (const ship of alpha4.shipTypes) {
+    if (!(ship.capacity > 0) || !(ship.virtualSpeed > 0) || !Number.isInteger(ship.buildTicks) || ship.buildTicks <= 0
+      || !Number.isInteger(ship.purchasePrice) || !Number.isInteger(ship.salePrice) || ship.salePrice <= 0 || ship.salePrice >= ship.purchasePrice) {
+      throw new ConfigError(`Der Schiffstyp "${ship.id}" besitzt ungültige Werte.`);
+    }
+    requireGold(ship.shipyardFee, `Die Werftgebühr von "${ship.id}"`);
+    for (const [goodId, amount] of Object.entries(ship.materials)) { requireGood(goodId, `Das Schiffsmaterial von "${ship.id}"`); requireTons(amount, `Das Schiffsmaterial "${goodId}" von "${ship.id}"`); }
+  }
+
   const buildings = config.buildings;
   if (!buildings.kontorType) throw new ConfigError('Der Gebäudetyp des Kontors fehlt.');
   requireGold(buildings.landPrice, 'Der Grundstückspreis');
