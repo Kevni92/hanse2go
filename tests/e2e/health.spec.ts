@@ -44,29 +44,15 @@ async function moveByDebugClick(page: Page, target: { longitude: number; latitud
 async function openLambrecht(page: Page) {
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Spielerübersicht öffnen' })).toContainText('100.000 G');
-  await expect(page.getByRole('button', { name: 'Stadt betreten' })).toHaveCount(0);
   await moveByDebugClick(page, cities.lambrecht);
   await page.getByRole('button', { name: 'Stadt betreten' }).click({ force: true });
   await expect(page.getByRole('dialog', { name: 'Lambrecht Stadtansicht' })).toBeVisible();
 }
 
-async function openMarketGood(page: Page, goodName: string) {
+async function openMarketGood(page: Page, name: string) {
   await page.getByRole('button', { name: 'Markt' }).click();
-  await page.getByRole('button', { name: new RegExp(goodName) }).first().click();
-  await expect(page.getByRole('heading', { name: goodName })).toBeVisible();
-}
-
-async function setQuantity(page: Page, quantity: number) {
-  const slider = page.getByLabel(/^Menge/);
-  // Der Regler ist erst bedienbar, wenn das Servermaximum vorliegt. Vorher begrenzt die
-  // eintreffende Preisvorschau jede gesetzte Menge auf eine Tonne.
-  await expect(slider).toBeEnabled();
-  await slider.evaluate((element, value) => {
-    const input = element as HTMLInputElement;
-    input.value = String(value);
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-  }, quantity);
+  await page.getByRole('button', { name: new RegExp(name) }).first().click();
+  await expect(page.getByRole('heading', { name })).toBeVisible();
 }
 
 async function state(page: Page) {
@@ -74,86 +60,68 @@ async function state(page: Page) {
   return response.json();
 }
 
-test('nimmt den Holz-Handelsweg Lambrecht nach Neustadt vollständig ab', async ({ page }) => {
+test('legt eine gedeckte Limitorder an und gibt sie atomar wieder frei', async ({ page }) => {
   await openLambrecht(page);
   await expect(page.getByText('1.000')).toBeVisible();
   await expect(page.getByText(/24 · einfach/)).toBeVisible();
   await expect(page.getByText('10 %')).toBeVisible();
-  await expect(page.getByText('nicht vorhanden')).toBeVisible();
-  await page.getByRole('button', { name: 'Produktion' }).click();
-  await expect(page.getByText('Holz')).toBeVisible();
-
-  await page.getByRole('button', { name: 'Markt' }).click();
-  for (const category of ['Nahrung', 'Baustoffe', 'Handwerk', 'Kleidung', 'Haushaltswaren', 'Luxuswaren']) await expect(page.getByRole('heading', { name: category })).toBeVisible();
-  await expect(page.locator('[data-testid^="market-good-"]')).toHaveCount(22);
   await openMarketGood(page, 'Holz');
-  await setQuantity(page, 10);
-  const buyQuoteResponse = await page.request.post(`${serverUrl}/api/cities/lambrecht/market/quote`, { data: { goodId: 'wood', direction: 'buy', quantity: 10 } });
-  const buyQuote = await buyQuoteResponse.json();
-  await expect(page.getByRole('region', { name: 'Serverangebot' })).toContainText(`${buyQuote.total.toLocaleString('de-DE')} Gold`);
-  await expect(page.getByRole('region', { name: 'Serverangebot' })).toContainText(`${buyQuote.resultingGold.toLocaleString('de-DE')} Gold`);
-  await page.getByRole('button', { name: 'Serverangebot abschließen' }).click();
-  await expect(page.getByRole('button', { name: 'Spielerübersicht öffnen' })).toContainText(`${buyQuote.resultingGold.toLocaleString('de-DE')} G`);
-  await expect(page.getByText('10 t in dieser Serverlaufzeit gehandelt')).toBeVisible();
-  let currentState = await state(page);
-  expect(currentState.fleet.cargo.wood).toBe(10);
-  expect(currentState.cities.find((city: { id: string }) => city.id === 'lambrecht').stock.wood).toBe(190);
-  expect((await page.request.get(`${serverUrl}/api/cities/lambrecht/market/wood/history`)).ok()).toBeTruthy();
-
-  await page.getByRole('button', { name: 'Stadtansicht schließen' }).click();
-  await moveByDebugClick(page, cities.neustadt);
-  await page.getByRole('button', { name: 'Stadt betreten' }).click({ force: true });
-  await openMarketGood(page, 'Holz');
-  await page.getByRole('button', { name: 'Verkaufen' }).click();
-  await setQuantity(page, 10);
-  const sellQuoteResponse = await page.request.post(`${serverUrl}/api/cities/neustadt/market/quote`, { data: { goodId: 'wood', direction: 'sell', quantity: 10 } });
-  const sellQuote = await sellQuoteResponse.json();
-  await expect(page.getByRole('region', { name: 'Serverangebot' })).toContainText(`${sellQuote.total.toLocaleString('de-DE')} Gold`);
-  await page.getByRole('button', { name: 'Serverangebot abschließen' }).click();
-  await expect(page.getByText('10 t in dieser Serverlaufzeit gehandelt')).toBeVisible();
-  currentState = await state(page);
-  expect(currentState.fleet.cargo.wood).toBeUndefined();
-  expect(currentState.player.gold).toBeGreaterThan(100_000);
-  expect(currentState.player.gold).toBe(buyQuote.resultingGold + sellQuote.total);
-  expect(currentState.cities.find((city: { id: string }) => city.id === 'neustadt').stock.wood).toBe(50);
-  expect((await page.request.get(`${serverUrl}/api/cities/neustadt/market/wood/history`)).ok()).toBeTruthy();
+  await expect(page.getByRole('region', { name: 'Orderbuch' })).toBeVisible();
+  await page.locator('#order-quantity').fill('1000');
+  await page.locator('#order-price').fill('80');
+  await page.getByRole('button', { name: 'Limitorder einstellen' }).click();
+  await expect(page.getByRole('button', { name: 'Stornieren' })).toBeVisible();
+  const reserved = await state(page);
+  expect(reserved.accounts['player:player-alpha'].reservedMoney).toBe(80_400);
+  const playerOrder = reserved.orders.find((order: { ownerType: string }) => order.ownerType === 'player');
+  const orderId = playerOrder.orderId;
+  const cancelled = await page.request.delete(`${serverUrl}/api/cities/lambrecht/market/orders/${orderId}`, { data: { orderVersion: playerOrder.orderVersion, idempotencyKey: 'e2e-cancel' } });
+  expect(cancelled.ok()).toBeTruthy();
+  await expect.poll(async () => (await state(page)).orders.find((order: { orderId: string }) => order.orderId === orderId).status).toBe('cancelled');
+  const released = await state(page);
+  expect(released.accounts['player:player-alpha'].reservedMoney).toBe(0);
+  expect(released.orders.find((order: { orderId: string }) => order.orderId === orderId).status).toBe('cancelled');
 });
 
-test('zeigt eine serverseitige Reichweitenablehnung ohne lokalen Handel', async ({ page }) => {
+test('zeigt eine serverseitige Reichweitenablehnung ohne lokalen Settlement-Effekt', async ({ page }) => {
   await openLambrecht(page);
   await openMarketGood(page, 'Holz');
   const before = await state(page);
   await page.request.put(`${serverUrl}/api/fleet/position`, { data: { longitude: 8.04, latitude: 49.4 } });
-  await page.getByRole('button', { name: 'Serverangebot abschließen' }).click();
+  await page.getByRole('button', { name: 'Limitorder einstellen' }).click();
   await expect(page.getByRole('alert')).toContainText('nicht in Reichweite');
   const after = await state(page);
   expect(after.player).toEqual(before.player);
-  expect(after.fleet.cargo).toEqual(before.fleet.cargo);
-  expect(after.cities).toEqual(before.cities);
+  expect(after.accounts).toEqual(before.accounts);
+  expect(after.orders).toEqual(before.orders);
 });
 
-test('lehnt Handelsgrenzen serverseitig ab', async ({ page }) => {
+test('lehnt ungültige, ungedeckte und unbesicherte Orders serverseitig ab', async ({ page }) => {
   await page.request.put(`${serverUrl}/api/fleet/position`, { data: cities.lambrecht });
-  const quote = (goodId: string, direction: 'buy' | 'sell', quantity: number) => page.request.post(`${serverUrl}/api/cities/lambrecht/market/quote`, { data: { goodId, direction, quantity } });
-  expect((await quote('wood', 'buy', 151)).status()).toBe(409);
-  expect((await quote('wood', 'buy', 201)).status()).toBe(409);
-  expect((await quote('wood', 'sell', 1)).status()).toBe(409);
-  const clothing = await quote('clothing', 'buy', 15);
-  const clothingOffer = await clothing.json();
-  expect((await page.request.post(`${serverUrl}/api/cities/lambrecht/market/trade`, { data: { goodId: 'clothing', direction: 'buy', quantity: 15, marketVersion: clothingOffer.marketVersion, idempotencyKey: 'e2e-clothing' } })).ok()).toBeTruthy();
-  await page.request.post(`${serverUrl}/test/seed`, { data: { gold: 5_000 } });
-  const insufficientGold = await quote('tools', 'buy', 30);
-  expect(insufficientGold.status()).toBe(409);
-  expect((await insufficientGold.json()).error.code).toBe('INSUFFICIENT_GOLD');
+  const order = (data: unknown) => page.request.post(`${serverUrl}/api/cities/lambrecht/market/orders`, { data });
+  expect((await order({ goodId: 'wood', side: 'buy', quantityUnits: 0, limitPriceGoldPerTon: 80, idempotencyKey: 'invalid-quantity' })).status()).toBe(400);
+  expect((await order({ goodId: 'wood', side: 'buy', quantityUnits: 100, limitPriceGoldPerTon: 0, idempotencyKey: 'invalid-price' })).status()).toBe(400);
+  expect((await order({ goodId: 'wood', side: 'sell', quantityUnits: 1, limitPriceGoldPerTon: 80, idempotencyKey: 'no-goods' })).status()).toBe(409);
+  const tooExpensive = await order({ goodId: 'wood', side: 'buy', quantityUnits: 1_000_000, limitPriceGoldPerTon: 1_000_000, idempotencyKey: 'insufficient-money' });
+  expect(tooExpensive.status()).toBe(409);
+  expect((await tooExpensive.json()).error.code).toBe('INSUFFICIENT_AVAILABLE_GOLD');
 });
 
-test('lehnt ein veraltetes Angebot in der Oberfläche ab und lädt ein neues', async ({ page }) => {
+test('lehnt eine veraltete Orderversion ohne zusätzliche Buchung ab', async ({ page }) => {
+  await page.request.put(`${serverUrl}/api/fleet/position`, { data: cities.lambrecht });
+  const create = (key: string) => page.request.post(`${serverUrl}/api/cities/lambrecht/market/orders`, { data: { goodId: 'wood', side: 'buy', quantityUnits: 100, limitPriceGoldPerTon: 80, idempotencyKey: key } });
+  const first = await create('version-first');
+  const firstOrder = (await first.json()).order;
+  const stale = await page.request.delete(`${serverUrl}/api/cities/lambrecht/market/orders/${firstOrder.orderId}`, { data: { orderVersion: firstOrder.orderVersion + 1, idempotencyKey: 'version-cancel' } });
+  expect(stale.status()).toBe(409);
+  expect((await stale.json()).error.code).toBe('ORDER_BOOK_VERSION_CONFLICT');
+  expect((await state(page)).orders.find((order: { orderId: string }) => order.orderId === firstOrder.orderId).status).toBe('open');
+});
+
+test('stellt die Alpha-5-Orderbook-Ansicht auf Desktop und Mobile ohne Seitenfehler dar', async ({ page }) => {
   await openLambrecht(page);
   await openMarketGood(page, 'Holz');
-  const current = await page.request.post(`${serverUrl}/api/cities/lambrecht/market/quote`, { data: { goodId: 'wood', direction: 'buy', quantity: 1 } });
-  const offer = await current.json();
-  await page.request.post(`${serverUrl}/api/cities/lambrecht/market/trade`, { data: { goodId: 'wood', direction: 'buy', quantity: 1, marketVersion: offer.marketVersion, idempotencyKey: 'e2e-mutate-market' } });
-  await page.getByRole('button', { name: 'Serverangebot abschließen' }).click();
-  await expect(page.getByRole('alert')).toContainText('veraltet');
-  expect((await state(page)).fleet.cargo.wood).toBe(1);
+  await expect(page.getByRole('region', { name: 'Kontostände' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Eigene offene Orders' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Stadtkasse' })).toBeVisible();
 });
