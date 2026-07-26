@@ -93,13 +93,7 @@ Die konkrete Formel wird später als eigene Balancingentscheidung umgesetzt. Sie
 
 ## Bevölkerungswachstum
 
-Die Bevölkerungswachstumsrate hängt ab von:
-
-- Wohlstand und Bedürfnisdeckung,
-- freiem Wohnraum,
-- später Gebäuden und Diensten wie Krankenhäusern.
-
-Gute Versorgung erhöht die Wachstumsrate. Dauerhafte Unterversorgung kann Wachstum stoppen und später zu Bevölkerungsrückgang führen.
+Alpha 3-Wachstum hängt nur von `wealth` und freiem Wohnraum ab. Es ist positiv oder null; Bevölkerungsverlust, Migration, Sterblichkeit und andere demografische Systeme bleiben ausgeschlossen. Die vollständige Regel steht in [`alpha-3/population-growth.md`](alpha-3/population-growth.md).
 
 ## Wohnraum
 

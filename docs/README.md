@@ -57,6 +57,8 @@
 - [`alpha-3/housing.md`](alpha-3/housing.md) – Grundwohnraum, Wohnhäuser und gemeinsame Kapazität
 - [`alpha-3/building-catalog.md`](alpha-3/building-catalog.md) – Alpha-3-Ergänzungen zum Gebäudekatalog
 - [`alpha-3/consumption-and-wealth.md`](alpha-3/consumption-and-wealth.md) – Verbrauch, Kaufkraft und Wohlstand
+- [`alpha-3/population-growth.md`](alpha-3/population-growth.md) – Wachstum, Reste und Stadtstartwerte
+- [`alpha-3/test-world.md`](alpha-3/test-world.md) – deterministische Alpha-3-Referenzwelt
 
 ## Umgang mit Lücken
 

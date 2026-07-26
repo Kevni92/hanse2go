@@ -19,6 +19,8 @@ Beschäftigungsklasse und Bauklasse sind unabhängige technische Felder. Statisc
 - [`housing.md`](housing.md) – städtischer Grundwohnraum und Wohnhäuser
 - [`building-catalog.md`](building-catalog.md) – nicht-produktive Alpha-3-Gebäude
 - [`consumption-and-wealth.md`](consumption-and-wealth.md) – Versorgung, Kaufkraft und der einzige soziale Wert
+- [`population-growth.md`](population-growth.md) – Wachstum aus Wohlstand und freiem Wohnraum
+- [`test-world.md`](test-world.md) – Startwerte und Referenzsimulation
 
 Weitere Alpha-3-Dokumente konkretisieren Verteilung, Teilproduktion, Wohnraum, Wohlstand, Wachstum, Tick, Oberfläche und Abnahme. Sie ersetzen Alpha-2-Regeln nur dort, wo sie dies ausdrücklich festlegen.
 
