@@ -109,6 +109,17 @@ In Alpha 3 sind Wohngebäude ausdrücklich keine Produktionsgebäude: Sie haben 
 - Brennerei
 - Wohngebäude
 
+## Alpha 6: Gebäude autonomer Handelshäuser
+
+Ab Alpha 6 besitzen auch KI-Handelshäuser Kontore, Produktionsgebäude und Wohnhäuser. Für sie gelten sämtliche Regeln dieses Dokuments unverändert: dieselben Rezepte, dieselben Beschäftigungsklassen, dieselbe Lohnpflicht, dieselbe Teilproduktion und dieselbe stadtweite Max-Min-Arbeiterverteilung. Ein KI-Gebäude erhält weder einen Produktionsbonus noch einen Startbestand noch exklusive Arbeiter.
+
+Zwei Regeln sind für die KI zu konkretisieren, weil sie keine aktive Flotte besitzt:
+
+- Baumaterialien stammen aus dem eigenen Kontor der Stadt; für den ersten Bau einer Stadt – das Kontor selbst – aus einer eigenen Flotte, die in diesem Hafen liegt und nicht reist.
+- Die Handlungsberechtigung in einer Stadt ergibt sich aus dem eigenen Kontor beziehungsweise der dort liegenden eigenen Flotte statt aus einer Position.
+
+Ein Neubau ist für ein Handelshaus keine freie Entscheidung, sondern an nachgewiesene strukturelle oder kritische Unterversorgung, eine Amortisation von höchstens 720 Ticks, eine Liquiditätsreserve von 25.000 Gold und höchstens eine größere Investition je 24 Ticks gebunden. Die vollständigen Regeln stehen in [`alpha-6/ai-production-and-investment.md`](alpha-6/ai-production-and-investment.md) und [`alpha-6/ai-building-plans.md`](alpha-6/ai-building-plans.md).
+
 ## Alpha 1
 
 Alpha 1 implementiert keine Gebäude, Kontore, Produktionszyklen, Arbeiter, Löhne, Verschleiß oder Reparaturen. Sie zeigt pro Stadt nur statische Produktionsschwerpunkte und handelt bereits alle 22 Waren.
