@@ -92,3 +92,7 @@ Gebäude, Bauplätze, Wachstum, KI-Produktion, Wohnraum und Stadtgründung werde
 Für Alpha 2 ist der Ruf je Spieler und Stadt ein zusätzlicher Stadtbezug. Eine Baukonzession gehört immer genau diesem Spieler und dieser Stadt und berechtigt dort zum Bau des verpflichtenden Kontors und danach von Produktionsgebäuden. Sie verleiht weder Eigentum an der Stadt noch ein exklusives Baurecht. Begrenzte Bauplätze, Stadtgründung, Wohnraum und Wachstum bleiben außerhalb von Alpha 2.
 
 Der Bau erfolgt sofort und nur, wenn sich die aktive Flotte im servergeprüften Stadtradius befindet. Alpha 2 kennt keine Bauplatzbegrenzung: Spieler können mehrere gleiche Produktionsgebäude besitzen, aber höchstens ein Kontor pro Stadt. Kosten, Materialquelle und Fehlerszenarien stehen in [`alpha-2/buildings-and-construction.md`](alpha-2/buildings-and-construction.md).
+
+## Alpha 3: gemeinsamer Wohnraum
+
+Der Alpha-3-Grundwohnraum ist stadtweit und neutral; spielereigene Wohnhäuser erhöhen denselben gemeinsamen Pool unmittelbar, ohne Einwohner zu reservieren. Das Wohnhaus gehört seinem Erbauer, aber sein Wohnraum unterstützt das Wachstum der gesamten Stadt. Kosten, Voraussetzungen und Kapazitätsformeln stehen in [`alpha-3/housing.md`](alpha-3/housing.md).
