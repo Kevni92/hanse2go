@@ -58,6 +58,9 @@ async function openMarketGood(page: Page, goodName: string) {
 
 async function setQuantity(page: Page, quantity: number) {
   const slider = page.getByLabel(/^Menge/);
+  // Der Regler ist erst bedienbar, wenn das Servermaximum vorliegt. Vorher begrenzt die
+  // eintreffende Preisvorschau jede gesetzte Menge auf eine Tonne.
+  await expect(slider).toBeEnabled();
   await slider.evaluate((element, value) => {
     const input = element as HTMLInputElement;
     input.value = String(value);

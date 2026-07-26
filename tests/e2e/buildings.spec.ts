@@ -3,6 +3,7 @@ import { expect, test as base, type Page } from '@playwright/test';
 const serverUrl = 'http://127.0.0.1:3000';
 const mapCenter = { longitude: 8.12, latitude: 49.4 };
 const lambrecht = { longitude: 8.07, latitude: 49.37 };
+const neustadt = { longitude: 8.14, latitude: 49.4 };
 const kontorMaterials = { wood: 50, planks: 25, bricks: 40, tools: 10 };
 const simpleMaterials = { wood: 20, planks: 10, bricks: 10, tools: 5 };
 
@@ -68,11 +69,14 @@ async function openBuildingsTab(page: Page) {
 test('führt den Lambrecht-Hauptablauf von Ruf bis Tickproduktion vollständig ab', async ({ page }) => {
   await openBuildingsTab(page);
 
-  // Ruf entsteht ausschließlich aus nützlichem Handel: Lehm liegt unter dem Zielbestand.
+  // Lambrecht startet mit Baukonzession; der Kaufknopf entfällt dort vollständig.
   const buildings = page.locator('[data-testid="buildings-tab"]');
   await expect(buildings).toContainText('0 / 100');
   await expect(buildings).toContainText('Fremder');
-  await expect(page.locator('[data-testid="concession-button"]')).toBeDisabled();
+  await expect(buildings).toContainText('vorhanden');
+  await expect(page.locator('[data-testid="concession-button"]')).toHaveCount(0);
+
+  // Ruf entsteht ausschließlich aus nützlichem Handel: Lehm liegt unter dem Zielbestand.
 
   await seed(page, { cargo: { clay: 20 } });
   const quote = await (await page.request.post(`${serverUrl}/api/cities/lambrecht/market/quote`, { data: { goodId: 'clay', direction: 'sell', quantity: 20 } })).json();
@@ -84,16 +88,13 @@ test('führt den Lambrecht-Hauptablauf von Ruf bis Tickproduktion vollständig a
   await seed(page, { reputation: { lambrecht: 80 }, cargo: kontorMaterials });
   await reopenBuildingsTab(page);
   await expect(buildings).toContainText('Vertrauenswürdiger Bürger');
-
-  const goldBefore = (await state(page)).player.gold;
-  await page.locator('[data-testid="concession-button"]').click();
   await expect(page.locator('[data-testid="kontor-build-button"]')).toBeVisible();
-  expect((await state(page)).player.gold).toBe(goldBefore - 10_000);
   await expect(buildings).toContainText('Holz: 50 / 50 t');
 
+  const goldBefore = (await state(page)).player.gold;
   await page.locator('[data-testid="kontor-build-button"]').click();
   await expect(buildings).toContainText('Kontorlager');
-  expect((await state(page)).player.gold).toBe(goldBefore - 20_000);
+  expect((await state(page)).player.gold).toBe(goldBefore - 10_000);
   expect((await state(page)).fleet.cargo).toEqual({});
 
   // Rohstoff- und Verarbeitungsgebäude bauen.
@@ -135,18 +136,23 @@ test('lehnt fehlenden Ruf, Gold, Material, Kontor und Laderaum serverseitig ab',
   await page.request.put(`${serverUrl}/api/fleet/position`, { data: lambrecht });
   const post = (path: string, data?: unknown) => page.request.post(`${serverUrl}${path}`, data ? { data } : undefined);
 
-  const withoutReputation = await post('/api/cities/lambrecht/concession');
+  // Nur Lambrecht startet mit Konzession; in Neustadt gilt der vollständige Kaufablauf.
+  await page.request.put(`${serverUrl}/api/fleet/position`, { data: neustadt });
+  const withoutReputation = await post('/api/cities/neustadt/concession');
   expect(withoutReputation.status()).toBe(409);
   expect((await withoutReputation.json()).error.code).toBe('REPUTATION_TOO_LOW');
 
-  await seed(page, { reputation: { lambrecht: 80 }, gold: 9_999 });
-  expect((await (await post('/api/cities/lambrecht/concession')).json()).error.code).toBe('INSUFFICIENT_GOLD');
+  await seed(page, { reputation: { neustadt: 80 }, gold: 9_999 });
+  expect((await (await post('/api/cities/neustadt/concession')).json()).error.code).toBe('INSUFFICIENT_GOLD');
 
   await seed(page, { gold: 100_000 });
-  const withoutConcession = await post('/api/cities/lambrecht/buildings', { buildingType: 'kontor' });
+  const withoutConcession = await post('/api/cities/neustadt/buildings', { buildingType: 'kontor' });
   expect((await withoutConcession.json()).error.code).toBe('CONCESSION_REQUIRED');
+  expect((await post('/api/cities/neustadt/concession')).ok()).toBeTruthy();
 
-  expect((await post('/api/cities/lambrecht/concession')).ok()).toBeTruthy();
+  await page.request.put(`${serverUrl}/api/fleet/position`, { data: lambrecht });
+  const ownedTwice = await post('/api/cities/lambrecht/concession');
+  expect((await ownedTwice.json()).error.code).toBe('CONCESSION_ALREADY_OWNED');
   const withoutMaterials = await post('/api/cities/lambrecht/buildings', { buildingType: 'kontor' });
   expect((await withoutMaterials.json()).error.code).toBe('INSUFFICIENT_BUILD_MATERIALS');
 
@@ -176,8 +182,7 @@ test('lehnt fehlenden Ruf, Gold, Material, Kontor und Laderaum serverseitig ab',
 
 test('deckt alle Katalogrezepte mit einem Tick je Gebäudetyp ab', async ({ page }) => {
   await page.request.put(`${serverUrl}/api/fleet/position`, { data: lambrecht });
-  await seed(page, { reputation: { lambrecht: 80 }, gold: 1_000_000, cargo: kontorMaterials });
-  expect((await page.request.post(`${serverUrl}/api/cities/lambrecht/concession`)).ok()).toBeTruthy();
+  await seed(page, { gold: 1_000_000, cargo: kontorMaterials });
   expect((await page.request.post(`${serverUrl}/api/cities/lambrecht/buildings`, { data: { buildingType: 'kontor' } })).ok()).toBeTruthy();
 
   const overview = await (await page.request.get(`${serverUrl}/api/cities/lambrecht/buildings`)).json();

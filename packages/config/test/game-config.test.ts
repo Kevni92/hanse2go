@@ -95,6 +95,18 @@ describe('validateGameConfig', () => {
     expect(() => validateGameConfig(config)).toThrow(/Baukonzession/);
   });
 
+  it('lehnt eine Start-Baukonzession für eine unbekannte Stadt ab', () => {
+    const config = base();
+    config.player.startingConcessions = ['unbekannt'];
+    expect(() => validateGameConfig(config)).toThrow(/unbekannte Stadt/);
+  });
+
+  it('lehnt eine doppelt vergebene Start-Baukonzession ab', () => {
+    const config = base();
+    config.player.startingConcessions = ['lambrecht', 'lambrecht'];
+    expect(() => validateGameConfig(config)).toThrow(/mehrfach vergeben/);
+  });
+
   it('lehnt einen Laderaum von null ab', () => {
     const config = base();
     config.fleet.capacity = 0;

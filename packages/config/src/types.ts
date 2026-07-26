@@ -8,7 +8,8 @@ export interface WorldConfig {
   /** Zeitstempel aller Startpositionen; hält den Startzustand deterministisch. */
   startTimestamp: string;
 }
-export interface PlayerConfig { id: string; name: string; startingGold: number }
+/** `startingConcessions` enthält Stadt-IDs, für die der Spieler die Baukonzession bereits besitzt. */
+export interface PlayerConfig { id: string; name: string; startingGold: number; startingConcessions: string[] }
 export interface FleetConfig { id: string; capacity: number; startPosition: GeoPoint }
 
 export interface GoodConfig { id: string; category: GoodCategory; basePrice: number; targetStock: number }

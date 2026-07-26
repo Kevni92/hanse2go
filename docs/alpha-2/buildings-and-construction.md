@@ -2,7 +2,7 @@
 
 ## Voraussetzungen und Eigentum
 
-Ein Gebäude gehört genau einem Spieler und genau einer Stadt. Jeder Bau ist ein serverautoritativer, atomarer Befehl; die aktive Flotte muss die Stadt erreichen können. Ohne lokale Baukonzession ist kein Gebäude baubar. Das Kontor ist stets das erste Gebäude: Ein Spieler darf pro Stadt genau ein Kontor bauen und erst danach Produktionsgebäude errichten. Mehrere gleiche Produktionsgebäude sind zulässig; Alpha 2 hat weder ein Gebäudelimit noch Bauplätze.
+Ein Gebäude gehört genau einem Spieler und genau einer Stadt. Jeder Bau ist ein serverautoritativer, atomarer Befehl; die aktive Flotte muss die Stadt erreichen können. Ohne lokale Baukonzession ist kein Gebäude baubar; für Lambrecht bringt der Startzustand sie bereits mit. Das Kontor ist stets das erste Gebäude: Ein Spieler darf pro Stadt genau ein Kontor bauen und erst danach Produktionsgebäude errichten. Mehrere gleiche Produktionsgebäude sind zulässig; Alpha 2 hat weder ein Gebäudelimit noch Bauplätze.
 
 Der Bau beginnt und endet sofort. Gold und Baumaterialien werden ausschließlich aus Goldbeutel beziehungsweise Laderaum der aktiven Flotte abgebucht. Kontorbestände existieren vor dem Kontor nicht und werden beim Bau nicht als Materialquelle herangezogen. Der Stadtmarkt wird niemals automatisch belastet.
 
