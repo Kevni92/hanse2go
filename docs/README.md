@@ -51,6 +51,9 @@
 - [`alpha-3/building-workforce-classes.md`](alpha-3/building-workforce-classes.md) – Beschäftigungsklassen aller Produktionsgebäude
 - [`alpha-3/workforce-and-wages.md`](alpha-3/workforce-and-wages.md) – Arbeitsnachfrage, Lohnbudget und atomare Lohnzahlung
 - [`alpha-3/workforce-allocation.md`](alpha-3/workforce-allocation.md) – faire Verteilung, Prioritäten und Arbeitslosigkeit
+- [`alpha-3/production-and-fractions.md`](alpha-3/production-and-fractions.md) – Teilproduktion, Hundertstel-Tonnen und atomare Buchung
+- [`alpha-3/production-recipes.md`](alpha-3/production-recipes.md) – verbindliche Alpha-3-Rezepte
+- [`alpha-3/balancing.md`](alpha-3/balancing.md) – Referenzmargen der Produktionsrezepte
 
 ## Umgang mit Lücken
 
