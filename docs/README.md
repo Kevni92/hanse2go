@@ -93,6 +93,9 @@
 - [`alpha-6/ai-actors.md`](alpha-6/ai-actors.md) – KI-Handelshäuser als reguläre Wirtschaftsakteure, Eigentum und Informationsgrenzen
 - [`alpha-6/start-state.md`](alpha-6/start-state.md) – bilanzierte Initialisierung von Gold, Konzession, Kontor, Schiff und Flotte
 - [`alpha-6/insolvency.md`](alpha-6/insolvency.md) – Liquiditätszustände, Sparmaßnahmen und Insolvenz ohne Rettungsgeld
+- [`alpha-6/economic-observation.md`](alpha-6/economic-observation.md) – öffentliche Beobachtungsfenster, Versorgungs- und Handelsanteilsmetriken
+- [`alpha-6/shortage-and-intervention.md`](alpha-6/shortage-and-intervention.md) – Unterversorgungsstatus, `supportScore`, Marktanteilsziel und Rückzug
+- [`alpha-6/ai-transparency.md`](alpha-6/ai-transparency.md) – Entscheidungsprotokoll, Ablehnungsgründe und Erklärtexte
 
 ## Umgang mit Lücken
 
