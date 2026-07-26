@@ -27,7 +27,10 @@ export type ApiErrorCode =
   | 'FLEET_NOT_FOUND' | 'FLEET_NOT_OWNED' | 'INVALID_SHIP_NAME' | 'INVALID_FLEET_NAME' | 'SHIP_ALREADY_ASSIGNED'
   | 'FLEET_CAPACITY_BELOW_CARGO' | 'FLEET_MUST_KEEP_ONE_SHIP' | 'ACTIVE_FLEET_CANNOT_BE_DISBANDED' | 'FLEET_CARGO_NOT_EMPTY'
   | 'ACCOUNT_NOT_FOUND' | 'INVALID_MONEY_AMOUNT' | 'INSUFFICIENT_AVAILABLE_GOLD' | 'MONEY_RESERVATION_CONFLICT'
-  | 'MONEY_ACCOUNT_INVARIANT_FAILED' | 'MONEY_SUPPLY_INVARIANT_VIOLATION';
+  | 'MONEY_ACCOUNT_INVARIANT_FAILED' | 'MONEY_SUPPLY_INVARIANT_VIOLATION'
+  | 'ORDER_NOT_FOUND' | 'ORDER_NOT_OWNED' | 'INVALID_ORDER_PRICE' | 'INVALID_ORDER_QUANTITY'
+  | 'ORDER_BOOK_VERSION_CONFLICT' | 'ORDER_NOT_OPEN' | 'ORDER_MATCHING_FAILED' | 'INSUFFICIENT_AVAILABLE_GOODS'
+  | 'ORDER_IDEMPOTENCY_CONFLICT';
 
 export interface ApiError {
   error: {
@@ -44,3 +47,6 @@ export interface BuildBuildingRequest { buildingType: string; }
 export interface KontorTransferRequest { goodId: string; quantity: number; direction: 'store' | 'retrieve'; }
 export interface TickRequest { idempotencyKey: string; }
 export interface WorkforcePriorityRequest { priority: 'very_high' | 'high' | 'normal' | 'low' | 'very_low'; }
+export interface CreateOrderRequest { goodId: string; side: 'buy' | 'sell'; priceMoneyPerUnit: number; quantityUnits: number; idempotencyKey: string; }
+export interface CancelOrderRequest { orderVersion: number; idempotencyKey: string; }
+export interface ReplaceOrderRequest { orderVersion: number; priceMoneyPerUnit: number; quantityUnits: number; idempotencyKey: string; }

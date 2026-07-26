@@ -34,6 +34,9 @@ export class InMemoryGameRepository implements GameRepository {
       const units = city.stock[good.id]! * 100;
       return [good.id, { availableUnits: units, reservedUnits: 0, totalUnits: units, inventoryVersion: 1 }];
     }))]));
+    const kontorWarehouses: Record<string, Record<string, InventoryBalance>> = Object.fromEntries(cities.map((city) => [city.id, Object.fromEntries(goods.map((good) => [good.id, {
+      availableUnits: 0, reservedUnits: 0, totalUnits: 0, inventoryVersion: 1,
+    }]))]));
     const moneySupply = Object.values(accounts).reduce((sum, value) => sum + value.totalMoney, 0);
     const cityEconomies = Object.fromEntries(cities.map((city) => {
       const alpha3 = this.config.alpha3.cities[city.id]!;
@@ -54,7 +57,8 @@ export class InMemoryGameRepository implements GameRepository {
       shipyards: cities.map((city) => ({ cityId: city.id, shipyardVersion: 1, queuedBuildOrderIds: [] })), shipBuildOrders: [], shipMarketVersions: Object.fromEntries(cities.map((city) => [city.id, 1])),
       goods, cities,
       cityEconomies, world: { tickNumber: 0, simulatedHour: 0 }, reputations, concessions: [...player.startingConcessions], buildings: [], kontors: {},
-      accounts, cityWarehouses, ledger: [], moneySupply,
+      accounts, cityWarehouses, kontorWarehouses, ledger: [], moneySupply,
+      orders: [], executions: [], orderBookVersions: {}, orderIdSequence: 0, executionIdSequence: 0, idempotencyRecords: {},
     };
   }
   getState = (): GameState => clone(this.state);
